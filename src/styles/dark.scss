@@ -1,0 +1,11 @@
+@import './variables';
+
+body {
+  background-color: $dark-background;
+  color: $dark-text;
+}
+
+.button {
+  background-color: $dark-button-bg;
+  color: $dark-button-color;
+}
