@@ -1,0 +1,17 @@
+.date-panel {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1rem;
+}
+.date-select {
+  padding: 1rem;
+  border-radius: 0.2rem;
+  background-color: transparent;
+  outline: none;
+  cursor: pointer;
+  color: var(--secondary-text);
+}
+.date-panel-info {
+  font-size: 0.8rem;
+  color: var(--secondary-text);
+}
