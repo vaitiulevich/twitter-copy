@@ -1,0 +1,18 @@
+.btn {
+  cursor: pointer;
+  background-color: var(--button-bg);
+  color: var(--button-color);
+  border: none;
+  padding: 1rem;
+  border-radius: 5rem;
+  margin-top: 1rem;
+}
+
+.btn:hover {
+  background-color: var(--button-bg-hover);
+}
+
+.btn:disabled {
+  background-color: var(--secondary-text);
+  cursor: not-allowed;
+}
