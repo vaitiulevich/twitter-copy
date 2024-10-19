@@ -1,0 +1,17 @@
+.sign-up-section {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sign-up-form-container {
+  width: 30rem;
+}
+.sign-up-logo {
+  text-align: center;
+}
+
+.sign-up-form {
+  display: flex;
+  flex-direction: column;
+}

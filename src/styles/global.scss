@@ -1,0 +1,29 @@
+* {
+  font-family: 'Roboto', sans-serif;
+}
+body {
+  margin: 0;
+  padding: 0;
+}
+
+img {
+  height: 100%;
+  width: auto;
+}
+
+a {
+  text-decoration: none;
+  text-wrap: nowrap;
+  font-size: 1rem;
+  transition: color 0.5s;
+}
+
+button {
+  font-size: 1rem;
+  transition: background-color 0.5s;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+}

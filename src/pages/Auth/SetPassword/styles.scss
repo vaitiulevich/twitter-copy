@@ -1,0 +1,19 @@
+.set-password-section {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+.set-password-form-container {
+  margin-top: 3rem;
+  width: 30rem;
+}
+.set-password-logo {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.no-match-error {
+  padding: 1rem;
+  color: var(--error-text);
+  background-color: var(--error-bg);
+  border-radius: 0.5rem;
+}
