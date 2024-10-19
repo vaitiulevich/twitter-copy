@@ -13,6 +13,11 @@ export const Months = [
   'December',
 ];
 
+export const DEFAULT_MONTH = 'Month';
+export const DEFAULT_DAY = 'Day';
+export const DEFAULT_YEAR = 'Year';
+export const YEAR_RANGE = 100;
+
 export const FooterLinks = [
   { title: 'About', link: '/' },
   { title: 'Help Center', link: '/' },

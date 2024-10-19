@@ -1,4 +1,4 @@
-import { ThemeAction,ThemeState } from '@store/types';
+import { ThemeAction, ThemeState } from '@store/types/theme/types';
 
 const initialState: ThemeState = {
   theme: 'light',

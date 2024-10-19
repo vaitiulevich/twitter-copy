@@ -1,12 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '@components/Button/Button';
 import { DateSelector } from '@components/DateSelector/DateSelector';
+import { ErrorBlock } from '@components/ErrorBlock/ErrorBlock';
 import { Input } from '@components/Input/Input';
 import { images } from '@constants/images';
-import { checkUserExists } from '@store/actions/authActions';
+import {
+  checkUserExists,
+  resetError,
+  resetNavigatePassword,
+} from '@store/actions/authActions';
+import { RootState } from '@store/types';
 
 import './styles.scss';
 
@@ -18,21 +25,33 @@ interface FormData {
 }
 
 export const SignUp = () => {
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState<string>();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
-  const [error, setError] = useState('');
+  const error = useSelector((state: RootState) => state.auth.error);
+  const navigateToSetPassword = useSelector(
+    (state: RootState) => state.auth.navigateToSetPassword
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const onSubmit = (data: FormData) => {
-    const completeData = { ...data, selectedDate };
-    dispatch(checkUserExists(completeData));
-    navigate('set-password');
+    const completeData = { ...data, dateBirth: selectedDate };
+    if (selectedDate) {
+      dispatch(checkUserExists(completeData));
+      dispatch(resetError());
+    }
   };
+
+  useEffect(() => {
+    if (navigateToSetPassword) {
+      navigate('set-password');
+      dispatch(resetNavigatePassword());
+    }
+  }, [navigateToSetPassword]);
 
   const handleDateChange = (month: string, day: string, year: string) => {
     setSelectedDate(`${year}-${month}-${day}`);
@@ -44,7 +63,12 @@ export const SignUp = () => {
         <div className="sign-up-logo">
           <img src={images.logo} alt="logo" />
         </div>
-        <h2>Create an account</h2>
+        <div className="sign-up-header">
+          <h2>Create an account</h2>
+          <Link to={'/'} className="to-entry-link">
+            back to entry
+          </Link>
+        </div>
         <form className="sign-up-form" onSubmit={handleSubmit(onSubmit)}>
           <Input
             placeholder="Name"
@@ -106,12 +130,12 @@ export const SignUp = () => {
               blandit viverra dignissim eget tellus. Nibh mi massa in molestie a
               sit. Elit congue.
             </p>
-            <DateSelector onDateChange={handleDateChange} />
+            <DateSelector isRequired={true} onDateChange={handleDateChange} />
           </div>
 
           <Button text="Next" type="submit" />
         </form>
-        {error && <div>{error}</div>}
+        {error && <ErrorBlock message={error} />}
       </div>
     </section>
   );

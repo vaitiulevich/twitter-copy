@@ -1,19 +1,16 @@
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@components/Button/Button';
-import { logoutRequest } from '@store/actions/authActions';
+import { AddPostPanel } from '@components/AddPostPanel/AddPostPanel';
+import { Feed } from '@components/Feed/Feed';
+import { ProfileHead } from '@components/ProfileHead/ProfileHead';
+
+import './styles.scss';
 
 export const Profile = () => {
-  const dispatch = useDispatch();
-  const navigation = useNavigate();
-  const handleLogOut = () => {
-    dispatch(logoutRequest());
-    navigation('/sign-in');
-  };
-
   return (
-    <div>
-      <Button onClick={handleLogOut} text="Log Out" />
-    </div>
+    <>
+      <ProfileHead />
+      <AddPostPanel />
+      <h2 className="headline-tweets">Tweets</h2>
+      <Feed />
+    </>
   );
 };

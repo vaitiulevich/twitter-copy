@@ -8,7 +8,7 @@ import createSagaMiddleware from 'redux-saga';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'theme'],
+  whitelist: ['auth', 'theme', 'user'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -1,21 +1,11 @@
 import { Link } from 'react-router-dom';
 import { EntryFooter } from '@components/EntryFooter/EntryFooter';
+import { GoogleSignUpButton } from '@components/GoogleSignUpButton/GoogleSignUpButton';
 import { images } from '@constants/images';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 import './styles.scss';
-import { auth } from '../../../firebase';
 
 export const Entry = () => {
-  const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-    } catch (error) {
-      console.error('Error during Google sign-in:', error);
-    }
-  };
   return (
     <div className="entry-container">
       <section className="entry-content">
@@ -30,11 +20,8 @@ export const Entry = () => {
             <h1 className="entry-title">Happening now</h1>
             <h2 className="entry-subtitle">Join Twitter today</h2>
             <div className="entry-btns-panel">
-              <button onClick={handleGoogleSignIn} className="enty-btn">
-                <img src={images.googleIcon} alt="google" />
-                <span>Sign up with Google</span>
-              </button>
-              <Link to={'/sign-up'} className="enty-btn">
+              <GoogleSignUpButton />
+              <Link to={'/sign-up'} className="entry-btn">
                 Sign up with email
               </Link>
             </div>

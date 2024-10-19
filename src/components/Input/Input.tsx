@@ -5,7 +5,9 @@ import {
   RegisterOptions,
   UseFormRegister,
 } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { images } from '@constants/images';
+import { resetError } from '@store/actions/authActions';
 import classNames from 'classnames';
 
 import './styles.scss';
@@ -28,6 +30,7 @@ export const Input = <T extends FieldValues>({
   option,
 }: InputProps<T>) => {
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -47,13 +50,19 @@ export const Input = <T extends FieldValues>({
     </button>
   );
 
+  const handaleResetError = () => {
+    dispatch(resetError());
+  };
+
+  const inputType = type === 'password' && !showPassword ? 'password' : 'text';
   return (
     <div className="inp-panel">
       <div className={classNames('inp-block', { 'inp-block-err': error })}>
         <input
           {...(register ? register(name, option) : {})}
           placeholder={placeholder}
-          type={type === 'password' && !showPassword ? 'password' : 'text'}
+          onChange={handaleResetError}
+          type={inputType}
           className="inp"
         />
         {type === 'password' && renderPasswordToggle()}

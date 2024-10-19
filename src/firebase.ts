@@ -1,20 +1,23 @@
 import { getAnalytics } from 'firebase/analytics';
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
+import { getBuildEnvVar } from './env';
+
 const firebaseConfig = {
-  apiKey: 'AIzaSyCdzpqC3COsaUHHYZa7xaYkStfSNyjvBIA',
-  authDomain: 'twitter-copy-92524.firebaseapp.com',
-  projectId: 'twitter-copy-92524',
-  storageBucket: 'twitter-copy-92524.appspot.com',
-  messagingSenderId: '387846671173',
-  appId: '1:387846671173:web:df309b863ea7f318ca0c2c',
-  measurementId: 'G-3CZFKQPK4B',
+  apiKey: getBuildEnvVar('API_KEY'),
+  authDomain: getBuildEnvVar('AUTH_DOMAIN'),
+  projectId: getBuildEnvVar('PROJECT_ID'),
+  storageBucket: getBuildEnvVar('STORAGE_BACKET'),
+  messagingSenderId: getBuildEnvVar('MESS_SEND_ID'),
+  appId: getBuildEnvVar('APP_ID'),
+  measurementId: getBuildEnvVar('MEASUR_ID'),
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
-export { analytics, auth, db };
+export { analytics, auth, db, provider };

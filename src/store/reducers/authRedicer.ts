@@ -1,18 +1,22 @@
 import {
   CLEAR_TOKENS,
+  CLEAR_USER_DATA,
   LOGIN_FAILURE,
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGOUT_FAILURE,
   LOGOUT_REQUEST,
   LOGOUT_SUCCESS,
+  NAVIGATE_TO_SET_PASSWORD,
   REGISTER_FAILURE,
   REGISTER_REQUEST,
   REGISTER_SUCCESS,
+  RESET_ERROR,
+  RESET_NAVIGATE_PASSWORD,
   SET_TOKENS,
   SET_USER_DATA,
-} from '@store/actions/authActions';
-import { AuthAction } from '@store/types';
+} from '@store/types/auth/actionTypes';
+import { AuthAction } from '@store/types/auth/types';
 
 export interface User {
   uid?: string;
@@ -24,11 +28,13 @@ export interface User {
 
 interface AuthState {
   user: User | null;
+  uid: string | null;
   error: string | null;
   loading: boolean;
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
+  navigateToSetPassword: boolean;
 }
 
 const initialState: AuthState = {
@@ -38,20 +44,35 @@ const initialState: AuthState = {
   error: null,
   loading: false,
   isAuthenticated: false,
+  navigateToSetPassword: false,
+  uid: null,
 };
 
 const authReducer = (state = initialState, action: AuthAction) => {
-  console.log(state, action);
-
   switch (action.type) {
     case SET_USER_DATA:
       return { ...state, user: action.payload };
+    case RESET_ERROR:
+      return {
+        ...state,
+        error: null,
+      };
+    case NAVIGATE_TO_SET_PASSWORD:
+      return {
+        ...state,
+        navigateToSetPassword: true,
+      };
+    case RESET_NAVIGATE_PASSWORD:
+      return {
+        ...state,
+        navigateToSetPassword: false,
+      };
     case LOGIN_REQUEST:
       return { ...state, loading: true, error: null };
     case LOGIN_SUCCESS:
       return {
         ...state,
-        user: action.payload,
+        uid: action.payload.uid,
         loading: false,
         isAuthenticated: true,
         error: null,
@@ -75,6 +96,7 @@ const authReducer = (state = initialState, action: AuthAction) => {
         loading: false,
         isAuthenticated: false,
         user: null,
+        uid: null,
       };
     case LOGOUT_FAILURE:
       return { ...state, loading: false, error: action.payload };

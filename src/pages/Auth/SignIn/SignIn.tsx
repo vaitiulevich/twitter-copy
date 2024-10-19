@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@components/Button/Button';
+import { ErrorBlock } from '@components/ErrorBlock/ErrorBlock';
 import { Input } from '@components/Input/Input';
 import { images } from '@constants/images';
 import { loginRequest } from '@store/actions/authActions';
@@ -74,10 +75,10 @@ export const SignIn = () => {
           />
           <Button type="submit" disabled={loading} text="Log In" />
         </form>
-        {error && <p className="sign-in-error">{error}</p>}
         <div className="link-to-sign-up">
           <Link to={'/sign-up'}>Sign up to Twitter</Link>
         </div>
+        {error && <ErrorBlock message={error} />}
       </div>
     </section>
   );

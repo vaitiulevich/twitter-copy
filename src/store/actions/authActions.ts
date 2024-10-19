@@ -1,22 +1,29 @@
 import { User } from '@store/reducers/authRedicer';
+import {
+  CHECK_USER_EXISTS,
+  CLEAR_TOKENS,
+  GOOGLE_LOGIN_FAILURE,
+  GOOGLE_LOGIN_REQUEST,
+  GOOGLE_LOGIN_SUCCESS,
+  LOGIN_FAILURE,
+  LOGIN_REQUEST,
+  LOGIN_SUCCESS,
+  LOGOUT_FAILURE,
+  LOGOUT_REQUEST,
+  LOGOUT_SUCCESS,
+  NAVIGATE_TO_SET_PASSWORD,
+  REGISTER_FAILURE,
+  REGISTER_REQUEST,
+  REGISTER_SUCCESS,
+  RESET_ERROR,
+  RESET_NAVIGATE_PASSWORD,
+  SET_TOKENS,
+  SET_USER_DATA,
+} from '@store/types/auth/actionTypes';
 
-export const SET_TOKENS = 'SET_TOKENS';
-export const CLEAR_TOKENS = 'CLEAR_TOKENS';
-export const SET_USER_DATA = 'SET_USER_DATA';
-
-export const LOGIN_REQUEST = 'LOGIN_REQUEST';
-export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-export const LOGIN_FAILURE = 'LOGIN_FAILURE';
-
-export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
-export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
-export const LOGOUT_FAILURE = 'LOGOUT_FAILURE';
-
-export const REGISTER_REQUEST = 'REGISTER_REQUEST';
-export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
-export const REGISTER_FAILURE = 'REGISTER_FAILURE';
-
-export const CHECK_USER_EXISTS = 'CHECK_USER_EXISTS';
+export const resetError = () => ({
+  type: RESET_ERROR,
+});
 
 export const checkUserExists = (user: User) => ({
   type: CHECK_USER_EXISTS,
@@ -28,6 +35,12 @@ export const setTokens = (accessToken: string, refreshToken: string) => ({
   payload: { accessToken, refreshToken },
 });
 
+export const resetNavigatePassword = () => ({
+  type: RESET_NAVIGATE_PASSWORD,
+});
+export const navigateToSetPassword = () => ({
+  type: NAVIGATE_TO_SET_PASSWORD,
+});
 export const claerTokens = () => ({
   type: CLEAR_TOKENS,
 });
@@ -42,9 +55,9 @@ export const loginRequest = (email: string, password: string) => ({
   payload: { email, password },
 });
 
-export const loginSuccess = (email: string, user: string) => ({
+export const loginSuccess = (email: string, uid: string) => ({
   type: LOGIN_SUCCESS,
-  payload: { email, user },
+  payload: { email, uid },
 });
 
 export const loginFailure = (error: string) => ({
@@ -68,10 +81,12 @@ export const logoutFailure = (error: string) => ({
 export const registerRequest = (
   email: string,
   phone: string,
-  password: string
+  password: string,
+  dateBirth: string,
+  name: string
 ) => ({
   type: REGISTER_REQUEST,
-  payload: { email, phone, password },
+  payload: { email, phone, password, dateBirth, name },
 });
 
 export const registerSuccess = (user: string) => ({
@@ -81,5 +96,15 @@ export const registerSuccess = (user: string) => ({
 
 export const registerFailure = (error: string) => ({
   type: REGISTER_FAILURE,
+  payload: error,
+});
+
+export const googleLoginRequest = () => ({ type: GOOGLE_LOGIN_REQUEST });
+export const googleLoginSuccess = (user: User) => ({
+  type: GOOGLE_LOGIN_SUCCESS,
+  payload: user,
+});
+export const googleLoginFailure = (error: string) => ({
+  type: GOOGLE_LOGIN_FAILURE,
   payload: error,
 });

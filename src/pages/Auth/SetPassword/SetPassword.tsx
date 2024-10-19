@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@components/Button/Button';
+import { ErrorBlock } from '@components/ErrorBlock/ErrorBlock';
 import { Input } from '@components/Input/Input';
 import { images } from '@constants/images';
 import { registerRequest } from '@store/actions/authActions';
@@ -23,7 +24,6 @@ export const SetPassword = () => {
   } = useForm<FormData>();
   const dispatch = useDispatch();
   const [isNotMatch, setIsNotMatch] = useState(false);
-  const loading = useSelector((state: RootState) => state.auth.loading);
   const user = useSelector((state: RootState) => state.auth.user);
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
@@ -31,25 +31,30 @@ export const SetPassword = () => {
   const navigate = useNavigate();
 
   const onSubmit = (data: FormData) => {
-    if (data.password === data.retpassword && user) {
-      setIsNotMatch(false);
-      dispatch(registerRequest(user.email, user.phone, data.password));
-      navigate('/profile');
-    } else {
+    if (data.password !== data.retpassword) {
       setIsNotMatch(true);
+      return;
+    }
+    setIsNotMatch(false);
+
+    if (user) {
+      dispatch(
+        registerRequest(
+          user.email,
+          user.phone,
+          data.password,
+          user.dateBirth ?? '',
+          user.name ?? ''
+        )
+      );
     }
   };
 
   useEffect(() => {
-    if (!user) {
-      navigate('/sign-up');
-    } else if (isAuthenticated) {
+    if (isAuthenticated) {
       navigate('/profile');
     }
-  }, [user, isAuthenticated, navigate]);
-
-  const renderErrorMessage = () =>
-    isNotMatch && <p className="no-match-error">Passwords are different</p>;
+  }, [isAuthenticated]);
 
   return (
     <section className="set-password-section">
@@ -86,9 +91,9 @@ export const SetPassword = () => {
               },
             }}
           />
-          <Button type="submit" disabled={loading} text="Log Up" />
+          <Button type="submit" text="Log Up" />
         </form>
-        {renderErrorMessage()}
+        {isNotMatch && <ErrorBlock message="Passwords do not match" />}
       </div>
     </section>
   );
