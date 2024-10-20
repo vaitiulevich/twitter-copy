@@ -1,0 +1,36 @@
+.inp {
+  padding: 1rem;
+  background-color: transparent;
+  color: var(--text);
+  width: 93%;
+  border: none;
+  outline: none;
+}
+
+.inp-panel {
+  margin-bottom: 1.5rem;
+  height: 3rem;
+}
+.inp-block-err {
+  border: 1px solid var(--error-text);
+}
+.inp-block {
+  border: 1px solid var(--secondary-text);
+  border-radius: 0.2rem;
+  display: flex;
+}
+.inp-err-message {
+  margin: 0;
+  color: var(--error-text);
+  font-size: 0.8rem;
+}
+
+.toggle-visibility-btn {
+  outline: none;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+}
+.toggle-visibility-img {
+  height: 1.5rem;
+}

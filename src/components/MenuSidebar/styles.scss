@@ -1,0 +1,41 @@
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nav-list-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+.nav-list-item a {
+  color: var(--text);
+}
+
+.header-menu-sidebar {
+  margin: 1rem 0 1.5rem;
+}
+.menu-sidebar {
+  padding-right: 1rem;
+}
+
+.user-info-panel {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.user-info-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+.user-info-name,
+.user-info-slug {
+  margin: 0;
+}
+
+.user-info-slug {
+  color: var(--secondary-text);
+}

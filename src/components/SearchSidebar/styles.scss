@@ -1,0 +1,23 @@
+.search-sidebar {
+  padding: 1rem 0 0 0.5rem;
+}
+.search-inp-block {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: var(--border-color);
+  border-radius: 5rem;
+}
+.search-inp-btn {
+  outline: none;
+  border: none;
+  background-color: transparent;
+  text-align: center;
+  padding: 0;
+  height: 1.3rem;
+}
+.search-inp {
+  outline: none;
+  border: none;
+  background-color: transparent;
+}
