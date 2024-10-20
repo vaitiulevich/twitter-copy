@@ -3,12 +3,12 @@ import {
   fetchPostsSuccess,
   getUserDataSuccess,
 } from '@store/actions/userActions';
-import { fetchPostsAction, getUserDataAction } from '@store/types';
 import { LOGOUT_SUCCESS } from '@store/types/auth/actionTypes';
 import {
   FETCH_POSTS_REQUEST,
   GET_USER_DATA,
 } from '@store/types/user/actionTypes';
+import { fetchPostsAction, getUserDataAction } from '@store/types/user/types';
 import { FirebaseError } from 'firebase/app';
 import {
   collection,

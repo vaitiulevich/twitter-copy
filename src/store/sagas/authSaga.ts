@@ -8,6 +8,7 @@ import {
   setTokens,
   setUserData,
 } from '@store/actions/authActions';
+import { fetchPostsRequest, getUserData } from '@store/actions/userActions';
 import { UserState } from '@store/reducers/userReducer';
 import {
   CHECK_USER_EXISTS,
@@ -23,6 +24,7 @@ import {
   RegisterAction,
   SignInAction,
 } from '@store/types/auth/types';
+import { generateSlug } from '@utils/generateSlug';
 import { FirebaseError } from 'firebase/app';
 import {
   createUserWithEmailAndPassword,
@@ -57,8 +59,8 @@ function* signInSaga(action: SignInAction): Generator {
     const refreshToken = userCredential.user.refreshToken;
     const user = userCredential.user;
 
-    yield put(loginSuccess(user.email, user.uid));
     yield put(setTokens(accessToken, refreshToken));
+    yield put(loginSuccess(user.email, user.uid));
   } catch (err) {
     if (err instanceof FirebaseError) {
       yield put(
@@ -98,9 +100,10 @@ function* registerSaga(action: RegisterAction): Generator {
     );
     const accessToken = yield userCredential.user.getIdToken();
     const refreshToken = userCredential.user.refreshToken;
+    const userSlug = generateSlug(name, userCredential.user.uid);
     const userData = {
       userId: userCredential.user.uid,
-      userSlug: `@${name}_${userCredential.user.uid.slice(-4)}`,
+      userSlug: userSlug,
       email,
       phone,
       password,
@@ -170,10 +173,11 @@ function* googleLoginSaga(action: googleLoginRequest): Generator {
     const result = yield call(signInWithPopup, auth, provider);
     const user = result.user;
     const exists = yield call(checkUserExists, user.email);
+    const userSlug = generateSlug(user.displayName, user.uid);
 
     const userData = {
       userId: user.uid,
-      userSlug: `@${user.displayName}_${user.uid.slice(-4)}`,
+      userSlug: userSlug,
       email: user.email,
       phone: '',
       password: user.providerData[0].uid,
@@ -188,12 +192,15 @@ function* googleLoginSaga(action: googleLoginRequest): Generator {
 
     const accessToken = yield user.getIdToken();
     const refreshToken = user.refreshToken;
+    console.log(exists);
+
     if (!exists) {
       const userRef = doc(db, 'users', user.uid);
       yield setDoc(userRef, userData);
-      yield put(setTokens(accessToken, refreshToken));
+      console.log(userData);
     }
 
+    yield put(setTokens(accessToken, refreshToken));
     yield put(loginSuccess(user.email, user.uid));
   } catch (error) {
     console.log(error);

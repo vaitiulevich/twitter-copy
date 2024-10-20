@@ -7,7 +7,9 @@ import { ErrorBlock } from '@components/ErrorBlock/ErrorBlock';
 import { Input } from '@components/Input/Input';
 import { images } from '@constants/images';
 import { loginRequest } from '@store/actions/authActions';
+import { fetchPostsRequest, getUserData } from '@store/actions/userActions';
 import { RootState } from '@store/types';
+import { getAuth, User } from 'firebase/auth';
 
 import './styles.scss';
 
@@ -29,16 +31,31 @@ export const SignIn = () => {
     (state: RootState) => state.auth.isAuthenticated
   );
   const navigate = useNavigate();
+  const auth = getAuth();
+  const user: User | null = auth.currentUser;
+  // const fetchUser = (uid: string) => {
+  //   if (uid) {
+  //     console.log('user', uid);
+  //     dispatch(getUserData(uid));
+  //     dispatch(fetchPostsRequest(uid));
+  //   }
+  // };
+  // useEffect(() => {
+  //   console.log('user', user);
+  //   if (user) {
+  //     fetchUser(user.uid);
+  //   }
+  // }, [user]);
 
   const onSubmit = (data: FormData) => {
     dispatch(loginRequest(data.email, data.password));
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && user) {
       navigate('/profile');
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, user, navigate]);
 
   return (
     <section className="sign-in-section">

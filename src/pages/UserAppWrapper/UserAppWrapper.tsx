@@ -14,11 +14,13 @@ export const UserAppWrapper = () => {
   const dispatch = useDispatch();
   const fetchUser = (uid: string) => {
     if (uid) {
+      console.log('user', uid);
       dispatch(getUserData(uid));
       dispatch(fetchPostsRequest(uid));
     }
   };
   useEffect(() => {
+    console.log('user', user);
     if (user) {
       fetchUser(user.uid);
     }
