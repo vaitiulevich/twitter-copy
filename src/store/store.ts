@@ -5,19 +5,18 @@ import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import createSagaMiddleware from 'redux-saga';
 
+import { RootAction, RootState } from './types';
+
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth', 'theme'],
+  whitelist: ['auth', 'theme', 'user'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 const sagaMiddleware = createSagaMiddleware();
 
-const store: any = createStore(
-  persistedReducer,
-  applyMiddleware(sagaMiddleware)
-);
+const store = createStore(persistedReducer, applyMiddleware(sagaMiddleware));
 const persistor = persistStore(store);
 
 sagaMiddleware.run(rootSaga);

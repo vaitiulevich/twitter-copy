@@ -34,7 +34,7 @@
   gap: 1rem;
   justify-content: space-between;
 }
-.enty-btn {
+.entry-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,10 +49,10 @@
   font-weight: 500;
   color: var(--text);
 }
-.enty-btn img {
+.entry-btn img {
   height: 2rem;
 }
-.enty-btn:hover {
+.entry-btn:hover {
   background-color: #6c6c6c17;
 }
 

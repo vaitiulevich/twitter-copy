@@ -24,6 +24,7 @@
       "@pages/*": ["pages/*"],
       "@store/*": ["store/*"],
       "@constants/*": ["constants/*"],
+      "@HOC/*": ["HOC/*"],
       "/*": ["types/*"]
     }
   },

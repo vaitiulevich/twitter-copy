@@ -1,0 +1,19 @@
+.user-info-panel {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.user-info-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+.user-info-name,
+.user-info-slug {
+  margin: 0;
+}
+
+.user-info-slug {
+  color: var(--secondary-text);
+}

@@ -3,38 +3,45 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@components/Button/Button';
-import { Input } from '@components/Input/Input';
+import { ControlledInput } from '@components/ControlledInput/ControlledInput';
+import { ErrorBlock } from '@components/ErrorBlock/ErrorBlock';
+import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '@constants/constants';
 import { images } from '@constants/images';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { registerRequest } from '@store/actions/authActions';
-import { RootState } from '@store/types';
+import { selectAuthLoad, selectAuthUser } from '@store/selectors';
+import { stringRequired } from '@utils/validationSchemas';
+import * as yup from 'yup';
 
 import './styles.scss';
-
+import { auth } from '../../../firebase';
 interface FormData {
   password: string;
-  retpassword: string;
+  repassword: string;
 }
 
+const validationSchema = yup.object().shape({
+  password: stringRequired(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH),
+  repassword: stringRequired(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH),
+});
+
 export const SetPassword = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>();
+  const { control, handleSubmit } = useForm({
+    mode: 'all',
+    resolver: yupResolver(validationSchema),
+  });
   const dispatch = useDispatch();
   const [isNotMatch, setIsNotMatch] = useState(false);
-  const loading = useSelector((state: RootState) => state.auth.loading);
-  const user = useSelector((state: RootState) => state.auth.user);
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
-  );
+  const loading = useSelector(selectAuthLoad);
+  const user = useSelector(selectAuthUser);
+
   const navigate = useNavigate();
+  const logUser = auth.currentUser;
 
   const onSubmit = (data: FormData) => {
-    if (data.password === data.retpassword && user) {
+    if (data.password === data.repassword && user) {
       setIsNotMatch(false);
-      dispatch(registerRequest(user.email, user.phone, data.password));
-      navigate('/profile');
+      dispatch(registerRequest({ ...user, password: data.password }));
     } else {
       setIsNotMatch(true);
     }
@@ -43,14 +50,14 @@ export const SetPassword = () => {
   useEffect(() => {
     if (!user) {
       navigate('/sign-up');
-    } else if (isAuthenticated) {
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    if (logUser) {
       navigate('/profile');
     }
-  }, [user, isAuthenticated, navigate]);
-
-  const renderErrorMessage = () =>
-    isNotMatch && <p className="no-match-error">Passwords are different</p>;
-
+  }, [logUser]);
   return (
     <section className="set-password-section">
       <div className="set-password-form-container">
@@ -58,37 +65,21 @@ export const SetPassword = () => {
           <img src={images.logo} alt="logo" />
         </div>
         <form className="sign-up-form" onSubmit={handleSubmit(onSubmit)}>
-          <Input
-            placeholder="Set Password"
-            error={errors.password?.message}
-            register={register}
+          <ControlledInput
             name="password"
             type="password"
-            option={{
-              required: 'Password is required',
-              minLength: {
-                value: 6,
-                message: 'Password must be at least 6 characters long',
-              },
-            }}
+            control={control}
+            placeholder="Set Password"
           />
-          <Input
-            placeholder="Repeat password"
-            error={errors.retpassword?.message}
-            register={register}
-            name="retpassword"
+          <ControlledInput
+            name="repassword"
             type="password"
-            option={{
-              required: 'Password is required',
-              minLength: {
-                value: 6,
-                message: 'Password must be at least 6 characters long',
-              },
-            }}
+            control={control}
+            placeholder="Repeat password"
           />
           <Button type="submit" disabled={loading} text="Log Up" />
         </form>
-        {renderErrorMessage()}
+        {isNotMatch && <ErrorBlock message="Passwords do not match" />}
       </div>
     </section>
   );

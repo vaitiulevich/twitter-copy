@@ -1,14 +1,19 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
-import { RootState } from '@store/types';
+import { logoutRequest } from '@store/actions/authActions';
+import { selectAuthTimestamp } from '@store/selectors';
+import { checkAuthentication } from '@utils/checkAuthentication';
 
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
-  );
+  const nowTime = new Date().getTime();
+  const timestamp = useSelector(selectAuthTimestamp);
+  const dispatch = useDispatch();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/sign-in" />;
+  const isSessionEnd = timestamp && nowTime > timestamp;
+  const isAuth = checkAuthentication();
+  if (!isAuth || isSessionEnd || isSessionEnd === undefined) {
+    dispatch(logoutRequest());
+    return <Navigate to="/" />;
   }
 
   return children;

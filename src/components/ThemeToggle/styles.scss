@@ -20,7 +20,7 @@
       position: absolute;
       width: 22px;
       height: 22px;
-      background-color: white;
+      background-color: var(--secondary-text);
       border-radius: 50%;
       transition: transform 0.3s;
       top: 0.6px;
@@ -28,23 +28,7 @@
     }
   }
 
-  &.dark {
-    .toggle-slider {
-      background-color: #ccc;
-
-      &::before {
-        transform: translateX(26px);
-      }
-    }
-  }
-
-  &.light {
-    .toggle-slider {
-      background-color: #ccc;
-
-      &::before {
-        transform: translateX(0);
-      }
-    }
+  &::before {
+    transform: var(--translete-x-toggle);
   }
 }

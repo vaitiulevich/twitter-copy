@@ -3,42 +3,51 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@components/Button/Button';
+import { ControlledInput } from '@components/ControlledInput/ControlledInput';
 import { Input } from '@components/Input/Input';
+import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '@constants/constants';
 import { images } from '@constants/images';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { loginRequest } from '@store/actions/authActions';
+import {
+  selectAuthError,
+  selectAuthLoad,
+  selectAuthUser,
+} from '@store/selectors';
 import { RootState } from '@store/types';
+import { emailValidation, stringRequired } from '@utils/validationSchemas';
+import * as yup from 'yup';
 
 import './styles.scss';
+import { auth } from '../../../firebase';
 
 interface FormData {
   email: string;
   password: string;
 }
-
+const validationSchema = yup.object().shape({
+  password: stringRequired(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH),
+  email: emailValidation,
+});
 export const SignIn = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>();
+  const { control, handleSubmit } = useForm({
+    mode: 'all',
+    resolver: yupResolver(validationSchema),
+  });
   const dispatch = useDispatch();
-  const loading = useSelector((state: RootState) => state.auth.loading);
-  const error = useSelector((state: RootState) => state.auth.error);
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
-  );
+  const loading = useSelector(selectAuthLoad);
+  const error = useSelector(selectAuthError);
   const navigate = useNavigate();
 
   const onSubmit = (data: FormData) => {
     dispatch(loginRequest(data.email, data.password));
   };
-
+  const logUser = auth.currentUser;
   useEffect(() => {
-    if (isAuthenticated) {
+    if (logUser) {
       navigate('/profile');
     }
-  }, [isAuthenticated, navigate]);
-
+  }, [logUser]);
   return (
     <section className="sign-in-section">
       <div className="sign-in-form-container">
@@ -46,32 +55,19 @@ export const SignIn = () => {
           <img src={images.logo} alt="logo" />
         </div>
         <form className="sign-up-form" onSubmit={handleSubmit(onSubmit)}>
-          <Input
-            placeholder="Phone number, email address"
-            error={errors.email?.message}
-            register={register}
+          <ControlledInput
+            type="email"
             name="email"
-            option={{
-              required: 'Email is required',
-              pattern: {
-                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                message: 'Email must be a valid email address',
-              },
-            }}
+            control={control}
+            placeholder="Phone number, email address"
           />
-          <Input
-            placeholder="Password"
-            error={errors.password?.message}
-            register={register}
+          <ControlledInput
+            type="password"
             name="password"
-            option={{
-              required: 'Password is required',
-              minLength: {
-                value: 6,
-                message: 'Password must be at least 6 characters long',
-              },
-            }}
+            control={control}
+            placeholder="Password"
           />
+
           <Button type="submit" disabled={loading} text="Log In" />
         </form>
         {error && <p className="sign-in-error">{error}</p>}

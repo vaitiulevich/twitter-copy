@@ -1,17 +1,16 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ThemeState } from '@store/types';
+import { toggleThemeRequest } from '@store/actions/themeActions';
+import { selectThemeType } from '@store/selectors';
 
 import './styles.scss';
 
 const ThemeToggle = () => {
   const dispatch = useDispatch();
-  const theme = useSelector(
-    (state: { theme: ThemeState }) => state.theme.theme
-  );
+  const theme = useSelector(selectThemeType);
 
   const toggleTheme = () => {
-    dispatch({ type: 'TOGGLE_THEME_REQUEST' });
+    dispatch(toggleThemeRequest());
   };
 
   useEffect(() => {
@@ -20,13 +19,13 @@ const ThemeToggle = () => {
 
   return (
     <>
-      <label className={`toggle-container ${theme}`}>
+      <label className="toggle-container">
         <input
           className={`toggle-input ${theme}`}
           type="checkbox"
           onChange={toggleTheme}
         />
-        <span className={`toggle-slider ${theme}`} />
+        <span className="toggle-slider" />
       </label>
     </>
   );

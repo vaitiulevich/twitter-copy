@@ -1,12 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@components/Button/Button';
+import { ControlledInput } from '@components/ControlledInput/ControlledInput';
 import { DateSelector } from '@components/DateSelector/DateSelector';
-import { Input } from '@components/Input/Input';
+import { ErrorBlock } from '@components/ErrorBlock/ErrorBlock';
 import { images } from '@constants/images';
-import { checkUserExists } from '@store/actions/authActions';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { checkUserExists, resetUserExist } from '@store/actions/authActions';
+import { selectAuthError } from '@store/selectors';
+import { RootState } from '@store/types';
+import {
+  emailValidation,
+  phoneValidation,
+  stringRequired,
+} from '@utils/validationSchemas';
+import * as yup from 'yup';
 
 import './styles.scss';
 
@@ -14,25 +24,41 @@ interface FormData {
   name: string;
   phone: string;
   email: string;
-  password: string;
+  password?: string;
 }
+const validationSchema = yup.object().shape({
+  name: stringRequired(2, 15),
+  phone: phoneValidation,
+  email: emailValidation,
+});
 
 export const SignUp = () => {
   const [selectedDate, setSelectedDate] = useState('');
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>();
-  const [error, setError] = useState('');
+  const { control, handleSubmit } = useForm({
+    mode: 'all',
+    resolver: yupResolver(validationSchema),
+  });
+  const error = useSelector(selectAuthError);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const onSubmit = (data: FormData) => {
-    const completeData = { ...data, selectedDate };
-    dispatch(checkUserExists(completeData));
-    navigate('set-password');
+    const completeData = { ...data, dateBirth: selectedDate };
+    if (selectedDate) {
+      dispatch(checkUserExists(completeData));
+    }
   };
+
+  const selectAuthExist = useSelector(
+    (state: RootState) => state.auth.navigateToSetPassword
+  );
+
+  useEffect(() => {
+    if (selectAuthExist) {
+      navigate('set-password');
+      dispatch(resetUserExist());
+    }
+  }, [selectAuthExist]);
 
   const handleDateChange = (month: string, day: string, year: string) => {
     setSelectedDate(`${year}-${month}-${day}`);
@@ -46,56 +72,17 @@ export const SignUp = () => {
         </div>
         <h2>Create an account</h2>
         <form className="sign-up-form" onSubmit={handleSubmit(onSubmit)}>
-          <Input
-            placeholder="Name"
-            error={errors.name?.message}
-            register={register}
-            name={'name'}
-            option={{
-              required: 'Name is required',
-              minLength: {
-                value: 2,
-                message: 'Name must be at least 2 characters',
-              },
-              maxLength: {
-                value: 15,
-                message: 'Name must be at most 15 characters',
-              },
-            }}
-          />
-          <Input
+          <ControlledInput name="name" control={control} placeholder="Name" />
+          <ControlledInput
+            name="phone"
+            control={control}
             placeholder="Phone number"
-            error={errors.phone?.message}
-            register={register}
-            name={'phone'}
-            option={{
-              required: 'Phone number is required',
-              pattern: {
-                value: /^\+?[1-9]\d{1,12}$/,
-                message: 'Phone number must be in international format',
-              },
-              minLength: {
-                value: 2,
-                message: 'Phone number must be at least 2 characters',
-              },
-              maxLength: {
-                value: 12,
-                message: 'Phone number must be at most 12 characters',
-              },
-            }}
           />
-          <Input
+          <ControlledInput
+            type="email"
+            name="email"
+            control={control}
             placeholder="Email"
-            error={errors.email?.message}
-            register={register}
-            name={'email'}
-            option={{
-              required: 'Email is required',
-              pattern: {
-                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                message: 'Email must be a valid email address',
-              },
-            }}
           />
           <div>
             <h3>Date of birth</h3>
@@ -106,12 +93,12 @@ export const SignUp = () => {
               blandit viverra dignissim eget tellus. Nibh mi massa in molestie a
               sit. Elit congue.
             </p>
-            <DateSelector onDateChange={handleDateChange} />
+            <DateSelector onDateChange={handleDateChange} isRequired={true} />
           </div>
 
           <Button text="Next" type="submit" />
         </form>
-        {error && <div>{error}</div>}
+        {error && <ErrorBlock message={error} />}
       </div>
     </section>
   );

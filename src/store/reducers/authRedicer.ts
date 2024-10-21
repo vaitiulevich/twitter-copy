@@ -1,5 +1,8 @@
+import { User } from '@store/types';
 import {
-  CLEAR_TOKENS,
+  AuthAction,
+  CHECK_USER_EXISTS_FAILURE,
+  CHECK_USER_EXISTS_SUCCESS,
   LOGIN_FAILURE,
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
@@ -8,84 +11,70 @@ import {
   LOGOUT_SUCCESS,
   REGISTER_FAILURE,
   REGISTER_REQUEST,
-  REGISTER_SUCCESS,
-  SET_TOKENS,
-  SET_USER_DATA,
-} from '@store/actions/authActions';
-import { AuthAction } from '@store/types';
+  RESET_ERROR,
+  RESET_USER_EXISTS,
+} from '@store/types/auth/actionTypes';
 
-export interface User {
-  uid?: string;
-  email: string;
-  phone: string;
-  dateBirth?: string;
-  name?: string;
-}
-
-interface AuthState {
-  user: User | null;
-  error: string | null;
+export type AuthState = {
+  error: string | undefined;
   loading: boolean;
-  accessToken: string | null;
-  refreshToken: string | null;
-  isAuthenticated: boolean;
-}
+  navigateToSetPassword: boolean;
+  uid: string | undefined;
+  endSessionTimestamp: number | null;
+  user?: User;
+};
 
 const initialState: AuthState = {
-  accessToken: null,
-  refreshToken: null,
-  user: null,
-  error: null,
+  error: undefined,
   loading: false,
-  isAuthenticated: false,
+  navigateToSetPassword: false,
+  uid: undefined,
+  endSessionTimestamp: null,
+  user: undefined,
 };
 
 const authReducer = (state = initialState, action: AuthAction) => {
-  console.log(state, action);
-
   switch (action.type) {
-    case SET_USER_DATA:
-      return { ...state, user: action.payload };
+    case RESET_ERROR:
+      return {
+        ...state,
+        error: undefined,
+      };
+    case RESET_USER_EXISTS:
+      return {
+        ...state,
+        navigateToSetPassword: false,
+      };
     case LOGIN_REQUEST:
-      return { ...state, loading: true, error: null };
+      return { ...state, loading: true, error: undefined };
     case LOGIN_SUCCESS:
       return {
         ...state,
-        user: action.payload,
+        uid: action.payload.uid,
         loading: false,
-        isAuthenticated: true,
-        error: null,
+        endSessionTimestamp: action.payload.endSessionTimestamp,
+        error: undefined,
       };
     case LOGIN_FAILURE:
       return { ...state, loading: false, error: action.payload };
-    case SET_TOKENS:
-      return {
-        ...state,
-        accessToken: action.payload.accessToken,
-        refreshToken: action.payload.refreshToken,
-      };
-    case CLEAR_TOKENS:
-      return { ...state, accessToken: null, refreshToken: null };
     case LOGOUT_REQUEST:
-      return { ...state, error: null, loading: true };
+      return { ...state, error: undefined, loading: true };
     case LOGOUT_SUCCESS:
-      return {
-        ...state,
-        error: null,
-        loading: false,
-        isAuthenticated: false,
-        user: null,
-      };
+      return { ...initialState };
     case LOGOUT_FAILURE:
       return { ...state, loading: false, error: action.payload };
-    case REGISTER_REQUEST:
-      return { ...state, loading: true, error: null };
-    case REGISTER_SUCCESS:
+    case CHECK_USER_EXISTS_SUCCESS:
       return {
         ...state,
-        loading: false,
-        user: action.payload,
-        isAuthenticated: true,
+        navigateToSetPassword: true,
+        user: action.payload.user,
+      };
+    case CHECK_USER_EXISTS_FAILURE:
+      return { ...state, error: action.payload.error };
+    case REGISTER_REQUEST:
+      return {
+        ...state,
+        error: undefined,
       };
     case REGISTER_FAILURE:
       return { ...state, loading: false, error: action.payload };
