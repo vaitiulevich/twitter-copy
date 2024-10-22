@@ -13,13 +13,16 @@ import { auth, db } from '../../firebase';
 function createAuthChannel() {
   return eventChannel((emit) => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      const lastSignInTime = (user && user.metadata.lastSignInTime) || 0;
-      const endSessionTimestamp = +lastSignInTime + sessionPeriod;
-      emit(
-        user
-          ? loginSuccess(user.email || '', user.uid, endSessionTimestamp)
-          : logoutRequest()
-      );
+      if (user) {
+        const lastSignInTime = user.metadata.lastSignInTime;
+        const endSessionTimestamp = lastSignInTime
+          ? new Date(lastSignInTime).getTime() + sessionPeriod
+          : 0;
+
+        emit(loginSuccess(user.email || '', user.uid, endSessionTimestamp));
+      } else {
+        emit(logoutRequest());
+      }
     });
     return () => unsubscribe();
   });

@@ -1,0 +1,31 @@
+.image-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+
+  input {
+    margin: 10px 0;
+  }
+
+  .error-messages {
+    color: red;
+
+    .error {
+      margin: 5px 0;
+    }
+  }
+
+  .file-list {
+    margin-top: 20px;
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+
+      li {
+        padding: 5px 0;
+      }
+    }
+  }
+}
