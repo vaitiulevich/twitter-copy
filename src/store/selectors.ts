@@ -2,6 +2,12 @@ import { createSelector } from 'reselect';
 
 import { RootState } from './types';
 
+const selectPost = (state: RootState) => state.post;
+export const selectPostLoad = createSelector(
+  [selectPost],
+  (post) => post.loading
+);
+
 const selectTheme = (state: RootState) => state.theme;
 export const selectThemeType = createSelector(
   [selectTheme],

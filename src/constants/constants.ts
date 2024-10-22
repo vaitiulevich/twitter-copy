@@ -79,3 +79,8 @@ export const MIN_PHONE_LENGTH = 6;
 
 export const MIN_PASSWORD_LENGTH = 2;
 export const MAX_PASSWORD_LENGTH = 15;
+
+export const MAX_POST_FILES = 4;
+
+export const pngSignature = [137, 80, 78, 71, 13, 10, 26, 10];
+export const jpgSignature = [255, 216];

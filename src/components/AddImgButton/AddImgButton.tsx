@@ -1,76 +1,77 @@
 import { ChangeEvent, useState } from 'react';
-import { images } from '@constants/images';
+import { MAX_POST_FILES } from '@constants/constants';
+import { images as imagesIcons } from '@constants/images';
+import { ERR_COUNT_POST_FILES, ERR_INVALID_FILE } from '@constants/messages';
+import { isImageFile } from '@utils/checkImageFile';
 
 import './styles.scss';
-export const AddImgButton = () => {
-  const [files, setFiles] = useState<File[]>([]);
+interface AddImgButtonProps {
+  handleImgSelect: (files: File[]) => void;
+  images: File[];
+}
+export const AddImgButton = ({
+  handleImgSelect,
+  images,
+}: AddImgButtonProps) => {
+  const [files, setFiles] = useState<File[]>(images);
   const [errors, setErrors] = useState<string[]>([]);
 
-  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const selectedFiles = Array.from(event.target.files || []);
-  //   setErrors([]);
-  //   if (files.length + selectedFiles.length > 5) {
-  //     setErrors((prev) => [...prev, 'Максимум 5 изображений можно загрузить.']);
-  //     return;
-  //   }
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(event.target.files || []);
+    setErrors([]);
+    if (files.length + selectedFiles.length > MAX_POST_FILES) {
+      setErrors((prev) => [...prev, ERR_COUNT_POST_FILES]);
+      return;
+    }
 
-  //   const validFormats = ['image/png', 'image/jpeg'];
-  //   const maxSize = 5 * 1024 * 1024; // 5 МБ
-  //   const newFiles: File[] = [];
+    const newFiles: File[] = [];
 
-  //   for (const file of selectedFiles) {
-  //     if (!validFormats.includes(file.type)) {
-  //       setErrors((prev) => [
-  //         ...prev,
-  //         `Файл ${file.name} имеет недопустимый формат.`,
-  //       ]);
-  //     } else if (file.size > maxSize) {
-  //       setErrors((prev) => [
-  //         ...prev,
-  //         `Файл ${file.name} превышает максимальный размер 5 МБ.`,
-  //       ]);
-  //     } else if (
-  //       !files.some((existingFile) => existingFile.name === file.name)
-  //     ) {
-  //       newFiles.push(file);
-  //     } else {
-  //       setErrors((prev) => [...prev, `Файл ${file.name} уже был загружен.`]);
-  //     }
-  //   }
+    selectedFiles.forEach((file) => {
+      const fileReader = new FileReader();
 
-  //   setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-  // };
+      fileReader.onload = async (e) => {
+        const arrayBuffer = e.target?.result as ArrayBuffer;
+        const byteArray = new Uint8Array(arrayBuffer);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {};
+        if (isImageFile(byteArray)) {
+          newFiles.push(file);
+        } else {
+          setErrors((prev) => [...prev, ERR_INVALID_FILE]);
+        }
+
+        if (newFiles.length + errors.length === selectedFiles.length) {
+          const updatedFiles = [...files, ...newFiles];
+          setFiles(updatedFiles);
+          handleImgSelect(updatedFiles);
+        }
+      };
+
+      fileReader.readAsArrayBuffer(file);
+    });
+    event.target.value = '';
+  };
+
+  const renderErrors = () => {
+    return errors.map((error, index) => (
+      <p key={index} className="error-messages">
+        {error}
+      </p>
+    ));
+  };
 
   return (
     <div>
       <label className="post-add-img" htmlFor="img-input">
-        <img src={images.addImg} alt="add-img" />
+        <img src={imagesIcons.addImg} alt="add-img" />
       </label>
       <input
         id="img-input"
-        style={{ display: 'none' }}
         accept=".png, .jpg, .jpeg"
         multiple
         type={'file'}
         onChange={handleFileChange}
       />
-      <div className="error-messages">
-        {errors.map((error, index) => (
-          <p key={index} className="error">
-            {error}
-          </p>
-        ))}
-      </div>
-      <div className="file-list">
-        {files.length > 0 && <h2>Выбранные файлы:</h2>}
-        <ul>
-          {files.map((file, index) => (
-            <li key={index}>{file.name}</li>
-          ))}
-        </ul>
-      </div>
+      <div>{renderErrors()}</div>
     </div>
   );
 };

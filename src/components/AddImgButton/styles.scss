@@ -1,31 +1,29 @@
-.image-upload {
+.post-add-img {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+.post-add-btns {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  margin: 20px;
-
-  input {
-    margin: 10px 0;
-  }
-
-  .error-messages {
-    color: red;
-
-    .error {
-      margin: 5px 0;
-    }
-  }
-
-  .file-list {
-    margin-top: 20px;
-
-    ul {
-      list-style-type: none;
-      padding: 0;
-
-      li {
-        padding: 5px 0;
-      }
-    }
-  }
+  justify-content: space-between;
+}
+.post-input {
+  width: 95%;
+  border: none;
+  resize: none;
+  padding: 10px;
+  outline: none;
+  font-size: 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--secondary-text);
+}
+.error-messages {
+  color: var(--error-text);
+  font-size: 0.7rem;
+  margin: 0;
+}
+#img-input {
+  display: none;
 }

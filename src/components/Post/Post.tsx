@@ -5,6 +5,7 @@ import { images } from '@constants/images';
 import { updatePostLikesRequest } from '@store/actions/postActions';
 import { PostState } from '@store/reducers/userReducer';
 import { formatTimestamp } from '@utils/formatTimestamp';
+import classNames from 'classnames';
 
 import './styles.scss';
 
@@ -13,6 +14,17 @@ export const Post = ({ post, userId }: { post: PostState; userId: string }) => {
   const userHasLiked = likes.includes(userId);
   const dispatch = useDispatch();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  let classes = classNames('post-images');
+
+  if (post.images) {
+    classes = classNames('post-images', {
+      'one-image': post.images.length === 1,
+      'two-images': post.images.length === 2,
+      'three-images': post.images.length === 3,
+      'four-images': post.images.length === 4,
+    });
+  }
 
   const handleLikeToggle = () => {
     const newLikes = userHasLiked
@@ -50,6 +62,18 @@ export const Post = ({ post, userId }: { post: PostState; userId: string }) => {
           />
         </div>
         <div className="post-text">{post.content}</div>
+        {post.images && post.images?.length > 0 && (
+          <div className={classes}>
+            {post.images.map((item, index) => (
+              <img
+                src={item as string}
+                key={index}
+                className={`post-image-${index + 1}`}
+                alt="post"
+              />
+            ))}
+          </div>
+        )}
         <div className="post-like">
           <img
             className="post-like-img"

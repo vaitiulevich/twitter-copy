@@ -1,4 +1,4 @@
-import * as actions from '@store/actions/authActions';
+import * as actions from '@store/actions/postActions';
 import { InferValueTypes } from '@store/types';
 
 export const FETCH_POSTS_REQUEST = 'FETCH_POSTS_REQUEST';

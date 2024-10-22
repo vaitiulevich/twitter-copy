@@ -9,25 +9,27 @@
 .add-posts-block {
   width: 100%;
 }
-.post-add-img {
-  background-color: transparent;
-  border: none;
-  outline: none;
-  cursor: pointer;
+
+.selected-images {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
 }
-.post-add-btns {
+.selected-image-item {
+  height: 4.2rem;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
 }
-.post-input {
-  width: 95%;
-  //   max-height: 7rem;
-  border: none;
-  resize: none;
-  padding: 10px;
+.delete-img-button {
+  position: absolute;
+  right: 0.8rem;
+  top: 0.1rem;
+  cursor: pointer;
+  height: 1.6rem;
+  width: 1.6rem;
+  background: #ffffff;
   outline: none;
-  font-size: 1rem;
-  scrollbar-width: thin;
-  scrollbar-color: var(--secondary-text);
+  border: none;
+  border-radius: 50%;
+  padding: 0;
 }
