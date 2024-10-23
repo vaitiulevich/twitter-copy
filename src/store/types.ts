@@ -1,3 +1,5 @@
+import { Maybe } from 'yup';
+
 import { AuthState } from './reducers/authRedicer';
 import { ThemeState } from './reducers/themeReducer';
 import { PostState, UserState } from './reducers/userReducer';
@@ -10,6 +12,9 @@ export interface User {
   phone: string;
   dateBirth: string;
   name: string;
+  avatar?: string;
+  profileImg?: string;
+  description?: Maybe<string | undefined>;
 }
 
 export type InferValueTypes<T> = T extends { [key: string]: infer U }

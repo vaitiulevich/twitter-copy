@@ -1,5 +1,6 @@
 import {
   Control,
+  FieldError,
   FieldValues,
   Path,
   PathValue,
@@ -11,8 +12,9 @@ interface ControlledInputProps<T extends FieldValues> {
   control?: Control<T>;
   name: Path<T>;
   placeholder?: string;
-  error?: string;
+  error?: FieldError;
   type?: string;
+  max?: string;
   defaultValue?: PathValue<T, Path<T>>;
 }
 
@@ -22,6 +24,7 @@ export const ControlledInput = <T extends FieldValues>({
   placeholder,
   type = 'text',
   defaultValue,
+  ...props
 }: ControlledInputProps<T>) => {
   const {
     field,
@@ -37,6 +40,7 @@ export const ControlledInput = <T extends FieldValues>({
       error={error}
       type={type}
       {...field}
+      {...props}
       name={name}
     />
   );

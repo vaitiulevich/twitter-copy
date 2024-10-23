@@ -37,6 +37,7 @@ import {
   takeEvery,
   takeLatest,
 } from 'redux-saga/effects';
+import { v4 as uuidv4 } from 'uuid';
 
 import { db, storage } from '../../firebase';
 import {
@@ -51,19 +52,28 @@ import {
   updatePostLikesSuccess,
 } from '../actions/postActions';
 
+export function* uploadImages(files: File[]): Generator {
+  const urls: string[] = [];
+
+  for (const file of files) {
+    const uniqueName = `${uuidv4()}_${file.name}`;
+    const storageRef = ref(storage, `images/${uniqueName}`);
+    yield call(uploadBytes, storageRef, file);
+    const downloadURL = yield call(getDownloadURL, storageRef);
+    urls.push(downloadURL);
+  }
+
+  return urls;
+}
+
 function* addPost(action: ReturnType<typeof addPostRequest>): Generator {
   try {
     const { files, ...postFields } = action.payload;
-    const urls = [];
     let postData = { ...postFields };
-    if (files) {
-      for (const file of files) {
-        const storageRef = ref(storage, `images/${file.name}`);
-        yield uploadBytes(storageRef, file);
-        const downloadURL = yield call(getDownloadURL, storageRef);
-        urls.push(downloadURL);
-      }
-      postData = { ...postFields, images: urls };
+
+    if (files && files.length > 0) {
+      const imageUrls = yield call(uploadImages, files);
+      postData = { ...postFields, images: imageUrls };
     }
 
     const postsCollectionRef = collection(db, 'posts');
