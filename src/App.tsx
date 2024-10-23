@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import ErrorBoundary from '@components/ErrorBoundary/ErrorBoundary';
 import { ProtectedRoute } from '@components/ProtectedRoute/ProtectedRoute';
 import { Entry } from '@pages/Auth/Entry/Entry';
 import { SetPassword } from '@pages/Auth/SetPassword/SetPassword';
@@ -10,23 +11,43 @@ import { UserAppWrapper } from '@pages/UserAppWrapper/UserAppWrapper';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Entry />,
+    element: (
+      <ErrorBoundary>
+        <Entry />
+      </ErrorBoundary>
+    ),
   },
   {
     path: '/login',
-    element: <Entry />,
+    element: (
+      <ErrorBoundary>
+        <Entry />
+      </ErrorBoundary>
+    ),
   },
   {
     path: '/sign-up',
-    element: <SignUp />,
+    element: (
+      <ErrorBoundary>
+        <SignUp />
+      </ErrorBoundary>
+    ),
   },
   {
     path: '/sign-up/set-password',
-    element: <SetPassword />,
+    element: (
+      <ErrorBoundary>
+        <SetPassword />
+      </ErrorBoundary>
+    ),
   },
   {
     path: '/sign-in',
-    element: <SignIn />,
+    element: (
+      <ErrorBoundary>
+        <SignIn />
+      </ErrorBoundary>
+    ),
   },
   {
     path: '/',

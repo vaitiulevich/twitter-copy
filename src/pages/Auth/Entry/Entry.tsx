@@ -9,8 +9,8 @@ import { selectUserId } from '@store/selectors';
 import './styles.scss';
 
 export const Entry = () => {
+  throw new Error('Я сломался!');
   const navigate = useNavigate();
-
   const user = useSelector(selectUserId);
   useEffect(() => {
     if (user) {

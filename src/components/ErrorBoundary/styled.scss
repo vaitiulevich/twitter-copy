@@ -1,0 +1,10 @@
+.error-boundary {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+.error-boundary img {
+  height: 2rem;
+}
