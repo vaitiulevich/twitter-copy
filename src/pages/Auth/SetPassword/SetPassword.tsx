@@ -5,12 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@components/Button/Button';
 import { ControlledInput } from '@components/ControlledInput/ControlledInput';
 import { ErrorBlock } from '@components/ErrorBlock/ErrorBlock';
-import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '@constants/constants';
 import { images } from '@constants/images';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { registerRequest } from '@store/actions/authActions';
 import { selectAuthLoad, selectAuthUser } from '@store/selectors';
-import { stringRequired } from '@utils/validationSchemas';
+import { passwordValidation, stringRequired } from '@utils/validationSchemas';
 import * as yup from 'yup';
 
 import './styles.scss';
@@ -21,8 +20,11 @@ interface FormData {
 }
 
 const validationSchema = yup.object().shape({
-  password: stringRequired(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH),
-  repassword: stringRequired(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH),
+  password: passwordValidation,
+  repassword: yup
+    .string()
+    .oneOf([yup.ref('password')], 'Passwords must match')
+    .required('Please confirm your password'),
 });
 
 export const SetPassword = () => {
@@ -75,7 +77,7 @@ export const SetPassword = () => {
             name="repassword"
             type="password"
             control={control}
-            placeholder="Repeat password"
+            placeholder="Confirm password"
           />
           <Button type="submit" disabled={loading} text="Log Up" />
         </form>

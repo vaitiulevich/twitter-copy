@@ -15,7 +15,24 @@
   display: flex;
   flex-direction: column;
 }
-.link-to-sign-up {
-  text-align: end;
+.links-to-sign {
   margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.links-to-sign a {
+  color: var(--link-text);
+}
+.sign-in-types {
+  display: flex;
+  gap: 1rem;
+}
+.toggle-sign-in {
+  border: 1px solid var(--border-color);
+  color: var(--text);
+  background-color: transparent;
+  padding: 0.7rem;
+  border-radius: 3rem;
+  cursor: pointer;
 }

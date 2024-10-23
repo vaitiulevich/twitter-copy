@@ -9,12 +9,11 @@
   .toggle-slider {
     width: 50px;
     height: 24px;
-    background-color: #ccc;
+    background-color: #aeaeae8a;
     border-radius: 24px;
     position: relative;
     cursor: pointer;
     transition: background-color 0.3s;
-
     &::before {
       content: '';
       position: absolute;
@@ -25,10 +24,7 @@
       transition: transform 0.3s;
       top: 0.6px;
       left: 1px;
+      transform: var(--translete-x-toggle);
     }
-  }
-
-  &::before {
-    transform: var(--translete-x-toggle);
   }
 }

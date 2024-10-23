@@ -1,4 +1,8 @@
-import { MAX_POST_FILES } from './constants';
+import {
+  MAX_LENTGH_PASSWORD,
+  MAX_POST_FILES,
+  MIN_LENTGH_PASSWORD,
+} from './constants';
 
 export const ERR_REQUIRED = 'Required field';
 export const ERR_INCORRECT_FILL = 'The field is filled in incorrectly';
@@ -8,3 +12,10 @@ export const INCORRECT_CREDS =
 export const ERR_COUNT_FILES = `Can contain a maximum:`;
 export const ERR_INVALID_FILE = 'The file is not a PNG or JPG image.';
 export const ERR_BOUNDARY_MESS = 'Something went wrong';
+
+export const ERR_MIN_LENTGH_PASSWORD = `Minimum number of characters in a password ${MIN_LENTGH_PASSWORD}`;
+
+export const ERR_MAX_LENTGH_PASSWORD = `Maximum number of characters in a password ${MAX_LENTGH_PASSWORD}`;
+
+export const ERR_PASSWORD_CONTIN_NUM = 'Must contain a number';
+export const ERR_PASSWORD_CONTIN_UPERCASE = 'Must contain a capital letter';

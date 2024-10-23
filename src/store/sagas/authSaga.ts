@@ -38,10 +38,25 @@ import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 
 import { auth, db, provider } from '../../firebase';
 
+interface UserDataProps extends User {
+  userId: string;
+  userSlug: string;
+  followers: string[];
+  following: string[];
+  posts: string[];
+}
 function* signInSaga(action: ReturnType<typeof loginRequest>): Generator {
   try {
-    const { email, password } = action.payload;
-    yield call(signInWithEmailAndPassword, auth, email, password);
+    const { type, login, password } = action.payload;
+    if (type === 'email') {
+      yield call(signInWithEmailAndPassword, auth, login, password);
+    }
+    if (type === 'phone') {
+      const user = yield getUserFromDatabase(login, password);
+      // console.log(user);
+      // const match = password === user.password;
+      // yield auth.signInWithCustomToken(user.customToken);
+    }
   } catch (err) {
     if (err instanceof FirebaseError) {
       yield put(loginFailure(INCORRECT_CREDS));
@@ -76,10 +91,7 @@ function createUserData(uid: string, payload: User & { password?: string }) {
   return userData;
 }
 
-function* addUserToDatabase(
-  uid: string,
-  userData: User & { password?: string }
-): Generator {
+function* addUserToDatabase(uid: string, userData: UserDataProps): Generator {
   const userRef = doc(db, 'users', uid);
   yield setDoc(userRef, userData);
 }
@@ -135,7 +147,6 @@ function* checkUserExistsSaga(
   const { email, phone } = action.payload.user;
   try {
     const exists = yield call(checkDocUserExists, email, phone);
-    console.log(exists);
     if (exists) {
       yield put(checkUserExistsFailure(USER_ALREDY_EXIST));
     } else {
@@ -190,4 +201,7 @@ export function* watchRegister() {
 
 export function* watchUserExists() {
   yield takeLatest(CHECK_USER_EXISTS, checkUserExistsSaga);
+}
+function* getUserFromDatabase(phoneNumber: any, password: string): unknown {
+  throw new Error('Function not implemented.');
 }

@@ -4,7 +4,7 @@ import addImg from '@assets/icons/addImg.svg';
 import bookmarks from '@assets/icons/bookmarks-light.svg';
 import deleteIcon from '@assets/icons/delete.png';
 import explore from '@assets/icons/explore-light.svg';
-import googleIcon from '@assets/icons/google-icon.svg';
+import googleIcon from '@assets/icons/Google-Symbol.png';
 import home from '@assets/icons/home-light.svg';
 import likeEmpty from '@assets/icons/likeEmpty.svg';
 import likeFill from '@assets/icons/likeFill.svg';

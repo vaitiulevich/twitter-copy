@@ -9,7 +9,6 @@ import { selectUserId } from '@store/selectors';
 import './styles.scss';
 
 export const Entry = () => {
-  throw new Error('Я сломался!');
   const navigate = useNavigate();
   const user = useSelector(selectUserId);
   useEffect(() => {
@@ -31,16 +30,17 @@ export const Entry = () => {
             <h1 className="entry-title">Happening now</h1>
             <h2 className="entry-subtitle">Join Twitter today</h2>
             <div className="entry-btns-panel">
-              <GoogleSignUpButton />
+              <GoogleSignUpButton text="Sign up with Google" />
               <Link to={'/sign-up'} className="entry-btn">
                 Sign up with email
               </Link>
             </div>
             <div className="entry-terms">
               <p>
-                By singing up you agree to the <a href="">Terms of Service</a>{' '}
-                and <a href="">Privacy Policy</a>, including{' '}
-                <a href="">Cookie Use</a>.
+                By singing up you agree to the{' '}
+                <Link to={'terms'}>Terms of Service</Link> and{' '}
+                <Link to={'/policy'}>Privacy Policy</Link>, including{' '}
+                <Link to={'/cookie'}>Cookie Use</Link>.
               </p>
               <div>
                 <span>Already have an account? </span>

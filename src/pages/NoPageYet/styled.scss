@@ -1,0 +1,13 @@
+.no-page-yet {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.no-page-yet img {
+  height: 2rem;
+}
+.to-entry-link {
+  color: var(--link-text);
+}

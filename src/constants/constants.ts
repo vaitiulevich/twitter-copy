@@ -19,27 +19,28 @@ export const DEFAULT_MONTH = 'Month';
 export const DEFAULT_DAY = 'Day';
 export const DEFAULT_YEAR = 'Year';
 export const YEAR_RANGE = 100;
+export const DEFAULT_COUNT_DAYS_IN_MONTH = 30;
 
 const COUNT_SESSION_HOUR = 24;
 export const sessionPeriod = COUNT_SESSION_HOUR * 60 * 60 * 1000;
 
 export const FooterLinks = [
-  { title: 'About', link: '/' },
-  { title: 'Help Center', link: '/' },
-  { title: 'Terms of Service', link: '/' },
-  { title: 'Privacy Policy', link: '/' },
-  { title: 'Cookie Policy', link: '/' },
-  { title: 'Ads info', link: '/' },
-  { title: 'Blog', link: '/' },
-  { title: 'Status', link: '/' },
-  { title: 'Carrres', link: '/' },
-  { title: 'Brand Resources', link: '/' },
-  { title: 'Advertsing', link: '/' },
-  { title: 'Marketing', link: '/' },
-  { title: 'Twitter for Business', link: '/' },
-  { title: 'Developers', link: '/' },
-  { title: 'Directory', link: '/' },
-  { title: 'Settings', link: '/' },
+  { title: 'About', link: '/about' },
+  { title: 'Help Center', link: '/help' },
+  { title: 'Terms of Service', link: '/terms' },
+  { title: 'Privacy Policy', link: '/privacy' },
+  { title: 'Cookie Policy', link: '/cookie' },
+  { title: 'Ads info', link: '/ads' },
+  { title: 'Blog', link: '/blog' },
+  { title: 'Status', link: '/status' },
+  { title: 'Carrres', link: '/carres' },
+  { title: 'Brand Resources', link: '/brand' },
+  { title: 'Advertsing', link: '/advert' },
+  { title: 'Marketing', link: '/marketing' },
+  { title: 'Twitter for Business', link: '/business' },
+  { title: 'Developers', link: '/dev' },
+  { title: 'Directory', link: '/dir' },
+  { title: 'Settings', link: '/settings' },
 ];
 export const NavMenu = [
   {
@@ -77,8 +78,8 @@ export const NavMenu = [
 export const MAX_PHONE_LENGTH = 12;
 export const MIN_PHONE_LENGTH = 6;
 
-export const MIN_PASSWORD_LENGTH = 2;
-export const MAX_PASSWORD_LENGTH = 15;
+export const MIN_LENTGH_PASSWORD = 8;
+export const MAX_LENTGH_PASSWORD = 20;
 
 export const MAX_POST_FILES = 4;
 

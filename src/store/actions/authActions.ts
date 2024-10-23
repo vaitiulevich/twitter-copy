@@ -1,10 +1,14 @@
 import { User } from '@store/types';
 import * as types from '@store/types/auth/actionTypes';
 
-export const loginRequest = (email: string, password: string) =>
+export const loginRequest = (
+  type: 'phone' | 'email',
+  login: string,
+  password: string
+) =>
   ({
     type: types.LOGIN_REQUEST,
-    payload: { email, password },
+    payload: { type, login, password },
   }) as const;
 
 export const loginSuccess = (
@@ -89,6 +93,10 @@ export const googleLoginSuccess = (user: User) =>
   ({
     type: types.GOOGLE_LOGIN_SUCCESS,
     payload: user,
+  }) as const;
+export const resetAuthUser = () =>
+  ({
+    type: types.RESET_AUTH_USER,
   }) as const;
 export const googleLoginFailure = (error: string) =>
   ({

@@ -5,6 +5,7 @@ import { Entry } from '@pages/Auth/Entry/Entry';
 import { SetPassword } from '@pages/Auth/SetPassword/SetPassword';
 import { SignIn } from '@pages/Auth/SignIn/SignIn';
 import { SignUp } from '@pages/Auth/SignUp/SignUp';
+import { NoPageYet } from '@pages/NoPageYet/NoPageYet';
 import { Profile } from '@pages/Profile/Profile';
 import { UserAppWrapper } from '@pages/UserAppWrapper/UserAppWrapper';
 
@@ -14,6 +15,14 @@ const router = createBrowserRouter([
     element: (
       <ErrorBoundary>
         <Entry />
+      </ErrorBoundary>
+    ),
+  },
+  {
+    path: '*',
+    element: (
+      <ErrorBoundary>
+        <NoPageYet />
       </ErrorBoundary>
     ),
   },

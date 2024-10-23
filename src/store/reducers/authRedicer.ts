@@ -1,6 +1,7 @@
 import { User } from '@store/types';
 import {
   AuthAction,
+  CHECK_USER_EXISTS,
   CHECK_USER_EXISTS_FAILURE,
   CHECK_USER_EXISTS_SUCCESS,
   LOGIN_FAILURE,
@@ -11,6 +12,7 @@ import {
   LOGOUT_SUCCESS,
   REGISTER_FAILURE,
   REGISTER_REQUEST,
+  RESET_AUTH_USER,
   RESET_ERROR,
   RESET_USER_EXISTS,
 } from '@store/types/auth/actionTypes';
@@ -21,7 +23,7 @@ export type AuthState = {
   navigateToSetPassword: boolean;
   uid: string | undefined;
   endSessionTimestamp: number | null;
-  user?: User;
+  user?: User | null;
 };
 
 const initialState: AuthState = {
@@ -39,6 +41,11 @@ const authReducer = (state = initialState, action: AuthAction) => {
       return {
         ...state,
         error: undefined,
+      };
+    case RESET_AUTH_USER:
+      return {
+        ...state,
+        user: null,
       };
     case RESET_USER_EXISTS:
       return {
@@ -63,14 +70,17 @@ const authReducer = (state = initialState, action: AuthAction) => {
       return { ...initialState };
     case LOGOUT_FAILURE:
       return { ...state, loading: false, error: action.payload };
+    case CHECK_USER_EXISTS:
+      return { ...state, loading: true };
     case CHECK_USER_EXISTS_SUCCESS:
       return {
         ...state,
         navigateToSetPassword: true,
         user: action.payload.user,
+        loading: false,
       };
     case CHECK_USER_EXISTS_FAILURE:
-      return { ...state, error: action.payload.error };
+      return { ...state, loading: false, error: action.payload.error };
     case REGISTER_REQUEST:
       return {
         ...state,

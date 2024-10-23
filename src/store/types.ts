@@ -12,8 +12,8 @@ export interface User {
   phone: string;
   dateBirth: string;
   name: string;
-  avatar?: string;
-  profileImg?: string;
+  avatar?: string | null;
+  profileImg?: string | null;
   description?: Maybe<string | undefined>;
 }
 
