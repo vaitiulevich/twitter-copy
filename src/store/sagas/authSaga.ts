@@ -14,6 +14,7 @@ import { User } from '@store/types';
 import {
   CHECK_USER_EXISTS,
   GOOGLE_LOGIN_REQUEST,
+  GOOGLE_LOGUP_REQUEST,
   LOGIN_REQUEST,
   LOGOUT_REQUEST,
   REGISTER_REQUEST,
@@ -52,10 +53,21 @@ function* signInSaga(action: ReturnType<typeof loginRequest>): Generator {
       yield call(signInWithEmailAndPassword, auth, login, password);
     }
     if (type === 'phone') {
-      const user = yield getUserFromDatabase(login, password);
-      // console.log(user);
-      // const match = password === user.password;
-      // yield auth.signInWithCustomToken(user.customToken);
+      const usersRef = collection(db, 'users');
+
+      const phoneQuery = query(
+        usersRef,
+        where('phone', '==', login),
+        where('password', '==', password)
+      );
+      const phoneExists = yield getDocs(phoneQuery);
+      phoneExists?.forEach((doc: any) => {
+        const data = doc.data();
+        if (data.email) {
+          console.log(data.email, password);
+          signInWithEmailAndPassword(auth, data.email, password);
+        }
+      });
     }
   } catch (err) {
     if (err instanceof FirebaseError) {
@@ -135,6 +147,7 @@ async function checkDocUserExists(
 
   const emailExists = emailQuery ? await getDocs(emailQuery) : null;
   const phoneExists = phoneQuery ? await getDocs(phoneQuery) : null;
+
   return (
     !!(emailExists && !emailExists.empty) ||
     !!(phoneExists && !phoneExists.empty)
@@ -159,9 +172,10 @@ function* checkUserExistsSaga(
   }
 }
 
-function* googleLoginSaga(): Generator {
+function* googleLogupSaga(): Generator {
   try {
     const result = yield call(signInWithPopup, auth, provider);
+
     const user = result.user;
     const exists = yield call(checkDocUserExists, user.email);
     if (!exists) {
@@ -183,6 +197,21 @@ function* googleLoginSaga(): Generator {
   }
 }
 
+function* googleLoginSaga(): Generator {
+  try {
+    const result = yield call(signInWithPopup, auth, provider);
+    const user = result.user;
+    const exists = yield call(checkDocUserExists, user.email);
+    if (exists) {
+      yield put(getUserData(user.uid));
+    }
+  } catch (error) {
+    if (error instanceof FirebaseError) {
+      console.log(error);
+    }
+  }
+}
+
 export function* watchSignIn() {
   yield takeEvery(LOGIN_REQUEST, signInSaga);
 }
@@ -194,6 +223,9 @@ export function* watchSignOut() {
 export function* watchGoogleLogin() {
   yield takeLatest(GOOGLE_LOGIN_REQUEST, googleLoginSaga);
 }
+export function* watchGoogleLogup() {
+  yield takeLatest(GOOGLE_LOGUP_REQUEST, googleLogupSaga);
+}
 
 export function* watchRegister() {
   yield takeEvery(REGISTER_REQUEST, registerSaga);
@@ -201,7 +233,4 @@ export function* watchRegister() {
 
 export function* watchUserExists() {
   yield takeLatest(CHECK_USER_EXISTS, checkUserExistsSaga);
-}
-function* getUserFromDatabase(phoneNumber: any, password: string): unknown {
-  throw new Error('Function not implemented.');
 }

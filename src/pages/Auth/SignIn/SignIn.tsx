@@ -5,15 +5,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@components/Button/Button';
 import { ControlledInput } from '@components/ControlledInput/ControlledInput';
 import { ErrorBlock } from '@components/ErrorBlock/ErrorBlock';
-import { GoogleSignUpButton } from '@components/GoogleSignUpButton/GoogleSignUpButton';
+import { GoogleSignButton } from '@components/GoogleSignButton/GoogleSignButton';
 import { images } from '@constants/images';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { loginRequest } from '@store/actions/authActions';
+import { loginRequest, resetError } from '@store/actions/authActions';
 import { selectAuthError, selectAuthLoad } from '@store/selectors';
 import {
   emailValidation,
   passwordValidation,
   phoneValidation,
+  stringRequired,
 } from '@utils/validationSchemas';
 import * as yup from 'yup';
 
@@ -21,35 +22,54 @@ import './styles.scss';
 import { auth } from '../../../firebase';
 
 interface FormData {
-  email: string;
+  email?: string;
   password: string;
+  phone?: string;
 }
 const validationSchema = yup.object().shape({
-  password: passwordValidation,
-  email: emailValidation,
-  phone: phoneValidation,
+  password: stringRequired(1, 20),
+  isEmailLogin: yup.bool(),
+  email: yup.string().when('isEmailLogin', {
+    is: true,
+    then: () => emailValidation,
+  }),
+  phone: yup.string().when('isEmailLogin', {
+    is: false,
+    then: () => phoneValidation,
+  }),
 });
 export const SignIn = () => {
+  const [isEmailLogin, setIsEmailLogin] = useState(true);
+
   const { control, handleSubmit } = useForm({
     mode: 'all',
     resolver: yupResolver(validationSchema),
+    context: { isEmailLogin },
   });
-  const [isEmailLogin, setIsEmailLogin] = useState(true);
   const dispatch = useDispatch();
   const loading = useSelector(selectAuthLoad);
   const error = useSelector(selectAuthError);
   const navigate = useNavigate();
 
   const toggleLiginType = () => {
+    dispatch(resetError());
     setIsEmailLogin(!isEmailLogin);
   };
   const onSubmit = (data: FormData) => {
+    dispatch(resetError());
     const loginType = isEmailLogin ? 'email' : 'phone';
-    dispatch(loginRequest(loginType, data.email, data.password));
+    const loginData = isEmailLogin ? data.email : data.phone;
+    dispatch(loginRequest(loginType, loginData as string, data.password));
   };
   const logUser = auth.currentUser;
   useEffect(() => {
+    return () => {
+      dispatch(resetError());
+    };
+  }, []);
+  useEffect(() => {
     if (logUser) {
+      dispatch(resetError());
       navigate('/profile');
     }
   }, [logUser]);
@@ -77,7 +97,7 @@ export const SignIn = () => {
         </form>
         <div className="links-to-sign">
           <div className="sign-in-types">
-            <GoogleSignUpButton />
+            <GoogleSignButton type="signin" />
             <button onClick={toggleLiginType} className="toggle-sign-in">
               {isEmailLogin
                 ? 'Sign in with phone number'

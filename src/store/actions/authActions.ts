@@ -89,6 +89,8 @@ export const registerFailure = (error: string) =>
   }) as const;
 export const googleLoginRequest = () =>
   ({ type: types.GOOGLE_LOGIN_REQUEST }) as const;
+export const googleLogupRequest = () =>
+  ({ type: types.GOOGLE_LOGUP_REQUEST }) as const;
 export const googleLoginSuccess = (user: User) =>
   ({
     type: types.GOOGLE_LOGIN_SUCCESS,

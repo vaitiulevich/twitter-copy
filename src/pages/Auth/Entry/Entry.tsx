@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { EntryFooter } from '@components/EntryFooter/EntryFooter';
-import { GoogleSignUpButton } from '@components/GoogleSignUpButton/GoogleSignUpButton';
+import { GoogleSignButton } from '@components/GoogleSignButton/GoogleSignButton';
 import { images } from '@constants/images';
 import { selectUserId } from '@store/selectors';
 
@@ -30,7 +30,7 @@ export const Entry = () => {
             <h1 className="entry-title">Happening now</h1>
             <h2 className="entry-subtitle">Join Twitter today</h2>
             <div className="entry-btns-panel">
-              <GoogleSignUpButton text="Sign up with Google" />
+              <GoogleSignButton text="Sign up with Google" type="signup" />
               <Link to={'/sign-up'} className="entry-btn">
                 Sign up with email
               </Link>

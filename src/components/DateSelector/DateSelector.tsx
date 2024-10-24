@@ -55,9 +55,6 @@ export const DateSelector = memo(
         onDateChange(month, day, year);
       }
     };
-    useEffect(() => {
-      checkValidation();
-    }, [day, month, year]);
 
     const dispatch = useDispatch();
     const handleChange =
@@ -75,6 +72,7 @@ export const DateSelector = memo(
             setDate((prev) => ({ ...prev, day: '1' }));
           }
         }
+        checkValidation();
       };
 
     const renderSelect = (

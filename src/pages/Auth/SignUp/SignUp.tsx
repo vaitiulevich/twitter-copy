@@ -40,7 +40,7 @@ export const SignUp = () => {
     handleSubmit,
     formState: { isValid },
   } = useForm({
-    mode: 'onChange',
+    mode: 'all',
     resolver: yupResolver(validationSchema),
   });
   const loading = useSelector(selectAuthLoad);

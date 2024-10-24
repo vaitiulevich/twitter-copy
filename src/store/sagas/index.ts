@@ -1,5 +1,6 @@
 import {
   watchGoogleLogin,
+  watchGoogleLogup,
   watchRegister,
   watchSignIn,
   watchSignOut,
@@ -34,5 +35,6 @@ export default function* rootSaga() {
     watchDeletePost(),
     watchUpdatePostLikes(),
     watchUpdateUserData(),
+    watchGoogleLogup(),
   ]);
 }
