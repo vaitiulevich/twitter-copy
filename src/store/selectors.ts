@@ -20,6 +20,14 @@ export const selectUserSelector = createSelector([selectUser], (user) => {
   return userWithoutPosts;
 });
 export const selectUserId = createSelector([selectUser], (user) => user.userId);
+export const selectUserLoad = createSelector(
+  [selectUser],
+  (user) => user.loading
+);
+export const selectUserError = createSelector(
+  [selectUser],
+  (user) => user.error
+);
 export const selectUserPosts = createSelector(
   [selectUser],
   (user) => user.posts

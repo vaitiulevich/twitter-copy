@@ -15,6 +15,7 @@ import {
 import watchToggleTheme from '@store/sagas/themeSaga';
 import {
   watchAuth,
+  watchChangePassword,
   watchUpdateUserData,
   watchUserData,
 } from '@store/sagas/userSaga';
@@ -36,5 +37,6 @@ export default function* rootSaga() {
     watchUpdatePostLikes(),
     watchUpdateUserData(),
     watchGoogleLogup(),
+    watchChangePassword(),
   ]);
 }

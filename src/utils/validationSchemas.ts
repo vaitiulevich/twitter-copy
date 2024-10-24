@@ -55,6 +55,14 @@ export const setPasswordValidationSchema = yup.object().shape({
     .required(ERR_PASSWORD_CONFIRM),
 });
 
+export const chandgePasswordValidationSchema = yup.object().shape({
+  password: stringRequired(
+    MIN_LOGIN_LENTGH_PASSWORD,
+    MAX_LOGIN_LENTGH_PASSWORD
+  ),
+  newPassword: passwordValidation,
+});
+
 export const editProfileValidationSchema = yup.object().shape({
   name: stringRequired(MIN_LENTGH_NAME, MAX_LENTGH_NAME),
   phone: phoneValidation,

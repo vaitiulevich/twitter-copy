@@ -23,6 +23,8 @@ import optionDark from '@assets/icons/option-dark.svg';
 import profileDark from '@assets/icons/profile-dark.svg';
 import profile from '@assets/icons/profile-light.svg';
 import search from '@assets/icons/search.svg';
+import settings from '@assets/icons/settings.png';
+import settingsDark from '@assets/icons/settings-dark.png';
 import logo from '@assets/icons/twitter-logo.svg';
 import unvisible from '@assets/icons/unvisible.png';
 import visible from '@assets/icons/visible.png';
@@ -35,6 +37,9 @@ export const images = {
   logOutIcon: logOutIcon,
   visible: visible,
   unvisible: unvisible,
+
+  settingsDark: settingsDark,
+  settings: settings,
 
   home: home,
   explore: explore,

@@ -1,48 +1,72 @@
 import { PostState } from '@store/reducers/userReducer';
 import { ProfileFiles, User } from '@store/types';
-import * as types from '@store/types/user/actionTypes';
+import * as actions from '@store/types/user/actionTypes';
+
+export const changePasswordRequest = (
+  newPassword: string,
+  oldPassword: string
+) =>
+  ({
+    type: actions.CHANGE_PASSWORD_REQUEST,
+    payload: { newPassword, oldPassword },
+  }) as const;
+
+export const clearError = () =>
+  ({
+    type: actions.CLEAR_ERROR,
+  }) as const;
+export const changePasswordSuccess = () =>
+  ({
+    type: actions.CHANGE_PASSWORD_SUCCESS,
+  }) as const;
+
+export const changePasswordFailure = (error: string) =>
+  ({
+    type: actions.CHANGE_PASSWORD_FAILURE,
+    payload: error,
+  }) as const;
 
 export const updateUserDataRequest = (
   userId: string,
   userData: Omit<User, 'email'> & ProfileFiles
 ) =>
   ({
-    type: types.UPDATE_USER_DATA_REQUEST,
+    type: actions.UPDATE_USER_DATA_REQUEST,
     payload: { userData, userId },
   }) as const;
 
 export const updateUserDataSuccess = () =>
   ({
-    type: types.UPDATE_USER_DATA_SUCCESS,
+    type: actions.UPDATE_USER_DATA_SUCCESS,
   }) as const;
 export const updateUserDataFailure = () =>
   ({
-    type: types.UPDATE_USER_DATA_FAILURE,
+    type: actions.UPDATE_USER_DATA_FAILURE,
   }) as const;
 
 export const getUserData = (id: string) =>
   ({
-    type: types.GET_USER_DATA,
+    type: actions.GET_USER_DATA,
     payload: id,
   }) as const;
 
 export const getUserDataSuccess = (user: User) =>
   ({
-    type: types.GET_USER_DATA_SUCCESS,
+    type: actions.GET_USER_DATA_SUCCESS,
     payload: user,
   }) as const;
 
 export const getUserDataFailure = () =>
   ({
-    type: types.GET_USER_DATA_FAILURE,
+    type: actions.GET_USER_DATA_FAILURE,
   }) as const;
 export const fetchPostsSuccess = (posts: PostState[]) =>
   ({
-    type: types.FETCH_POSTS_SUCCESS,
+    type: actions.FETCH_POSTS_SUCCESS,
     payload: posts,
   }) as const;
 
 export const clearUserData = () =>
   ({
-    type: types.CLEAR_USER_DATA,
+    type: actions.CLEAR_USER_DATA,
   }) as const;

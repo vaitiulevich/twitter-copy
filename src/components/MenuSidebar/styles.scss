@@ -23,6 +23,9 @@
     display: none;
   }
 }
+.nav-list-item img {
+  height: 2rem;
+}
 .mobile-menu-sidebar {
   display: none;
   @include respond-to(tablet) {

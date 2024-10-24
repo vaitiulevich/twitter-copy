@@ -2,15 +2,24 @@ import { sessionPeriod } from '@constants/constants';
 import { loginSuccess, logoutRequest } from '@store/actions/authActions';
 import { fetchPostsRequest } from '@store/actions/postActions';
 import {
+  changePasswordFailure,
+  changePasswordRequest,
+  changePasswordSuccess,
   getUserData,
   getUserDataSuccess,
   updateUserDataRequest,
 } from '@store/actions/userActions';
 import {
+  CHANGE_PASSWORD_REQUEST,
   GET_USER_DATA,
   UPDATE_USER_DATA_REQUEST,
 } from '@store/types/user/actionTypes';
 import { FirebaseError } from 'firebase/app';
+import {
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword,
+} from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { eventChannel } from 'redux-saga';
 import { call, put, take, takeEvery } from 'redux-saga/effects';
@@ -90,6 +99,43 @@ function* updateUserData(
   } catch (error) {
     console.error(error);
   }
+}
+
+function* changePasswordSaga(
+  action: ReturnType<typeof changePasswordRequest>
+): Generator {
+  try {
+    const user = auth.currentUser;
+    if (user) {
+      const credential = EmailAuthProvider.credential(
+        user.email as string,
+        action.payload.oldPassword
+      );
+      const res = yield reauthenticateWithCredential(user, credential);
+      console.log(credential);
+      console.log(res);
+      yield call(updatePassword, user, action.payload.newPassword);
+
+      const userRef = doc(db, 'users', user.uid);
+      yield updateDoc(userRef, { password: action.payload.newPassword });
+
+      yield put(changePasswordSuccess());
+      console.log('success');
+    }
+  } catch (error) {
+    if (error instanceof FirebaseError) {
+      console.log(error.message);
+      console.log(error.code);
+      if (error.code === 'auth/invalid-credential') {
+        yield put(changePasswordFailure('invalid old password'));
+      }
+    }
+    // yield put(changePasswordFailure(error.message));
+  }
+}
+
+export function* watchChangePassword() {
+  yield takeEvery(CHANGE_PASSWORD_REQUEST, changePasswordSaga);
 }
 
 export function* watchAuth() {

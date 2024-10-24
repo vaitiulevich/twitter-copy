@@ -9,6 +9,7 @@ import { SignIn } from '@pages/Auth/SignIn/SignIn';
 import { SignUp } from '@pages/Auth/SignUp/SignUp';
 import { NoPageYet } from '@pages/NoPageYet/NoPageYet';
 import { Profile } from '@pages/Profile/Profile';
+import { Settings } from '@pages/Settings/Settings';
 import { UserAppWrapper } from '@pages/UserAppWrapper/UserAppWrapper';
 import { selectThemeType } from '@store/selectors';
 
@@ -72,6 +73,10 @@ const router = createBrowserRouter([
       {
         path: 'profile',
         element: <Profile />,
+      },
+      {
+        path: 'settings',
+        element: <Settings />,
       },
     ],
   },

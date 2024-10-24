@@ -1,4 +1,8 @@
 import {
+  CHANGE_PASSWORD_FAILURE,
+  CHANGE_PASSWORD_REQUEST,
+  CHANGE_PASSWORD_SUCCESS,
+  CLEAR_ERROR,
   CLEAR_USER_DATA,
   FETCH_POSTS_SUCCESS,
   GET_USER_DATA_SUCCESS,
@@ -13,7 +17,7 @@ export interface User {
   name?: string;
 }
 
-export interface UserState {
+export interface UserState extends StatusRequest {
   user?: string;
   userId: string;
   userSlug: string;
@@ -44,7 +48,12 @@ export interface PostState {
   userAvatar: string | null;
 }
 
-const initialState: UserState = {
+interface StatusRequest {
+  loading?: boolean;
+  error?: string | null;
+}
+
+const initialState: UserState & StatusRequest = {
   userId: '',
   userSlug: '@user',
   avatar: null,
@@ -57,10 +66,20 @@ const initialState: UserState = {
   followers: [],
   following: [],
   posts: [],
+  loading: false,
+  error: null,
 };
 
 const userReducer = (state = initialState, action: UserAction) => {
   switch (action.type) {
+    case CLEAR_ERROR:
+      return { ...state, error: null };
+    case CHANGE_PASSWORD_SUCCESS:
+      return { ...state, loading: false, error: null };
+    case CHANGE_PASSWORD_FAILURE:
+      return { ...state, loading: false, error: action.payload };
+    case CHANGE_PASSWORD_REQUEST:
+      return { ...state, loading: true, error: null };
     case GET_USER_DATA_SUCCESS:
       return { ...state, ...action.payload };
     case FETCH_POSTS_SUCCESS:

@@ -79,6 +79,12 @@ export const NavMenu = [
     img: images.profile,
     imgDark: images.profileDark,
   },
+  {
+    title: 'Settings',
+    link: '/settings',
+    img: images.settings,
+    imgDark: images.settingsDark,
+  },
 ];
 
 export const MAX_PHONE_LENGTH = 12;
