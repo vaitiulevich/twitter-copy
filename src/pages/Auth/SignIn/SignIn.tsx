@@ -10,13 +10,7 @@ import { images } from '@constants/images';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { loginRequest, resetError } from '@store/actions/authActions';
 import { selectAuthError, selectAuthLoad } from '@store/selectors';
-import {
-  emailValidation,
-  passwordValidation,
-  phoneValidation,
-  stringRequired,
-} from '@utils/validationSchemas';
-import * as yup from 'yup';
+import { signInValidationSchema } from '@utils/validationSchemas';
 
 import './styles.scss';
 import { auth } from '../../../firebase';
@@ -26,24 +20,13 @@ interface FormData {
   password: string;
   phone?: string;
 }
-const validationSchema = yup.object().shape({
-  password: stringRequired(1, 20),
-  isEmailLogin: yup.bool(),
-  email: yup.string().when('isEmailLogin', {
-    is: true,
-    then: () => emailValidation,
-  }),
-  phone: yup.string().when('isEmailLogin', {
-    is: false,
-    then: () => phoneValidation,
-  }),
-});
+
 export const SignIn = () => {
   const [isEmailLogin, setIsEmailLogin] = useState(true);
 
   const { control, handleSubmit } = useForm({
     mode: 'all',
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(signInValidationSchema),
     context: { isEmailLogin },
   });
   const dispatch = useDispatch();
@@ -93,7 +76,12 @@ export const SignIn = () => {
             placeholder="Password"
           />
 
-          <Button type="submit" disabled={loading} text="Log In" />
+          <Button
+            loading={loading}
+            type="submit"
+            disabled={loading}
+            text="Log In"
+          />
         </form>
         <div className="links-to-sign">
           <div className="sign-in-types">

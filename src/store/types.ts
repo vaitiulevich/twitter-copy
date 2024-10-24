@@ -17,6 +17,11 @@ export interface User {
   description?: Maybe<string | undefined>;
 }
 
+export interface ProfileFiles {
+  avatarFile?: File;
+  bannerFile?: File;
+}
+
 export type InferValueTypes<T> = T extends { [key: string]: infer U }
   ? U
   : never;

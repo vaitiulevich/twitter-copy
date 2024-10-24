@@ -77,8 +77,8 @@ export const DateSelector = memo(
 
     const renderSelect = (
       key: 'month' | 'day' | 'year',
-      value: string,
-      options: Array<{ label: string; value: string }>
+      value: number | string,
+      options: Array<{ label: string; value: number | string }>
     ) => (
       <select
         className="date-select"
@@ -117,6 +117,7 @@ export const DateSelector = memo(
       }),
     ];
 
+    const isErrorDate = isRequired && !isSetDate && error;
     return (
       <div className="select-date">
         <div className="date-panel">
@@ -124,9 +125,7 @@ export const DateSelector = memo(
           {renderSelect('day', day, dayOptions)}
           {renderSelect('year', year, yearOptions)}
         </div>
-        {isRequired && !isSetDate && error && (
-          <p className="inp-err-message">{error}</p>
-        )}
+        {isErrorDate && <p className="inp-err-message">{error}</p>}
       </div>
     );
   }

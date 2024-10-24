@@ -2,6 +2,7 @@ import { ChangeEvent, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@components/Button/Button';
 import { ImageUploader } from '@components/ImageUploader/ImageUploader';
+import { MAX_POST_FILES } from '@constants/constants';
 import { images } from '@constants/images';
 import { addPostRequest } from '@store/actions/postActions';
 import { PostState } from '@store/reducers/userReducer';
@@ -58,9 +59,11 @@ export const AddPostPanel = () => {
             name="post-images"
             setImagesSelected={setSelectedFiles}
             initialFiles={selectedFiles}
+            countFiles={MAX_POST_FILES}
           />
           <Button
-            text={loading ? 'Loading..' : 'Tweet'}
+            text="Tweet"
+            loading={loading}
             className="tweet-add"
             disabled={isDisableBtn}
             onClick={handlePostSubmit}

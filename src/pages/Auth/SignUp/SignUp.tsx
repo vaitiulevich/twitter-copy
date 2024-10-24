@@ -12,12 +12,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { checkUserExists, resetUserExist } from '@store/actions/authActions';
 import { selectAuthError, selectAuthLoad } from '@store/selectors';
 import { RootState } from '@store/types';
-import {
-  emailValidation,
-  phoneValidation,
-  stringRequired,
-} from '@utils/validationSchemas';
-import * as yup from 'yup';
+import { signUpValidationSchema } from '@utils/validationSchemas';
 
 import './styles.scss';
 
@@ -27,11 +22,6 @@ interface FormData {
   email: string;
   password?: string;
 }
-const validationSchema = yup.object().shape({
-  name: stringRequired(2, 15),
-  phone: phoneValidation,
-  email: emailValidation,
-});
 
 export const SignUp = () => {
   const [selectedDate, setSelectedDate] = useState('');
@@ -41,7 +31,7 @@ export const SignUp = () => {
     formState: { isValid },
   } = useForm({
     mode: 'all',
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(signUpValidationSchema),
   });
   const loading = useSelector(selectAuthLoad);
   const error = useSelector(selectAuthError);
@@ -50,8 +40,6 @@ export const SignUp = () => {
 
   const onSubmit = (data: FormData) => {
     const completeData = { ...data, dateBirth: selectedDate };
-    console.log(selectedDate);
-    console.log(completeData);
     if (selectedDate) {
       dispatch(checkUserExists(completeData));
     }
@@ -111,7 +99,8 @@ export const SignUp = () => {
 
           <Button
             disabled={loading || !isValid || !!!selectedDate}
-            text={loading ? 'Check user...' : 'Next'}
+            text="Next"
+            loading={loading}
             type="submit"
           />
         </form>

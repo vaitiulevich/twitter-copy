@@ -7,6 +7,7 @@ type ButtonProps = {
   onClick?: MouseEventHandler<HTMLButtonElement>;
   type?: 'button' | 'submit' | 'reset';
   text: string;
+  loading?: boolean;
   className?: string;
   disabled?: boolean;
 };
@@ -16,6 +17,7 @@ export const Button = memo(
     onClick,
     type = 'button',
     text,
+    loading = false,
     className = '',
     disabled = false,
   }: ButtonProps) => {
@@ -32,7 +34,7 @@ export const Button = memo(
         className={classNames('btn', className)}
         disabled={disabled}
       >
-        {text}
+        {loading ? 'Loading...' : text}
       </button>
     );
   }

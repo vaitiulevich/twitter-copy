@@ -8,6 +8,7 @@ import {
 } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { Input } from '@components/Input/Input';
+import { PHONE_MASK_LENGTH } from '@constants/constants';
 import { resetError } from '@store/actions/authActions';
 import { formatPhoneNumber } from '@utils/formatPhoneNumber';
 
@@ -44,14 +45,10 @@ export const ControlledInput = <T extends FieldValues>({
     const isFormatPhone = type === 'phone';
     dispatch(resetError());
 
-    if (isFormatPhone) {
-      if (value.length > 15) {
-        return;
-      }
-      field.onChange(formatPhoneNumber(value));
-    } else {
-      field.onChange(value);
+    if (isFormatPhone && value.length > PHONE_MASK_LENGTH) {
+      return;
     }
+    field.onChange(isFormatPhone ? formatPhoneNumber(value) : value);
   };
   return (
     <Input

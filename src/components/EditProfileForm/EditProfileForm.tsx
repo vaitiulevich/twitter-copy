@@ -8,7 +8,11 @@ import { ERR_INCORRECT_FILL, ERR_REQUIRED } from '@constants/messages';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { updateUserDataRequest } from '@store/actions/userActions';
 import { selectUserSelector } from '@store/selectors';
-import { phoneValidation, stringRequired } from '@utils/validationSchemas';
+import {
+  editProfileValidationSchema,
+  phoneValidation,
+  stringRequired,
+} from '@utils/validationSchemas';
 import * as yup from 'yup';
 
 import './styles.scss';
@@ -20,42 +24,25 @@ interface FormData {
   dateBirth: string;
 }
 
-const validationSchema = yup.object().shape({
-  name: stringRequired(2, 10),
-  phone: phoneValidation,
-  dateBirth: stringRequired(10, 10),
-  description: yup
-    .string()
-    .min(1, ERR_INCORRECT_FILL)
-    .max(300, ERR_INCORRECT_FILL)
-    .notRequired(),
-});
-
 export const EditProfileForm = () => {
   const { control, handleSubmit } = useForm({
     mode: 'all',
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(editProfileValidationSchema),
   });
   const { name, description, dateBirth, phone, userId } =
     useSelector(selectUserSelector);
   const onSubmit = (data: FormData) => {
-    console.log(data);
-    updateUserData(userId, {
+    const newData = {
       ...data,
       avatarFile: selectedAvatar[0] ?? null,
       bannerFile: selectedBanner[0] ?? null,
-    });
+    };
+    dispatch(updateUserDataRequest(userId, newData));
   };
   const dispatch = useDispatch();
   const [selectedBanner, setSelectedBanner] = useState<File[]>([]);
   const [selectedAvatar, setSelectedAvatar] = useState<File[]>([]);
 
-  async function updateUserData(
-    userId: string,
-    newData: FormData & { avatarFile?: File; bannerFile?: File }
-  ) {
-    dispatch(updateUserDataRequest(userId, newData));
-  }
   const today = new Date().toISOString().split('T')[0];
   return (
     <div>
@@ -67,7 +54,6 @@ export const EditProfileForm = () => {
             name="profile-banner"
             setImagesSelected={setSelectedBanner}
             initialFiles={selectedBanner}
-            countFiles={1}
           />
         </div>
         <div className="edit-profile-set-img">
@@ -76,7 +62,6 @@ export const EditProfileForm = () => {
             name="profile-avatar"
             setImagesSelected={setSelectedAvatar}
             initialFiles={selectedAvatar}
-            countFiles={1}
           />
         </div>
       </div>

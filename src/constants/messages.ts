@@ -19,3 +19,6 @@ export const ERR_MAX_LENTGH_PASSWORD = `Maximum number of characters in a passwo
 
 export const ERR_PASSWORD_CONTIN_NUM = 'Must contain a number';
 export const ERR_PASSWORD_CONTIN_UPERCASE = 'Must contain a capital letter';
+
+export const ERR_PASSWORD_MATCH = 'Passwords must match';
+export const ERR_PASSWORD_CONFIRM = 'Please confirm your password';

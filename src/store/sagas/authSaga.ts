@@ -64,7 +64,6 @@ function* signInSaga(action: ReturnType<typeof loginRequest>): Generator {
       phoneExists?.forEach((doc: any) => {
         const data = doc.data();
         if (data.email) {
-          console.log(data.email, password);
           signInWithEmailAndPassword(auth, data.email, password);
         }
       });
@@ -175,7 +174,6 @@ function* checkUserExistsSaga(
 function* googleLogupSaga(): Generator {
   try {
     const result = yield call(signInWithPopup, auth, provider);
-
     const user = result.user;
     const exists = yield call(checkDocUserExists, user.email);
     if (!exists) {

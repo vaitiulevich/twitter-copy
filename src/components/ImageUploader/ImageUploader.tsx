@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { MAX_POST_FILES } from '@constants/constants';
+import { DEFAULT_POST_FILES } from '@constants/constants';
 import { images, images as imagesIcons } from '@constants/images';
 import { ERR_COUNT_FILES, ERR_INVALID_FILE } from '@constants/messages';
 import { isImageFile } from '@utils/checkImageFile';
@@ -17,7 +17,7 @@ export const ImageUploader = ({
   setImagesSelected,
   name,
   initialFiles = [],
-  countFiles = MAX_POST_FILES,
+  countFiles = DEFAULT_POST_FILES,
 }: ImageUploaderProps) => {
   const [files, setFiles] = useState<File[]>(initialFiles);
   const [errors, setErrors] = useState<string[]>([]);

@@ -13,8 +13,7 @@ import {
   resetError,
 } from '@store/actions/authActions';
 import { selectAuthLoad, selectAuthUser } from '@store/selectors';
-import { passwordValidation, stringRequired } from '@utils/validationSchemas';
-import * as yup from 'yup';
+import { setPasswordValidationSchema } from '@utils/validationSchemas';
 
 import './styles.scss';
 import { auth } from '../../../firebase';
@@ -23,18 +22,10 @@ interface FormData {
   repassword: string;
 }
 
-const validationSchema = yup.object().shape({
-  password: passwordValidation,
-  repassword: yup
-    .string()
-    .oneOf([yup.ref('password')], 'Passwords must match')
-    .required('Please confirm your password'),
-});
-
 export const SetPassword = () => {
   const { control, handleSubmit } = useForm({
     mode: 'all',
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(setPasswordValidationSchema),
   });
   const dispatch = useDispatch();
   const [isNotMatch, setIsNotMatch] = useState(false);
@@ -88,7 +79,12 @@ export const SetPassword = () => {
             control={control}
             placeholder="Confirm password"
           />
-          <Button type="submit" disabled={loading} text="Log Up" />
+          <Button
+            loading={loading}
+            type="submit"
+            disabled={loading}
+            text="Log Up"
+          />
         </form>
         <div>
           <Link

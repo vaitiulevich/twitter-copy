@@ -77,11 +77,23 @@ export const NavMenu = [
 
 export const MAX_PHONE_LENGTH = 12;
 export const MIN_PHONE_LENGTH = 6;
+export const PHONE_MASK_LENGTH = 15;
 
 export const MIN_LENTGH_PASSWORD = 8;
 export const MAX_LENTGH_PASSWORD = 20;
 
+export const MIN_LENTGH_DESCRIPTION = 1;
+export const MAX_LENTGH_DESCRIPTION = 300;
+
+export const MIN_LOGIN_LENTGH_PASSWORD = 1;
+export const MAX_LOGIN_LENTGH_PASSWORD = 20;
+
+export const MIN_LENTGH_NAME = 2;
+export const MAX_LENTGH_NAME = 30;
+
+export const DEFAULT_POST_FILES = 1;
 export const MAX_POST_FILES = 4;
+export const DATE_BIRTH_LENGTH = 10;
 
 export const pngSignature = [137, 80, 78, 71, 13, 10, 26, 10];
 export const jpgSignature = [255, 216];
