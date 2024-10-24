@@ -19,9 +19,11 @@ export const CHECK_USER_EXISTS_FAILURE = 'CHECK_USER_EXISTS_FAILURE';
 
 export const RESET_ERROR = 'RESET_ERROR';
 export const RESET_USER_EXISTS = 'RESET_USER_EXISTS';
+export const RESET_AUTH_USER = 'RESET_AUTH_USER';
 
 export const GOOGLE_LOGIN_REQUEST = 'GOOGLE_LOGIN_REQUEST';
 export const GOOGLE_LOGIN_SUCCESS = 'GOOGLE_LOGIN_SUCCESS';
 export const GOOGLE_LOGIN_FAILURE = 'GOOGLE_LOGIN_FAILURE';
+export const GOOGLE_LOGUP_REQUEST = 'GOOGLE_LOGUP_REQUEST';
 
 export type AuthAction = ReturnType<InferValueTypes<typeof actions>>;

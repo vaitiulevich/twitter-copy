@@ -1,5 +1,6 @@
 import {
   watchGoogleLogin,
+  watchGoogleLogup,
   watchRegister,
   watchSignIn,
   watchSignOut,
@@ -12,7 +13,11 @@ import {
   watchUpdatePostLikes,
 } from '@store/sagas/postSagas';
 import watchToggleTheme from '@store/sagas/themeSaga';
-import { watchAuth, watchUserData } from '@store/sagas/userSaga';
+import {
+  watchAuth,
+  watchUpdateUserData,
+  watchUserData,
+} from '@store/sagas/userSaga';
 import { all } from 'redux-saga/effects';
 
 export default function* rootSaga() {
@@ -29,5 +34,7 @@ export default function* rootSaga() {
     watchAddPost(),
     watchDeletePost(),
     watchUpdatePostLikes(),
+    watchUpdateUserData(),
+    watchGoogleLogup(),
   ]);
 }

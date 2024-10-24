@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux';
+import { EditProfileButton } from '@components/EditProfileButton/EditProfileButton';
 import { images } from '@constants/images';
 import { selectUserPosts, selectUserSelector } from '@store/selectors';
 
@@ -23,9 +24,7 @@ export const ProfileHead = () => {
           <div className="profile-avatar">
             <img src={user.avatar ?? images.avatar} alt="avatar" />
           </div>
-          <div className="profile-edit-options">
-            <button className="profile-edit-btn">Edit profile</button>
-          </div>
+          <EditProfileButton />
         </div>
         <div className="profile-bio">
           <h3 className="profile-name">{user.name}</h3>

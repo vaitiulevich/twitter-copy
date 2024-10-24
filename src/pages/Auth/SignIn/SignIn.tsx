@@ -1,50 +1,58 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@components/Button/Button';
 import { ControlledInput } from '@components/ControlledInput/ControlledInput';
-import { Input } from '@components/Input/Input';
-import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '@constants/constants';
+import { ErrorBlock } from '@components/ErrorBlock/ErrorBlock';
+import { GoogleSignButton } from '@components/GoogleSignButton/GoogleSignButton';
 import { images } from '@constants/images';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { loginRequest } from '@store/actions/authActions';
-import {
-  selectAuthError,
-  selectAuthLoad,
-  selectAuthUser,
-} from '@store/selectors';
-import { RootState } from '@store/types';
-import { emailValidation, stringRequired } from '@utils/validationSchemas';
-import * as yup from 'yup';
+import { loginRequest, resetError } from '@store/actions/authActions';
+import { selectAuthError, selectAuthLoad } from '@store/selectors';
+import { signInValidationSchema } from '@utils/validationSchemas';
 
 import './styles.scss';
 import { auth } from '../../../firebase';
 
 interface FormData {
-  email: string;
+  email?: string;
   password: string;
+  phone?: string;
 }
-const validationSchema = yup.object().shape({
-  password: stringRequired(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH),
-  email: emailValidation,
-});
+
 export const SignIn = () => {
+  const [isEmailLogin, setIsEmailLogin] = useState(true);
+
   const { control, handleSubmit } = useForm({
     mode: 'all',
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(signInValidationSchema),
+    context: { isEmailLogin },
   });
   const dispatch = useDispatch();
   const loading = useSelector(selectAuthLoad);
   const error = useSelector(selectAuthError);
   const navigate = useNavigate();
 
+  const toggleLiginType = () => {
+    dispatch(resetError());
+    setIsEmailLogin(!isEmailLogin);
+  };
   const onSubmit = (data: FormData) => {
-    dispatch(loginRequest(data.email, data.password));
+    dispatch(resetError());
+    const loginType = isEmailLogin ? 'email' : 'phone';
+    const loginData = isEmailLogin ? data.email : data.phone;
+    dispatch(loginRequest(loginType, loginData as string, data.password));
   };
   const logUser = auth.currentUser;
   useEffect(() => {
+    return () => {
+      dispatch(resetError());
+    };
+  }, []);
+  useEffect(() => {
     if (logUser) {
+      dispatch(resetError());
       navigate('/profile');
     }
   }, [logUser]);
@@ -56,10 +64,10 @@ export const SignIn = () => {
         </div>
         <form className="sign-up-form" onSubmit={handleSubmit(onSubmit)}>
           <ControlledInput
-            type="email"
-            name="email"
+            type={isEmailLogin ? 'email' : 'phone'}
+            name={isEmailLogin ? 'email' : 'phone'}
             control={control}
-            placeholder="Phone number, email address"
+            placeholder={isEmailLogin ? 'Email address' : 'Phone number'}
           />
           <ControlledInput
             type="password"
@@ -68,12 +76,26 @@ export const SignIn = () => {
             placeholder="Password"
           />
 
-          <Button type="submit" disabled={loading} text="Log In" />
+          <Button
+            loading={loading}
+            type="submit"
+            disabled={loading}
+            text="Log In"
+          />
         </form>
-        {error && <p className="sign-in-error">{error}</p>}
-        <div className="link-to-sign-up">
+        <div className="links-to-sign">
+          <div className="sign-in-types">
+            <GoogleSignButton type="signin" />
+            <button onClick={toggleLiginType} className="toggle-sign-in">
+              {isEmailLogin
+                ? 'Sign in with phone number'
+                : 'Sign in with email address'}
+            </button>
+          </div>
+
           <Link to={'/sign-up'}>Sign up to Twitter</Link>
         </div>
+        {error && <ErrorBlock message={error} />}
       </div>
     </section>
   );

@@ -2,6 +2,7 @@ import { getAnalytics } from 'firebase/analytics';
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
 import { getBuildEnvVar } from './env';
 
@@ -19,5 +20,6 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
-export { analytics, auth, db, provider };
+export { analytics, auth, db, provider, storage };

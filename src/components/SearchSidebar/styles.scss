@@ -1,5 +1,19 @@
+@import '@styles/breakpoints';
+
 .search-sidebar {
   padding: 1rem 0 0 0.5rem;
+  @include respond-to(tablet) {
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+.mobile-header-logo {
+  display: none;
+  @include respond-to(tablet) {
+    display: inline;
+  }
 }
 .search-inp-block {
   display: flex;

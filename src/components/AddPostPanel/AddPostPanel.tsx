@@ -1,18 +1,22 @@
 import { ChangeEvent, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AddImgButton } from '@components/AddImgButton/AddImgButton';
 import { Button } from '@components/Button/Button';
+import { ImageUploader } from '@components/ImageUploader/ImageUploader';
+import { MAX_POST_FILES } from '@constants/constants';
 import { images } from '@constants/images';
 import { addPostRequest } from '@store/actions/postActions';
 import { PostState } from '@store/reducers/userReducer';
+import { selectPostLoad } from '@store/selectors';
 import { RootState } from '@store/types';
 
 import './styles.scss';
 
 export const AddPostPanel = () => {
   const [postContent, setPostContent] = useState('');
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const user = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
+  const loading = useSelector(selectPostLoad);
 
   const handleTextareaChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setPostContent(e.target.value);
@@ -22,6 +26,7 @@ export const AddPostPanel = () => {
     const postData: PostState = {
       content: postContent,
       images: [],
+      files: selectedFiles ?? [],
       likes: [],
       userId: user.userId,
       userSlug: user.userSlug,
@@ -32,7 +37,11 @@ export const AddPostPanel = () => {
     };
     dispatch(addPostRequest(postData));
     setPostContent('');
+    setSelectedFiles([]);
   };
+
+  const isDisableBtn =
+    !postContent.trim() && selectedFiles.length === 0 && loading;
   return (
     <div className="add-post-panel">
       <div className="add-post-avatar">
@@ -46,11 +55,17 @@ export const AddPostPanel = () => {
           placeholder="What’s happening"
         />
         <div className="post-add-btns">
-          <AddImgButton />
+          <ImageUploader
+            name="post-images"
+            setImagesSelected={setSelectedFiles}
+            initialFiles={selectedFiles}
+            countFiles={MAX_POST_FILES}
+          />
           <Button
             text="Tweet"
+            loading={loading}
             className="tweet-add"
-            disabled={!postContent.trim()}
+            disabled={isDisableBtn}
             onClick={handlePostSubmit}
           />
         </div>

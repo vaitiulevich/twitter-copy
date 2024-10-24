@@ -1,9 +1,13 @@
 .post {
   display: flex;
   gap: 0.5rem;
+  border-bottom: 0.01rem sild var(--border-color);
 }
 .post-avatar {
   height: 3rem;
+  width: 3rem;
+  border-radius: 50%;
+  overflow: hidden;
 }
 .post-content {
   width: 100%;
@@ -23,6 +27,7 @@
 }
 .post-text {
   padding: 0.5rem 0;
+  word-wrap: break-word;
 }
 .post-author-slug {
   margin: 0;
@@ -50,8 +55,50 @@
 .post-like {
   display: flex;
   align-items: center;
+  margin: 0.5rem 0;
 }
 .post-like-img {
   height: 1.5rem;
   cursor: pointer;
+}
+
+.post-images img {
+  width: 100%;
+  height: auto;
+}
+.post-images {
+  display: grid;
+  gap: 0.5rem;
+
+  &.one-image {
+    grid-template-areas: 'img1';
+  }
+
+  &.two-images {
+    grid-template-areas: 'img1 img2';
+  }
+
+  &.three-images {
+    grid-template-areas:
+      'img1 img2'
+      'img3 img2';
+  }
+
+  &.four-images {
+    grid-template-areas:
+      'img1 img2'
+      'img3 img4';
+  }
+}
+.post-image-1 {
+  grid-area: img1;
+}
+.post-image-2 {
+  grid-area: img2;
+}
+.post-image-3 {
+  grid-area: img3;
+}
+.post-image-4 {
+  grid-area: img4;
 }

@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@components/Button/Button';
 import { ControlledInput } from '@components/ControlledInput/ControlledInput';
 import { ErrorBlock } from '@components/ErrorBlock/ErrorBlock';
-import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '@constants/constants';
 import { images } from '@constants/images';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { registerRequest } from '@store/actions/authActions';
+import {
+  registerRequest,
+  resetAuthUser,
+  resetError,
+} from '@store/actions/authActions';
 import { selectAuthLoad, selectAuthUser } from '@store/selectors';
-import { stringRequired } from '@utils/validationSchemas';
-import * as yup from 'yup';
+import { setPasswordValidationSchema } from '@utils/validationSchemas';
 
 import './styles.scss';
 import { auth } from '../../../firebase';
@@ -20,15 +22,10 @@ interface FormData {
   repassword: string;
 }
 
-const validationSchema = yup.object().shape({
-  password: stringRequired(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH),
-  repassword: stringRequired(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH),
-});
-
 export const SetPassword = () => {
   const { control, handleSubmit } = useForm({
     mode: 'all',
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(setPasswordValidationSchema),
   });
   const dispatch = useDispatch();
   const [isNotMatch, setIsNotMatch] = useState(false);
@@ -45,6 +42,11 @@ export const SetPassword = () => {
     } else {
       setIsNotMatch(true);
     }
+  };
+
+  const handleToSignUp = () => {
+    dispatch(resetError());
+    dispatch(resetAuthUser());
   };
 
   useEffect(() => {
@@ -75,10 +77,24 @@ export const SetPassword = () => {
             name="repassword"
             type="password"
             control={control}
-            placeholder="Repeat password"
+            placeholder="Confirm password"
           />
-          <Button type="submit" disabled={loading} text="Log Up" />
+          <Button
+            loading={loading}
+            type="submit"
+            disabled={loading}
+            text="Log Up"
+          />
         </form>
+        <div>
+          <Link
+            to={'/sign-up'}
+            onClick={handleToSignUp}
+            className="to-sign-up-link"
+          >
+            to sign up
+          </Link>
+        </div>
         {isNotMatch && <ErrorBlock message="Passwords do not match" />}
       </div>
     </section>

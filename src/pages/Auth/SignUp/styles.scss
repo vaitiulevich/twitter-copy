@@ -1,8 +1,13 @@
+@import '@styles/breakpoints';
+
 .sign-up-section {
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  @include respond-to(mobile) {
+    padding: 0 1rem;
+  }
 }
 .sign-up-form-container {
   width: 30rem;
@@ -14,4 +19,12 @@
 .sign-up-form {
   display: flex;
   flex-direction: column;
+}
+.to-entry-link {
+  font-size: 0.8rem;
+}
+.sign-up-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }

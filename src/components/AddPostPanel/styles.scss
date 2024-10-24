@@ -5,29 +5,10 @@
 }
 .add-post-avatar {
   height: 3rem;
+  width: 3rem;
+  border-radius: 50%;
+  overflow: hidden;
 }
 .add-posts-block {
-  width: 100%;
-}
-.post-add-img {
-  background-color: transparent;
-  border: none;
-  outline: none;
-  cursor: pointer;
-}
-.post-add-btns {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.post-input {
-  width: 95%;
-  //   max-height: 7rem;
-  border: none;
-  resize: none;
-  padding: 10px;
-  outline: none;
-  font-size: 1rem;
-  scrollbar-width: thin;
-  scrollbar-color: var(--secondary-text);
+  width: 90%;
 }

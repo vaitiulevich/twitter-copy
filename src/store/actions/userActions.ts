@@ -1,6 +1,23 @@
 import { PostState } from '@store/reducers/userReducer';
-import { User } from '@store/types';
+import { ProfileFiles, User } from '@store/types';
 import * as types from '@store/types/user/actionTypes';
+
+export const updateUserDataRequest = (
+  userId: string,
+  userData: Omit<User, 'email'> & ProfileFiles
+) =>
+  ({
+    type: types.UPDATE_USER_DATA_REQUEST,
+    payload: { userData, userId },
+  }) as const;
+export const updateUserDataSuccess = () =>
+  ({
+    types: types.UPDATE_USER_DATA_SUCCESS,
+  }) as const;
+export const updateUserDataFailure = () =>
+  ({
+    types: types.UPDATE_USER_DATA_FAILURE,
+  }) as const;
 
 export const getUserData = (id: string) =>
   ({

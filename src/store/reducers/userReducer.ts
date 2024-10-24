@@ -32,6 +32,7 @@ export interface UserState {
 
 export interface PostState {
   id?: string;
+  files?: File[];
   postId: string;
   userId: string;
   userName: string;

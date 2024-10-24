@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '@components/Button/Button';
 import { ControlledInput } from '@components/ControlledInput/ControlledInput';
 import { DateSelector } from '@components/DateSelector/DateSelector';
@@ -9,14 +10,9 @@ import { ErrorBlock } from '@components/ErrorBlock/ErrorBlock';
 import { images } from '@constants/images';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { checkUserExists, resetUserExist } from '@store/actions/authActions';
-import { selectAuthError } from '@store/selectors';
+import { selectAuthError, selectAuthLoad } from '@store/selectors';
 import { RootState } from '@store/types';
-import {
-  emailValidation,
-  phoneValidation,
-  stringRequired,
-} from '@utils/validationSchemas';
-import * as yup from 'yup';
+import { signUpValidationSchema } from '@utils/validationSchemas';
 
 import './styles.scss';
 
@@ -26,18 +22,18 @@ interface FormData {
   email: string;
   password?: string;
 }
-const validationSchema = yup.object().shape({
-  name: stringRequired(2, 15),
-  phone: phoneValidation,
-  email: emailValidation,
-});
 
 export const SignUp = () => {
   const [selectedDate, setSelectedDate] = useState('');
-  const { control, handleSubmit } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+  } = useForm({
     mode: 'all',
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(signUpValidationSchema),
   });
+  const loading = useSelector(selectAuthLoad);
   const error = useSelector(selectAuthError);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -63,18 +59,23 @@ export const SignUp = () => {
   const handleDateChange = (month: string, day: string, year: string) => {
     setSelectedDate(`${year}-${month}-${day}`);
   };
-
   return (
     <section className="sign-up-section">
       <div className="sign-up-form-container">
         <div className="sign-up-logo">
           <img src={images.logo} alt="logo" />
         </div>
-        <h2>Create an account</h2>
+        <div className="sign-up-header">
+          <h2>Create an account</h2>
+          <Link to={'/'} className="to-entry-link">
+            to entry
+          </Link>
+        </div>
         <form className="sign-up-form" onSubmit={handleSubmit(onSubmit)}>
           <ControlledInput name="name" control={control} placeholder="Name" />
           <ControlledInput
             name="phone"
+            type="phone"
             control={control}
             placeholder="Phone number"
           />
@@ -96,7 +97,12 @@ export const SignUp = () => {
             <DateSelector onDateChange={handleDateChange} isRequired={true} />
           </div>
 
-          <Button text="Next" type="submit" />
+          <Button
+            disabled={loading || !isValid || !!!selectedDate}
+            text="Next"
+            loading={loading}
+            type="submit"
+          />
         </form>
         {error && <ErrorBlock message={error} />}
       </div>

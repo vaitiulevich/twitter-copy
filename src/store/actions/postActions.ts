@@ -1,7 +1,7 @@
 import { PostState } from '@store/reducers/userReducer';
 import * as actions from '@store/types/posts/actionTypes';
 
-export const addPostRequest = (postData: PostState) =>
+export const addPostRequest = (postData: PostState & { files?: File[] }) =>
   ({
     type: actions.ADD_POST_REQUEST,
     payload: postData,
@@ -37,11 +37,12 @@ export const updatePostLikesFailure = () =>
 export const deletePostRequest = (
   id: string,
   ownerId: string,
-  userId: string
+  userId: string,
+  images?: string[]
 ) =>
   ({
     type: actions.DELETE_POST_REQUEST,
-    payload: { id, ownerId, userId },
+    payload: { id, ownerId, userId, images },
   }) as const;
 
 export const deletePostSuccess = (id: string) =>

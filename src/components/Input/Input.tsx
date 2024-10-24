@@ -15,7 +15,10 @@ interface InputProps<T extends FieldValues> {
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps<FieldValues>>(
-  ({ placeholder, error, type = 'text', value = '', onChange }, ref) => {
+  (
+    { placeholder, error, type = 'text', value = '', onChange, ...props },
+    ref
+  ) => {
     const [showPassword, setShowPassword] = useState(false);
 
     const handleTogglePasswordVisibility = () => {
@@ -37,7 +40,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps<FieldValues>>(
     );
 
     const inputType =
-      type === 'password' && !showPassword ? 'password' : 'text';
+      type === 'password' ? (!showPassword ? 'password' : 'text') : type;
 
     return (
       <div className="inp-panel">
@@ -46,6 +49,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps<FieldValues>>(
             ref={ref}
             placeholder={placeholder}
             value={value}
+            {...props}
             onChange={onChange}
             type={inputType}
             className="inp"

@@ -1,3 +1,5 @@
+@import '@styles/breakpoints';
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -12,12 +14,15 @@
 }
 
 .modal-content {
-  background: white;
+  background: var(--background);
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 0.2rem 1rem rgba(0, 0, 0, 0.1);
   position: relative;
   width: 50%;
+  @include respond-to(mobile) {
+    width: 75%;
+  }
 }
 
 .modal-close {

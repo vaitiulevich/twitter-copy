@@ -1,3 +1,4 @@
+import { images } from '@constants/images';
 import { fetchPostsSuccess } from '@store/actions/userActions';
 import { PostState } from '@store/reducers/userReducer';
 import {
@@ -21,6 +22,12 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from 'firebase/storage';
 import { eventChannel } from 'redux-saga';
 import {
   call,
@@ -30,8 +37,9 @@ import {
   takeEvery,
   takeLatest,
 } from 'redux-saga/effects';
+import { v4 as uuidv4 } from 'uuid';
 
-import { db } from '../../firebase';
+import { db, storage } from '../../firebase';
 import {
   addPostFailure,
   addPostRequest,
@@ -44,14 +52,32 @@ import {
   updatePostLikesSuccess,
 } from '../actions/postActions';
 
-function* addPost(action: ReturnType<typeof addPostRequest>) {
+export function* uploadImages(files: File[]): Generator {
+  const urls: string[] = [];
+
+  for (const file of files) {
+    const uniqueName = `${uuidv4()}_${file.name}`;
+    const storageRef = ref(storage, `images/${uniqueName}`);
+    yield call(uploadBytes, storageRef, file);
+    const downloadURL = yield call(getDownloadURL, storageRef);
+    urls.push(downloadURL);
+  }
+
+  return urls;
+}
+
+function* addPost(action: ReturnType<typeof addPostRequest>): Generator {
   try {
+    const { files, ...postFields } = action.payload;
+    let postData = { ...postFields };
+
+    if (files && files.length > 0) {
+      const imageUrls = yield call(uploadImages, files);
+      postData = { ...postFields, images: imageUrls };
+    }
+
     const postsCollectionRef = collection(db, 'posts');
-    const newPost: PostState = yield call(
-      addDoc,
-      postsCollectionRef,
-      action.payload
-    );
+    const newPost: PostState = yield call(addDoc, postsCollectionRef, postData);
 
     yield put(addPostSuccess(newPost));
   } catch (error) {
@@ -74,13 +100,19 @@ function* updatePostLikes(action: ReturnType<typeof updatePostLikesRequest>) {
 }
 
 function* deletePostSaga(action: ReturnType<typeof deletePostRequest>) {
-  const { id, ownerId, userId } = action.payload;
+  const { id, ownerId, userId, images } = action.payload;
 
   if (ownerId !== userId) {
     return;
   }
   try {
     const postRef = doc(db, 'posts', id);
+    if (images) {
+      for (const imageUrl of images) {
+        const imageRef = ref(storage, imageUrl);
+        yield call(deleteObject, imageRef);
+      }
+    }
     yield call(deleteDoc, postRef);
   } catch (error) {
     console.log(error);

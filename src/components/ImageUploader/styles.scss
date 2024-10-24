@@ -1,0 +1,53 @@
+.post-add-img {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+.post-add-btns {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.post-input {
+  width: 95%;
+  border: none;
+  resize: none;
+  padding: 10px;
+  outline: none;
+  font-size: 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--secondary-text);
+}
+.error-messages {
+  color: var(--error-text);
+  font-size: 0.7rem;
+  margin: 0;
+}
+.img-input {
+  display: none;
+}
+.selected-images {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(5, 1fr);
+}
+.selected-image-item {
+  height: 4.2rem;
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+}
+.delete-img-button {
+  position: absolute;
+  right: 0.2rem;
+  top: 0.1rem;
+  cursor: pointer;
+  height: 1.6rem;
+  width: 1.6rem;
+  background: #ffffff;
+  outline: none;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+}

@@ -32,7 +32,14 @@ export const PostOptionsMenu = ({
   }, []);
 
   const handleDelete = () => {
-    dispatch(deletePostRequest(post.id || post.userId, post.userId, userId));
+    dispatch(
+      deletePostRequest(
+        post.id || post.userId,
+        post.userId,
+        userId,
+        post.images
+      )
+    );
   };
   if (!isOpen) return null;
 

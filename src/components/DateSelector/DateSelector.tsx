@@ -1,6 +1,7 @@
 import { ChangeEvent, memo, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
+  DEFAULT_COUNT_DAYS_IN_MONTH,
   DEFAULT_DAY,
   DEFAULT_MONTH,
   DEFAULT_YEAR,
@@ -27,24 +28,33 @@ export const DateSelector = memo(
 
     const { month, day, year } = date;
     const [isSetDate, setIsSetDate] = useState(true);
+    const [error, setError] = useState('');
 
     const daysInMonth = useMemo(() => {
-      if (month !== DEFAULT_MONTH && year !== DEFAULT_YEAR) {
-        const totalDays = new Date(+year, +month, 0).getDate();
-        return Array.from({ length: totalDays }, (_, index) => index + 1);
-      }
-      return [];
+      const totalDays =
+        month !== DEFAULT_MONTH && year !== DEFAULT_YEAR
+          ? new Date(+year, +month, 0).getDate()
+          : DEFAULT_COUNT_DAYS_IN_MONTH;
+
+      return Array.from({ length: totalDays }, (_, index) => index + 1);
     }, [month, year]);
 
-    useEffect(() => {
-      if (
-        month !== DEFAULT_MONTH &&
-        year !== DEFAULT_YEAR &&
-        +day > daysInMonth.length
-      ) {
-        setDate((prev) => ({ ...prev, day: DEFAULT_DAY }));
+    const checkValidation = () => {
+      const validDay = +day <= daysInMonth.length && +day > 0;
+      const validMonth = month !== DEFAULT_MONTH;
+      const validYear = year !== DEFAULT_YEAR;
+
+      if (!validDay) {
+        setError(ERR_REQUIRED);
+        setIsSetDate(false);
+      } else {
+        setError('');
+        setIsSetDate(true);
       }
-    }, [daysInMonth, day, month, year]);
+      if (validDay && validMonth && validYear) {
+        onDateChange(month, day, year);
+      }
+    };
 
     const dispatch = useDispatch();
     const handleChange =
@@ -54,19 +64,21 @@ export const DateSelector = memo(
         const value = event.target.value;
         setDate((prev) => ({ ...prev, [key]: value }));
         setIsSetDate(true);
+        setError('');
 
-        const isLastSelect =
-          key === 'day' && month !== DEFAULT_MONTH && year !== DEFAULT_YEAR;
-        if (isLastSelect) {
-          setIsSetDate(false);
-          onDateChange(month, value, year);
+        if (key === 'month' || key == 'year') {
+          const newDaysInMonth = new Date(+year, +value, 0).getDate();
+          if (+day > newDaysInMonth) {
+            setDate((prev) => ({ ...prev, day: '1' }));
+          }
         }
+        checkValidation();
       };
 
     const renderSelect = (
       key: 'month' | 'day' | 'year',
-      value: string,
-      options: Array<{ label: string; value: string }>
+      value: number | string,
+      options: Array<{ label: string; value: number | string }>
     ) => (
       <select
         className="date-select"
@@ -105,6 +117,7 @@ export const DateSelector = memo(
       }),
     ];
 
+    const isErrorDate = isRequired && !isSetDate && error;
     return (
       <div className="select-date">
         <div className="date-panel">
@@ -112,9 +125,7 @@ export const DateSelector = memo(
           {renderSelect('day', day, dayOptions)}
           {renderSelect('year', year, yearOptions)}
         </div>
-        {isRequired && isSetDate && (
-          <p className="inp-err-message">{ERR_REQUIRED}</p>
-        )}
+        {isErrorDate && <p className="inp-err-message">{error}</p>}
       </div>
     );
   }

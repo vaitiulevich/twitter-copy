@@ -2,12 +2,14 @@ import avatar from '@assets/avatar.png';
 import banner from '@assets/banner.png';
 import addImg from '@assets/icons/addImg.svg';
 import bookmarks from '@assets/icons/bookmarks-light.svg';
+import deleteIcon from '@assets/icons/delete.png';
 import explore from '@assets/icons/explore-light.svg';
-import googleIcon from '@assets/icons/google-icon.svg';
+import googleIcon from '@assets/icons/Google-Symbol.png';
 import home from '@assets/icons/home-light.svg';
 import likeEmpty from '@assets/icons/likeEmpty.svg';
 import likeFill from '@assets/icons/likeFill.svg';
 import lists from '@assets/icons/lists-light.svg';
+import logOutIcon from '@assets/icons/logout.png';
 import messages from '@assets/icons/messages-light.svg';
 import notification from '@assets/icons/notification-light.svg';
 import option from '@assets/icons/option.svg';
@@ -22,6 +24,7 @@ export const images = {
   logo: logo,
   banner: banner,
   googleIcon: googleIcon,
+  logOutIcon: logOutIcon,
   visible: visible,
   unvisible: unvisible,
   home: home,
@@ -38,4 +41,5 @@ export const images = {
   likeEmpty: likeEmpty,
   likeFill: likeFill,
   search: search,
+  deleteIcon: deleteIcon,
 };
