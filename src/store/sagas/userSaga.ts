@@ -61,8 +61,8 @@ function* getUserDataRequest(
   const id = action.payload;
   try {
     const userData = yield call(fetchUserData, id);
-    yield put(getUserDataSuccess(userData));
     yield put(fetchPostsRequest(id));
+    yield put(getUserDataSuccess(userData));
   } catch (error) {
     if (error instanceof FirebaseError) {
       console.log(error.message);

@@ -16,11 +16,14 @@ export const ProfileHead = () => {
       </header>
       <div className="profile-hero-panel">
         <div className="profile-hero">
-          <img
-            className="profile-banner"
-            src={user.profileImg ?? images.profileBanner}
-            alt="profile-banner"
-          />
+          <div>
+            <img
+              className="profile-banner"
+              src={user.profileImg ?? images.profileBanner}
+              alt="profile-banner"
+            />
+          </div>
+
           <div className="profile-avatar">
             <img src={user.avatar ?? images.avatar} alt="avatar" />
           </div>

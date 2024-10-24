@@ -10,13 +10,14 @@ export const updateUserDataRequest = (
     type: types.UPDATE_USER_DATA_REQUEST,
     payload: { userData, userId },
   }) as const;
+
 export const updateUserDataSuccess = () =>
   ({
-    types: types.UPDATE_USER_DATA_SUCCESS,
+    type: types.UPDATE_USER_DATA_SUCCESS,
   }) as const;
 export const updateUserDataFailure = () =>
   ({
-    types: types.UPDATE_USER_DATA_FAILURE,
+    type: types.UPDATE_USER_DATA_FAILURE,
   }) as const;
 
 export const getUserData = (id: string) =>

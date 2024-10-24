@@ -5,7 +5,7 @@ import ErrorBoundary from '@components/ErrorBoundary/ErrorBoundary';
 import { MenuSidebar } from '@components/MenuSidebar/MenuSidebar';
 import { SearchSidebar } from '@components/SearchSidebar/SearchSidebar';
 import { getUserData } from '@store/actions/userActions';
-import { selectAuthUid } from '@store/selectors';
+import { selectAuthUid, selectUserPosts } from '@store/selectors';
 
 import './styles.scss';
 

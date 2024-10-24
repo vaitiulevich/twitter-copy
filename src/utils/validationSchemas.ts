@@ -11,12 +11,15 @@ import {
 } from '@constants/constants';
 import {
   ERR_INCORRECT_FILL,
+  ERR_MAX_LENTGH_NAME,
   ERR_MAX_LENTGH_PASSWORD,
+  ERR_MIN_LENTGH_NAME,
   ERR_MIN_LENTGH_PASSWORD,
   ERR_PASSWORD_CONFIRM,
   ERR_PASSWORD_CONTIN_NUM,
   ERR_PASSWORD_CONTIN_UPERCASE,
   ERR_PASSWORD_MATCH,
+  ERR_PASSWORD_RULES,
   ERR_REQUIRED,
 } from '@constants/messages';
 import * as yup from 'yup';
@@ -25,18 +28,18 @@ export const stringRequired = (min: number, max: number) =>
   yup
     .string()
     .required(ERR_REQUIRED)
-    .min(min, ERR_INCORRECT_FILL)
-    .max(max, ERR_INCORRECT_FILL);
+    .min(min, ERR_MIN_LENTGH_NAME)
+    .max(max, ERR_MAX_LENTGH_NAME);
 
 export const phoneValidation = yup.string().required(ERR_REQUIRED);
 
 export const passwordValidation = yup
   .string()
   .required(ERR_REQUIRED)
-  .min(MIN_LENTGH_PASSWORD, ERR_MIN_LENTGH_PASSWORD)
-  .max(MAX_LENTGH_PASSWORD, ERR_MAX_LENTGH_PASSWORD)
-  .matches(/(?=.*[0-9])/, ERR_PASSWORD_CONTIN_NUM)
-  .matches(/(?=.*[A-Z])/, ERR_PASSWORD_CONTIN_UPERCASE);
+  .min(MIN_LENTGH_PASSWORD, ERR_PASSWORD_RULES)
+  .max(MAX_LENTGH_PASSWORD, ERR_PASSWORD_RULES)
+  .matches(/(?=.*[0-9])/, ERR_PASSWORD_RULES)
+  .matches(/(?=.*[A-Z])/, ERR_PASSWORD_RULES);
 
 export const emailValidation = yup
   .string()
@@ -55,7 +58,10 @@ export const setPasswordValidationSchema = yup.object().shape({
 export const editProfileValidationSchema = yup.object().shape({
   name: stringRequired(MIN_LENTGH_NAME, MAX_LENTGH_NAME),
   phone: phoneValidation,
-  dateBirth: stringRequired(DATE_BIRTH_LENGTH, DATE_BIRTH_LENGTH),
+  dateBirth: yup
+    .date()
+    .max(new Date(), 'Дата не может быть в будущем')
+    .required('Дата рождения обязательна'),
   description: yup
     .string()
     .min(MIN_LENTGH_DESCRIPTION, ERR_INCORRECT_FILL)

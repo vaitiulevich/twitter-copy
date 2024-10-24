@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { PostOptionsMenu } from '@components/PostOptionsMenu/PostOptionsMenu';
 import { images } from '@constants/images';
 import { updatePostLikesRequest } from '@store/actions/postActions';
 import { PostState } from '@store/reducers/userReducer';
+import { selectThemeType } from '@store/selectors';
 import { formatTimestamp } from '@utils/formatTimestamp';
 import classNames from 'classnames';
 
@@ -39,6 +40,7 @@ export const Post = ({ post, userId }: { post: PostState; userId: string }) => {
   const togglePostMenu = () => {
     setIsMenuOpen((prev) => !prev);
   };
+  const theme = useSelector(selectThemeType);
 
   return (
     <div className="post">
@@ -53,7 +55,10 @@ export const Post = ({ post, userId }: { post: PostState; userId: string }) => {
             <span className="post-date">{formatTimestamp(post.timestamp)}</span>
           </div>
           <button onClick={togglePostMenu} className="post-options-btn">
-            <img src={images.option} alt="options" />
+            <img
+              src={theme === 'light' ? images.option : images.optionDark}
+              alt="options"
+            />
           </button>
           <PostOptionsMenu
             isOpen={isMenuOpen}

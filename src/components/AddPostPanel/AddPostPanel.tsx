@@ -11,7 +11,11 @@ import { RootState } from '@store/types';
 
 import './styles.scss';
 
-export const AddPostPanel = () => {
+export const AddPostPanel = ({
+  location = 'post-images',
+}: {
+  location?: string;
+}) => {
   const [postContent, setPostContent] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const user = useSelector((state: RootState) => state.user);
@@ -41,7 +45,7 @@ export const AddPostPanel = () => {
   };
 
   const isDisableBtn =
-    !postContent.trim() && selectedFiles.length === 0 && loading;
+    (!postContent.trim() && selectedFiles.length === 0) || loading;
   return (
     <div className="add-post-panel">
       <div className="add-post-avatar">
@@ -56,7 +60,7 @@ export const AddPostPanel = () => {
         />
         <div className="post-add-btns">
           <ImageUploader
-            name="post-images"
+            name={location}
             setImagesSelected={setSelectedFiles}
             initialFiles={selectedFiles}
             countFiles={MAX_POST_FILES}

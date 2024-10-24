@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleThemeRequest } from '@store/actions/themeActions';
 import { selectThemeType } from '@store/selectors';
@@ -12,11 +12,6 @@ const ThemeToggle = () => {
   const toggleTheme = () => {
     dispatch(toggleThemeRequest());
   };
-
-  useEffect(() => {
-    document.body.setAttribute('data-theme', theme);
-  }, [theme]);
-
   return (
     <>
       <label className="toggle-container">

@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ErrorBoundary from '@components/ErrorBoundary/ErrorBoundary';
 import { ProtectedRoute } from '@components/ProtectedRoute/ProtectedRoute';
@@ -8,6 +10,7 @@ import { SignUp } from '@pages/Auth/SignUp/SignUp';
 import { NoPageYet } from '@pages/NoPageYet/NoPageYet';
 import { Profile } from '@pages/Profile/Profile';
 import { UserAppWrapper } from '@pages/UserAppWrapper/UserAppWrapper';
+import { selectThemeType } from '@store/selectors';
 
 const router = createBrowserRouter([
   {
@@ -75,6 +78,11 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => {
+  const theme = useSelector(selectThemeType);
+
+  useEffect(() => {
+    document.body.setAttribute('data-theme', theme);
+  }, [theme]);
   return <RouterProvider router={router} />;
 };
 

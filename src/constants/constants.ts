@@ -47,31 +47,37 @@ export const NavMenu = [
     title: 'Home',
     link: '/home',
     img: images.home,
+    imgDark: images.homeDark,
   },
   {
     title: 'Explore',
     link: '/home',
     img: images.explore,
+    imgDark: images.exploreDark,
   },
   {
     title: 'Notifications',
     link: '/home',
     img: images.notification,
+    imgDark: images.notificationDark,
   },
   {
     title: 'Messages',
     link: '/home',
     img: images.messages,
+    imgDark: images.messagesDark,
   },
   {
     title: 'Lists',
     link: '/home',
     img: images.lists,
+    imgDark: images.listsDark,
   },
   {
     title: 'Profile',
     link: '/profile',
     img: images.profile,
+    imgDark: images.profileDark,
   },
 ];
 

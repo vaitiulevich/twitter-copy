@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { AddPostPanel } from '@components/AddPostPanel/AddPostPanel';
 import { Button } from '@components/Button/Button';
@@ -8,6 +8,7 @@ import { NavMenu } from '@constants/constants';
 import { images } from '@constants/images';
 import withModal from '@HOC/withModal';
 import { logoutRequest } from '@store/actions/authActions';
+import { selectThemeType } from '@store/selectors';
 
 import './styles.scss';
 
@@ -18,15 +19,19 @@ interface MenuSidebarProps {
 export const MenuSidebar = withModal(({ openModal }: MenuSidebarProps) => {
   const dispatch = useDispatch();
   const handleOpenModal = () => {
-    openModal(<AddPostPanel />);
+    openModal(<AddPostPanel location="modal-tweet" />);
   };
   const handleLogOut = () => {
     dispatch(logoutRequest());
   };
+  const theme = useSelector(selectThemeType);
   const renderMenu = () => {
     return NavMenu.map((item) => (
       <li className="nav-list-item" key={item.title}>
-        <img src={item.img} alt={item.title} />
+        <img
+          src={theme === 'light' ? item.img : item.imgDark}
+          alt={item.title}
+        />
         <Link to={item.link}>{item.title}</Link>
       </li>
     ));
@@ -35,7 +40,10 @@ export const MenuSidebar = withModal(({ openModal }: MenuSidebarProps) => {
     return NavMenu.map((item) => (
       <li className="nav-list-item" key={item.title}>
         <Link to={item.link}>
-          <img src={item.img} alt={item.title} />
+          <img
+            src={theme === 'light' ? item.img : item.imgDark}
+            alt={item.title}
+          />
         </Link>
       </li>
     ));
