@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@components/Button/Button';
 import { ControlledInput } from '@components/ControlledInput/ControlledInput';
 import { ErrorBlock } from '@components/ErrorBlock/ErrorBlock';
 import { images } from '@constants/images';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { registerRequest } from '@store/actions/authActions';
+import {
+  registerRequest,
+  resetAuthUser,
+  resetError,
+} from '@store/actions/authActions';
 import { selectAuthLoad, selectAuthUser } from '@store/selectors';
 import { passwordValidation, stringRequired } from '@utils/validationSchemas';
 import * as yup from 'yup';
@@ -49,6 +53,11 @@ export const SetPassword = () => {
     }
   };
 
+  const handleToSignUp = () => {
+    dispatch(resetError());
+    dispatch(resetAuthUser());
+  };
+
   useEffect(() => {
     if (!user) {
       navigate('/sign-up');
@@ -81,6 +90,15 @@ export const SetPassword = () => {
           />
           <Button type="submit" disabled={loading} text="Log Up" />
         </form>
+        <div>
+          <Link
+            to={'/sign-up'}
+            onClick={handleToSignUp}
+            className="to-sign-up-link"
+          >
+            to sign up
+          </Link>
+        </div>
         {isNotMatch && <ErrorBlock message="Passwords do not match" />}
       </div>
     </section>

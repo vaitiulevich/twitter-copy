@@ -1,9 +1,19 @@
+@import '@styles/breakpoints';
+
 .user-app-wrapper {
   padding: 0 5rem;
   display: grid;
   grid-template-columns: 1fr 3fr 1fr;
+  @include respond-to(tablet) {
+    padding: 0;
+    display: flex;
+    flex-direction: column-reverse;
+  }
 }
 .main-section {
   border-right: 0.01rem solid var(--border-color);
   border-left: 0.01rem solid var(--border-color);
+  @include respond-to(tablet) {
+    border: none;
+  }
 }

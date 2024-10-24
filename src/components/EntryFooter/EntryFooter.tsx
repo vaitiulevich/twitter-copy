@@ -19,7 +19,9 @@ export const EntryFooter = () => {
 
   return (
     <footer className="entry-footer">
-      <ThemeToggle />
+      <div className="toggle-block">
+        <ThemeToggle />
+      </div>
       {renderFooterLinks()}
       <span>© 2021 Twitter, Inc.</span>
     </footer>

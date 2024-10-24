@@ -1,6 +1,11 @@
+@import '@styles/breakpoints';
+
 .toggle-container {
   display: flex;
   align-items: center;
+  @include respond-to(mobile) {
+    justify-content: flex-end;
+  }
 
   .toggle-input {
     display: none;

@@ -1,4 +1,5 @@
 @import '@styles/themes';
+@import '@styles/breakpoints';
 
 .entry-container {
   min-height: 100vh;
@@ -11,10 +12,24 @@
   flex-grow: 1;
   gap: 1.5rem;
 }
+.entry-banner {
+  width: 100%;
+  object-fit: cover;
+}
+.entry-banner-block {
+  width: 50%;
+  @include respond-to(mobile) {
+    display: none;
+  }
+}
 .entry-title {
   font-size: 4rem;
   margin: 2rem 0;
   font-weight: 900;
+
+  @include respond-to(mobile) {
+    font-size: 2.5rem;
+  }
 }
 .entry-subtitle {
   font-size: 2rem;
@@ -26,6 +41,10 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  @include respond-to(mobile) {
+    width: 100%;
+    align-items: center;
+  }
 }
 .entry-btns-panel {
   width: 20rem;

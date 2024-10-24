@@ -1,3 +1,5 @@
+@import '@styles/breakpoints';
+
 .nav-list {
   list-style: none;
   margin: 0;
@@ -16,6 +18,37 @@
 .header-menu-sidebar {
   margin: 1rem 0 1.5rem;
 }
+.desctop-menu-sidebar {
+  @include respond-to(tablet) {
+    display: none;
+  }
+}
+.mobile-menu-sidebar {
+  display: none;
+  @include respond-to(tablet) {
+    display: block;
+  }
+}
+.mobile-menu-nav .nav-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 .menu-sidebar {
   padding-right: 1rem;
+  @include respond-to(tablet) {
+    padding: 0.5rem;
+    border-top: 0.01rem solid var(--border-color);
+    position: sticky;
+    bottom: 0;
+    background-color: var(--background);
+    z-index: 100;
+  }
+}
+.log-out-button {
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  height: 2.5rem;
 }

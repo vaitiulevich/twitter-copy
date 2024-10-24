@@ -1,7 +1,12 @@
+@import '@styles/breakpoints';
+
 .set-password-section {
   height: 100vh;
   display: flex;
   justify-content: center;
+  @include respond-to(mobile) {
+    padding: 0 1rem;
+  }
 }
 .set-password-form-container {
   margin-top: 3rem;
@@ -16,4 +21,8 @@
   color: var(--error-text);
   background-color: var(--error-bg);
   border-radius: 0.5rem;
+}
+.to-sign-up-link {
+  color: var(--link-text);
+  font-size: 0.8rem;
 }

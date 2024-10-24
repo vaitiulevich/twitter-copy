@@ -19,8 +19,8 @@ export const Entry = () => {
   return (
     <div className="entry-container">
       <section className="entry-content">
-        <div>
-          <img src={images.banner} alt="banner" />
+        <div className="entry-banner-block">
+          <img src={images.banner} className="entry-banner" alt="banner" />
         </div>
         <div className="entry-contant-panel">
           <div>
