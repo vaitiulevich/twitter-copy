@@ -68,7 +68,7 @@ export function* uploadImages(files: File[]): Generator {
 
 function* addPost(action: ReturnType<typeof addPostRequest>): Generator {
   try {
-    const { files, ...postFields } = action.payload;
+    const { files, ...postFields } = action.payload.postData;
     let postData = { ...postFields };
 
     if (files && files.length > 0) {
@@ -83,6 +83,9 @@ function* addPost(action: ReturnType<typeof addPostRequest>): Generator {
   } catch (error) {
     console.log(error);
     yield put(addPostFailure());
+  }
+  if (action.payload.onClose) {
+    yield action.payload.onClose();
   }
 }
 

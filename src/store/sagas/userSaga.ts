@@ -8,6 +8,7 @@ import {
   getUserData,
   getUserDataSuccess,
   updateUserDataRequest,
+  updateUserDataSuccess,
 } from '@store/actions/userActions';
 import {
   CHANGE_PASSWORD_REQUEST,
@@ -96,8 +97,14 @@ function* updateUserData(
     }
     const userDocRef = doc(db, 'users', action.payload.userId);
     yield updateDoc(userDocRef, postData);
+    const newUserData = yield call(fetchUserData, action.payload.userId);
+    yield put(getUserDataSuccess(newUserData));
+    yield put(updateUserDataSuccess());
   } catch (error) {
     console.error(error);
+  }
+  if (action.payload.closeModal) {
+    action.payload.closeModal();
   }
 }
 

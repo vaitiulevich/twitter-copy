@@ -3,6 +3,7 @@ import { Modal } from '@components/Modal/Modal';
 
 interface WithModalProps {
   openModal: (content: React.ReactNode) => void;
+  onCloseModal: () => void;
 }
 
 const withModal = <P extends object>(
@@ -24,7 +25,11 @@ const withModal = <P extends object>(
 
     return (
       <>
-        <WrappedComponent {...(props as P)} openModal={openModal} />
+        <WrappedComponent
+          {...(props as P)}
+          openModal={openModal}
+          onCloseModal={closeModal}
+        />
         <Modal isOpen={isOpen} onClose={closeModal}>
           {modalContent}
         </Modal>

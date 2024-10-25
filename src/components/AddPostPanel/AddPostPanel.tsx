@@ -13,8 +13,10 @@ import './styles.scss';
 
 export const AddPostPanel = ({
   location = 'post-images',
+  onCloseModal,
 }: {
   location?: string;
+  onCloseModal?: () => void;
 }) => {
   const [postContent, setPostContent] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -39,7 +41,11 @@ export const AddPostPanel = ({
       timestamp: new Date().getTime(),
       postId: '',
     };
-    dispatch(addPostRequest(postData));
+    if (onCloseModal) {
+      dispatch(addPostRequest(postData, onCloseModal));
+    } else {
+      dispatch(addPostRequest(postData));
+    }
     setPostContent('');
     setSelectedFiles([]);
   };

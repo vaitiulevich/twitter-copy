@@ -1,10 +1,13 @@
 import { PostState } from '@store/reducers/userReducer';
 import * as actions from '@store/types/posts/actionTypes';
 
-export const addPostRequest = (postData: PostState & { files?: File[] }) =>
+export const addPostRequest = (
+  postData: PostState & { files?: File[] },
+  onClose?: () => void
+) =>
   ({
     type: actions.ADD_POST_REQUEST,
-    payload: postData,
+    payload: { postData, onClose },
   }) as const;
 
 export const addPostSuccess = (post: PostState) =>

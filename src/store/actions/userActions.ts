@@ -29,11 +29,12 @@ export const changePasswordFailure = (error: string) =>
 
 export const updateUserDataRequest = (
   userId: string,
-  userData: Omit<User, 'email'> & ProfileFiles
+  userData: Omit<User, 'email'> & ProfileFiles,
+  closeModal?: () => void
 ) =>
   ({
     type: actions.UPDATE_USER_DATA_REQUEST,
-    payload: { userData, userId },
+    payload: { userData, userId, closeModal },
   }) as const;
 
 export const updateUserDataSuccess = () =>

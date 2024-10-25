@@ -7,7 +7,8 @@ import { ImageUploader } from '@components/ImageUploader/ImageUploader';
 import { images } from '@constants/images';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { updateUserDataRequest } from '@store/actions/userActions';
-import { selectUserSelector } from '@store/selectors';
+import { selectUserLoad, selectUserSelector } from '@store/selectors';
+import { formatDate } from '@utils/formatDate';
 import { editProfileValidationSchema } from '@utils/validationSchemas';
 import * as yup from 'yup';
 
@@ -20,7 +21,11 @@ interface FormData {
   dateBirth: Date;
 }
 
-export const EditProfileForm = () => {
+export const EditProfileForm = ({
+  onCloseModal,
+}: {
+  onCloseModal?: () => void;
+}) => {
   const { control, handleSubmit } = useForm({
     mode: 'all',
     resolver: yupResolver(editProfileValidationSchema),
@@ -28,17 +33,22 @@ export const EditProfileForm = () => {
   const { name, description, dateBirth, phone, userId, avatar, profileImg } =
     useSelector(selectUserSelector);
   const onSubmit = (data: FormData) => {
-    const birth = data.dateBirth;
-    const dateString = `${birth.getFullYear()}-${birth.getMonth() + 1}-${birth.getDate()}`;
+    const { dateBirth } = data;
+    const dateString = formatDate(dateBirth);
     const newData = {
       ...data,
       dateBirth: dateString,
       avatarFile: selectedAvatar[0] ?? null,
       bannerFile: selectedBanner[0] ?? null,
     };
-    dispatch(updateUserDataRequest(userId, newData));
+    if (onCloseModal) {
+      dispatch(updateUserDataRequest(userId, newData, onCloseModal));
+    } else {
+      dispatch(updateUserDataRequest(userId, newData));
+    }
   };
   const dispatch = useDispatch();
+  const loading = useSelector(selectUserLoad);
   const [selectedBanner, setSelectedBanner] = useState<File[]>([]);
   const [selectedAvatar, setSelectedAvatar] = useState<File[]>([]);
 
@@ -104,7 +114,12 @@ export const EditProfileForm = () => {
           control={control}
           placeholder="dateBirth"
         />
-        <Button type="submit" text="Update" />
+        <Button
+          type="submit"
+          loading={loading}
+          disabled={loading}
+          text="Update"
+        />
       </form>
     </div>
   );

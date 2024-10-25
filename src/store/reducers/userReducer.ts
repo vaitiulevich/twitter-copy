@@ -6,6 +6,9 @@ import {
   CLEAR_USER_DATA,
   FETCH_POSTS_SUCCESS,
   GET_USER_DATA_SUCCESS,
+  UPDATE_USER_DATA_FAILURE,
+  UPDATE_USER_DATA_REQUEST,
+  UPDATE_USER_DATA_SUCCESS,
   UserAction,
 } from '@store/types/user/actionTypes';
 import { string } from 'yup';
@@ -84,7 +87,13 @@ const userReducer = (state = initialState, action: UserAction) => {
     case CHANGE_PASSWORD_REQUEST:
       return { ...state, loading: true, error: null };
     case GET_USER_DATA_SUCCESS:
-      return { ...state, ...action.payload };
+      return { ...state, ...action.payload, loading: false };
+    case UPDATE_USER_DATA_REQUEST:
+      return { ...state, loading: true };
+    case UPDATE_USER_DATA_SUCCESS:
+      return { ...state, loading: false };
+    case UPDATE_USER_DATA_FAILURE:
+      return { ...state, loading: false };
     case FETCH_POSTS_SUCCESS:
       return { ...state, posts: action.payload };
     case CLEAR_USER_DATA:
