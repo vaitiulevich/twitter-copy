@@ -28,6 +28,10 @@ export const selectUserError = createSelector(
   [selectUser],
   (user) => user.error
 );
+export const selectUserStatus = createSelector(
+  [selectUser],
+  (user) => user.status
+);
 export const selectUserPosts = createSelector(
   [selectUser],
   (user) => user.posts

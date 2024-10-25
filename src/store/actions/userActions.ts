@@ -15,9 +15,10 @@ export const clearError = () =>
   ({
     type: actions.CLEAR_ERROR,
   }) as const;
-export const changePasswordSuccess = () =>
+export const changePasswordSuccess = (status: string | null) =>
   ({
     type: actions.CHANGE_PASSWORD_SUCCESS,
+    payload: { status },
   }) as const;
 
 export const changePasswordFailure = (error: string) =>

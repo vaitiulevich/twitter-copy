@@ -22,7 +22,7 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { eventChannel } from 'redux-saga';
-import { call, put, take, takeEvery } from 'redux-saga/effects';
+import { call, delay, put, take, takeEvery } from 'redux-saga/effects';
 
 import { auth, db } from '../../firebase';
 import { uploadImages } from './postSagas';
@@ -111,26 +111,22 @@ function* changePasswordSaga(
         user.email as string,
         action.payload.oldPassword
       );
-      const res = yield reauthenticateWithCredential(user, credential);
-      console.log(credential);
-      console.log(res);
+      yield reauthenticateWithCredential(user, credential);
       yield call(updatePassword, user, action.payload.newPassword);
 
       const userRef = doc(db, 'users', user.uid);
       yield updateDoc(userRef, { password: action.payload.newPassword });
 
-      yield put(changePasswordSuccess());
-      console.log('success');
+      yield put(changePasswordSuccess('success'));
+      yield delay(3000);
+      yield put(changePasswordSuccess(null));
     }
   } catch (error) {
     if (error instanceof FirebaseError) {
-      console.log(error.message);
-      console.log(error.code);
       if (error.code === 'auth/invalid-credential') {
         yield put(changePasswordFailure('invalid old password'));
       }
     }
-    // yield put(changePasswordFailure(error.message));
   }
 }
 

@@ -13,6 +13,7 @@
 .main-section {
   border-right: 0.01rem solid var(--border-color);
   border-left: 0.01rem solid var(--border-color);
+  min-height: 100vh;
   @include respond-to(tablet) {
     border: none;
   }

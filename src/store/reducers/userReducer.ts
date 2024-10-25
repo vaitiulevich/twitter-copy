@@ -8,6 +8,7 @@ import {
   GET_USER_DATA_SUCCESS,
   UserAction,
 } from '@store/types/user/actionTypes';
+import { string } from 'yup';
 
 export interface User {
   uid?: string;
@@ -51,6 +52,7 @@ export interface PostState {
 interface StatusRequest {
   loading?: boolean;
   error?: string | null;
+  status?: string | null;
 }
 
 const initialState: UserState & StatusRequest = {
@@ -67,6 +69,7 @@ const initialState: UserState & StatusRequest = {
   following: [],
   posts: [],
   loading: false,
+  status: null,
   error: null,
 };
 
@@ -75,7 +78,7 @@ const userReducer = (state = initialState, action: UserAction) => {
     case CLEAR_ERROR:
       return { ...state, error: null };
     case CHANGE_PASSWORD_SUCCESS:
-      return { ...state, loading: false, error: null };
+      return { ...state, loading: false, ...action.payload, error: null };
     case CHANGE_PASSWORD_FAILURE:
       return { ...state, loading: false, error: action.payload };
     case CHANGE_PASSWORD_REQUEST:

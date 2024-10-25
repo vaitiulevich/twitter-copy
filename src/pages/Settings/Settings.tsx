@@ -5,7 +5,11 @@ import { ControlledInput } from '@components/ControlledInput/ControlledInput';
 import { ErrorBlock } from '@components/ErrorBlock/ErrorBlock';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { changePasswordRequest } from '@store/actions/userActions';
-import { selectUserError, selectUserLoad } from '@store/selectors';
+import {
+  selectUserError,
+  selectUserLoad,
+  selectUserStatus,
+} from '@store/selectors';
 import { chandgePasswordValidationSchema } from '@utils/validationSchemas';
 
 import './styles.scss';
@@ -20,10 +24,10 @@ export const Settings = () => {
     resolver: yupResolver(chandgePasswordValidationSchema),
   });
   const onSubmit = (data: FormData) => {
-    console.log(data);
     dispatch(changePasswordRequest(data.newPassword, data.password));
   };
   const error = useSelector(selectUserError);
+  const status = useSelector(selectUserStatus);
   const loading = useSelector(selectUserLoad);
 
   return (
@@ -51,6 +55,7 @@ export const Settings = () => {
             text="Change password"
           />
         </form>
+        {status !== null && <p className="succes-status">Access</p>}
         {error && <ErrorBlock message={error} />}
       </div>
     </section>
