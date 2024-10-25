@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { AddPostPanel } from '@components/AddPostPanel/AddPostPanel';
 import { Button } from '@components/Button/Button';
 import { UserShortInfo } from '@components/UserShortInfo/UserShortInfo';
@@ -9,6 +9,7 @@ import { images } from '@constants/images';
 import withModal from '@HOC/withModal';
 import { logoutRequest } from '@store/actions/authActions';
 import { selectThemeType } from '@store/selectors';
+import classNames from 'classnames';
 
 import './styles.scss';
 
@@ -18,6 +19,7 @@ interface MenuSidebarProps {
 
 export const MenuSidebar = withModal(({ openModal }: MenuSidebarProps) => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const handleOpenModal = () => {
     openModal(<AddPostPanel location="modal-tweet" />);
   };
@@ -26,15 +28,23 @@ export const MenuSidebar = withModal(({ openModal }: MenuSidebarProps) => {
   };
   const theme = useSelector(selectThemeType);
   const renderMenu = () => {
-    return NavMenu.map((item) => (
-      <li className="nav-list-item" key={item.title}>
-        <img
-          src={theme === 'light' ? item.img : item.imgDark}
-          alt={item.title}
-        />
-        <Link to={item.link}>{item.title}</Link>
-      </li>
-    ));
+    return NavMenu.map((item) => {
+      const isActive = location.pathname === item.link;
+      return (
+        <li className="nav-list-item" key={item.title}>
+          <img
+            src={theme === 'light' ? item.img : item.imgDark}
+            alt={item.title}
+          />
+          <Link
+            className={classNames('nav-list-item-link', { active: isActive })}
+            to={item.link}
+          >
+            {item.title}
+          </Link>
+        </li>
+      );
+    });
   };
   const renderMobileMenu = () => {
     return NavMenu.map((item) => (
