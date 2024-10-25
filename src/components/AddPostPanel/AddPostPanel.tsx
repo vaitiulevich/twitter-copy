@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@components/Button/Button';
 import { ImageUploader } from '@components/ImageUploader/ImageUploader';
-import { MAX_POST_FILES } from '@constants/constants';
+import { MAX_CHARS_IN_POST, MAX_POST_FILES } from '@constants/constants';
 import { images } from '@constants/images';
 import { addPostRequest } from '@store/actions/postActions';
 import { PostState } from '@store/reducers/userReducer';
@@ -25,7 +25,10 @@ export const AddPostPanel = ({
   const loading = useSelector(selectPostLoad);
 
   const handleTextareaChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setPostContent(e.target.value);
+    const { value } = e.target;
+    if (value.length <= MAX_CHARS_IN_POST) {
+      setPostContent(value);
+    }
   };
 
   const handlePostSubmit = () => {
@@ -50,6 +53,7 @@ export const AddPostPanel = ({
     setSelectedFiles([]);
   };
 
+  const currentLength = postContent.length;
   const isDisableBtn =
     (!postContent.trim() && selectedFiles.length === 0) || loading;
   return (
@@ -58,12 +62,20 @@ export const AddPostPanel = ({
         <img src={user.avatar ?? images.avatar} alt="avatar" />
       </div>
       <div className="add-posts-block">
-        <textarea
-          value={postContent}
-          className="post-input"
-          onChange={handleTextareaChange}
-          placeholder="What’s happening"
-        />
+        <div>
+          <div className="post-char-count">
+            <span>
+              {currentLength}/{MAX_CHARS_IN_POST}
+            </span>
+          </div>
+          <textarea
+            value={postContent}
+            className="post-input"
+            onChange={handleTextareaChange}
+            placeholder="What’s happening"
+          />
+        </div>
+
         <div className="post-add-btns">
           <ImageUploader
             name={location}

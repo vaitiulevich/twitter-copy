@@ -1,8 +1,17 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { DEFAULT_POST_FILES } from '@constants/constants';
 import { images, images as imagesIcons } from '@constants/images';
-import { ERR_COUNT_FILES, ERR_INVALID_FILE } from '@constants/messages';
-import { isImageFile } from '@utils/checkImageFile';
+import {
+  ERR_COUNT_FILES,
+  ERR_INVALID_DIMENSIONS,
+  ERR_INVALID_FILE,
+  ERR_INVALID_SIZE,
+} from '@constants/messages';
+import {
+  isFileSizeValid,
+  isImageDimensionsValid,
+  isImageFile,
+} from '@utils/checkImageFile';
 
 import './styles.scss';
 
@@ -46,6 +55,17 @@ export const ImageUploader = ({
         const byteArray = new Uint8Array(arrayBuffer);
 
         if (isImageFile(byteArray)) {
+          if (!isFileSizeValid(file)) {
+            setErrors((prev) => [...prev, ERR_INVALID_SIZE]);
+            return;
+          }
+
+          const dimensionsValid = await isImageDimensionsValid(file);
+          if (!dimensionsValid) {
+            setErrors((prev) => [...prev, ERR_INVALID_DIMENSIONS]);
+            return;
+          }
+
           newFiles.push(file);
         } else {
           setErrors((prev) => [...prev, ERR_INVALID_FILE]);

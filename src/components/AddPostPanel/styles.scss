@@ -21,6 +21,9 @@
   scrollbar-width: thin;
   scrollbar-color: var(--secondary-text);
 }
+.post-char-count {
+  text-align: end;
+}
 .add-posts-block {
   width: 90%;
 }

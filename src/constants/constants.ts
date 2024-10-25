@@ -1,5 +1,10 @@
 import { images } from '@constants/images';
 
+export const MAX_CHARS_IN_POST = 500;
+export const MAX_FILE_SIZE = 5 * 1024 * 1024;
+export const MAX_WIDTH = 1920;
+export const MAX_HEIGHT = 1080;
+
 export const Months = [
   'January',
   'February',
