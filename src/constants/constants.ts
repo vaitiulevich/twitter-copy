@@ -1,7 +1,7 @@
 import { images } from '@constants/images';
 
 export const MAX_CHARS_IN_POST = 500;
-export const MAX_FILE_SIZE = 5 * 1024 * 1024;
+export const MAX_FILE_SIZE = 160 * 1024;
 export const MAX_WIDTH = 1920;
 export const MAX_HEIGHT = 1080;
 
@@ -56,25 +56,25 @@ export const NavMenu = [
   },
   {
     title: 'Explore',
-    link: '/home',
+    link: '/explore',
     img: images.explore,
     imgDark: images.exploreDark,
   },
   {
     title: 'Notifications',
-    link: '/home',
+    link: '/notification',
     img: images.notification,
     imgDark: images.notificationDark,
   },
   {
     title: 'Messages',
-    link: '/home',
+    link: '/message',
     img: images.messages,
     imgDark: images.messagesDark,
   },
   {
     title: 'Lists',
-    link: '/home',
+    link: '/lists',
     img: images.lists,
     imgDark: images.listsDark,
   },

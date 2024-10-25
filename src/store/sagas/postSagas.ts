@@ -142,14 +142,10 @@ function createPostsChannel(postsQuery: Query<DocumentData>) {
 }
 
 function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
-  const userId = action.payload;
+  const userId = action.payload.id;
   let channel;
   try {
-    const postsQuery = query(
-      collection(db, 'posts'),
-      where('userId', '==', userId),
-      orderBy('timestamp', 'desc')
-    );
+    const postsQuery = action.payload.query();
     yield getDocs(postsQuery);
 
     channel = yield call(createPostsChannel, postsQuery);

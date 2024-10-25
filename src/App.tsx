@@ -7,6 +7,7 @@ import { Entry } from '@pages/Auth/Entry/Entry';
 import { SetPassword } from '@pages/Auth/SetPassword/SetPassword';
 import { SignIn } from '@pages/Auth/SignIn/SignIn';
 import { SignUp } from '@pages/Auth/SignUp/SignUp';
+import { Home } from '@pages/Home/Home';
 import { NoPageYet } from '@pages/NoPageYet/NoPageYet';
 import { Profile } from '@pages/Profile/Profile';
 import { Settings } from '@pages/Settings/Settings';
@@ -73,6 +74,10 @@ const router = createBrowserRouter([
       {
         path: 'profile',
         element: <Profile />,
+      },
+      {
+        path: 'home',
+        element: <Home />,
       },
       {
         path: 'settings',

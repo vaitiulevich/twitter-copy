@@ -13,7 +13,7 @@ export const INCORRECT_CREDS =
   'Incorrect login/password entry or such user does not exist';
 export const ERR_COUNT_FILES = `Can contain a maximum:`;
 export const ERR_INVALID_FILE = 'The file is not a PNG or JPG image.';
-export const ERR_INVALID_SIZE = 'invalid size (ok:5mb)';
+export const ERR_INVALID_SIZE = 'invalid size (ok:160kb)';
 export const ERR_INVALID_DIMENSIONS = 'invalid demensions';
 
 export const ERR_BOUNDARY_MESS = 'Something went wrong';

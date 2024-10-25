@@ -32,7 +32,9 @@ export const ProfileHead = () => {
         <div className="profile-bio">
           <h3 className="profile-name">{user.name}</h3>
           <p className="profile-slug">{user.userSlug}</p>
-          {user.description && <p>{user.description}</p>}
+          {user.description && (
+            <p className="profile-description">{user.description}</p>
+          )}
           <div className="follow-panel">
             <div>
               <span>{user.following.length}</span>

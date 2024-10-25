@@ -1,5 +1,6 @@
 import { PostState } from '@store/reducers/userReducer';
 import * as actions from '@store/types/posts/actionTypes';
+import { DocumentData, Query } from 'firebase/firestore';
 
 export const addPostRequest = (
   postData: PostState & { files?: File[] },
@@ -60,10 +61,13 @@ export const deletePostFailure = (error: string) =>
     payload: error,
   }) as const;
 
-export const fetchPostsRequest = (id: string) =>
+export const fetchPostsRequest = (
+  id: string,
+  query: () => Query<DocumentData, DocumentData>
+) =>
   ({
     type: actions.FETCH_POSTS_REQUEST,
-    payload: id,
+    payload: { id, query },
   }) as const;
 export const fetchPostsFailure = () =>
   ({
