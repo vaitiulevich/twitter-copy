@@ -36,6 +36,10 @@ export const selectUserPosts = createSelector(
   [selectUser],
   (user) => user.posts
 );
+export const selectPostById = createSelector(
+  [selectUser, (state: RootState, postId: string) => postId],
+  (user, postId) => user.posts.find((p) => p.id === postId)
+);
 
 const selectAuth = (state: RootState) => state.auth;
 export const selectAuthTimestamp = createSelector(

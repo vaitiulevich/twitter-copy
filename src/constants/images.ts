@@ -9,6 +9,8 @@ import explore from '@assets/icons/explore-light.svg';
 import googleIcon from '@assets/icons/Google-Symbol.png';
 import homeDark from '@assets/icons/home-dark.svg';
 import home from '@assets/icons/home-light.svg';
+import left from '@assets/icons/left.svg';
+import leftDark from '@assets/icons/left-dark.svg';
 import likeEmpty from '@assets/icons/likeEmpty.svg';
 import likeFill from '@assets/icons/likeFill.svg';
 import listsDark from '@assets/icons/lists-dark.svg';
@@ -66,4 +68,7 @@ export const images = {
   listsDark: listsDark,
   profileDark: profileDark,
   optionDark: optionDark,
+
+  leftArrow: left,
+  leftArrowDark: leftDark,
 };

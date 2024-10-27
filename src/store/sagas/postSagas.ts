@@ -145,9 +145,11 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
   const userId = action.payload.id;
   let channel;
   try {
+    if (!action.payload.query) {
+      return;
+    }
     const postsQuery = action.payload.query();
     yield getDocs(postsQuery);
-
     channel = yield call(createPostsChannel, postsQuery);
     while (true) {
       const updatedPosts = yield take(channel);

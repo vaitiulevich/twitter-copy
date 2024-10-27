@@ -9,9 +9,10 @@ import './styles.scss';
 
 interface FeedProps {
   query: () => Query<DocumentData, DocumentData>;
+  isNavigateFeed?: boolean;
 }
 
-export const Feed = ({ query }: FeedProps) => {
+export const Feed = ({ query, isNavigateFeed = false }: FeedProps) => {
   const userId = useSelector(selectUserId);
   const posts = useSelector(selectUserPosts);
   const dispatch = useDispatch();
@@ -19,9 +20,15 @@ export const Feed = ({ query }: FeedProps) => {
   useEffect(() => {
     dispatch(fetchPostsRequest(userId, query));
   }, [dispatch, userId]);
+
   const renderTweets = () => {
     return posts.map((post) => (
-      <Post key={post.id} post={post} userId={userId} />
+      <Post
+        key={post.id}
+        post={post}
+        userId={userId}
+        navigateTo={isNavigateFeed ? `posts/${post.id}` : undefined}
+      />
     ));
   };
   const isHasPosts = posts && posts.length > 0;
