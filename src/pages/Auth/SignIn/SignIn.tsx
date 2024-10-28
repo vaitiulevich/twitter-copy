@@ -23,7 +23,6 @@ interface FormData {
 
 export const SignIn = () => {
   const [isEmailLogin, setIsEmailLogin] = useState(true);
-
   const { control, handleSubmit } = useForm({
     mode: 'all',
     resolver: yupResolver(signInValidationSchema),

@@ -10,6 +10,7 @@ import { useDispatch } from 'react-redux';
 import { Input } from '@components/Input/Input';
 import { PHONE_MASK_LENGTH } from '@constants/constants';
 import { resetError } from '@store/actions/authActions';
+import { clearError } from '@store/actions/userActions';
 import { formatPhoneNumber } from '@utils/formatPhoneNumber';
 
 interface ControlledInputProps<T extends FieldValues> {
@@ -44,6 +45,7 @@ export const ControlledInput = <T extends FieldValues>({
     const { value } = event.target;
     const isFormatPhone = type === 'phone';
     dispatch(resetError());
+    dispatch(clearError());
 
     if (isFormatPhone && value.length > PHONE_MASK_LENGTH) {
       return;

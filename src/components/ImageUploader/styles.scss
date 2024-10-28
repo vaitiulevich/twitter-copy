@@ -9,15 +9,10 @@
   align-items: center;
   justify-content: space-between;
 }
-.post-input {
-  width: 95%;
-  border: none;
-  resize: none;
-  padding: 10px;
-  outline: none;
-  font-size: 1rem;
-  scrollbar-width: thin;
-  scrollbar-color: var(--secondary-text);
+.add-img-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 .error-messages {
   color: var(--error-text);

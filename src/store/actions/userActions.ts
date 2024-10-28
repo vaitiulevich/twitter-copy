@@ -1,47 +1,68 @@
-import { PostState } from '@store/reducers/userReducer';
 import { ProfileFiles, User } from '@store/types';
-import * as types from '@store/types/user/actionTypes';
+import * as actions from '@store/types/user/actionTypes';
+
+export const changePasswordRequest = (
+  newPassword: string,
+  oldPassword: string
+) =>
+  ({
+    type: actions.CHANGE_PASSWORD_REQUEST,
+    payload: { newPassword, oldPassword },
+  }) as const;
+
+export const clearError = () =>
+  ({
+    type: actions.CLEAR_ERROR,
+  }) as const;
+export const changePasswordSuccess = (status: string | null) =>
+  ({
+    type: actions.CHANGE_PASSWORD_SUCCESS,
+    payload: { status },
+  }) as const;
+
+export const changePasswordFailure = (error: string) =>
+  ({
+    type: actions.CHANGE_PASSWORD_FAILURE,
+    payload: error,
+  }) as const;
 
 export const updateUserDataRequest = (
   userId: string,
-  userData: Omit<User, 'email'> & ProfileFiles
+  userData: Omit<User, 'email'> & ProfileFiles,
+  closeModal?: () => void
 ) =>
   ({
-    type: types.UPDATE_USER_DATA_REQUEST,
-    payload: { userData, userId },
+    type: actions.UPDATE_USER_DATA_REQUEST,
+    payload: { userData, userId, closeModal },
   }) as const;
+
 export const updateUserDataSuccess = () =>
   ({
-    types: types.UPDATE_USER_DATA_SUCCESS,
+    type: actions.UPDATE_USER_DATA_SUCCESS,
   }) as const;
 export const updateUserDataFailure = () =>
   ({
-    types: types.UPDATE_USER_DATA_FAILURE,
+    type: actions.UPDATE_USER_DATA_FAILURE,
   }) as const;
 
 export const getUserData = (id: string) =>
   ({
-    type: types.GET_USER_DATA,
+    type: actions.GET_USER_DATA,
     payload: id,
   }) as const;
 
 export const getUserDataSuccess = (user: User) =>
   ({
-    type: types.GET_USER_DATA_SUCCESS,
+    type: actions.GET_USER_DATA_SUCCESS,
     payload: user,
   }) as const;
 
 export const getUserDataFailure = () =>
   ({
-    type: types.GET_USER_DATA_FAILURE,
-  }) as const;
-export const fetchPostsSuccess = (posts: PostState[]) =>
-  ({
-    type: types.FETCH_POSTS_SUCCESS,
-    payload: posts,
+    type: actions.GET_USER_DATA_FAILURE,
   }) as const;
 
 export const clearUserData = () =>
   ({
-    type: types.CLEAR_USER_DATA,
+    type: actions.CLEAR_USER_DATA,
   }) as const;

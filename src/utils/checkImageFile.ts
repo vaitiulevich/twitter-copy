@@ -1,4 +1,10 @@
-import { jpgSignature, pngSignature } from '@constants/constants';
+import {
+  jpgSignature,
+  MAX_FILE_SIZE,
+  MAX_HEIGHT,
+  MAX_WIDTH,
+  pngSignature,
+} from '@constants/constants';
 
 export const isImageFile = (byteArray: Uint8Array) => {
   if (
@@ -17,4 +23,20 @@ export const isImageFile = (byteArray: Uint8Array) => {
   }
 
   return false;
+};
+
+export const isFileSizeValid = (file: File) => {
+  return file.size <= MAX_FILE_SIZE;
+};
+export const isImageDimensionsValid = (file: File): Promise<boolean> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+    img.onload = () => {
+      resolve(img.width <= MAX_WIDTH && img.height <= MAX_HEIGHT);
+    };
+    img.onerror = () => {
+      resolve(false);
+    };
+  });
 };

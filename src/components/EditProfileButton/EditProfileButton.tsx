@@ -6,17 +6,18 @@ import './styles.scss';
 
 interface EditButtonProps {
   openModal: (content: ReactNode) => void;
+  onCloseModal: () => void;
 }
 
-export const EditProfileButton = withModal(({ openModal }: EditButtonProps) => {
-  const handleOpenModal = () => {
-    openModal(<EditProfileForm />);
-  };
-  return (
-    <div className="profile-edit-options">
+export const EditProfileButton = withModal(
+  ({ openModal, onCloseModal }: EditButtonProps) => {
+    const handleOpenModal = () => {
+      openModal(<EditProfileForm onCloseModal={onCloseModal} />);
+    };
+    return (
       <button onClick={handleOpenModal} className="profile-edit-btn">
         Edit profile
       </button>
-    </div>
-  );
-});
+    );
+  }
+);

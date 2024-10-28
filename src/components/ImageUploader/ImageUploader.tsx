@@ -1,8 +1,17 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { DEFAULT_POST_FILES } from '@constants/constants';
 import { images, images as imagesIcons } from '@constants/images';
-import { ERR_COUNT_FILES, ERR_INVALID_FILE } from '@constants/messages';
-import { isImageFile } from '@utils/checkImageFile';
+import {
+  ERR_COUNT_FILES,
+  ERR_INVALID_DIMENSIONS,
+  ERR_INVALID_FILE,
+  ERR_INVALID_SIZE,
+} from '@constants/messages';
+import {
+  isFileSizeValid,
+  isImageDimensionsValid,
+  isImageFile,
+} from '@utils/checkImageFile';
 
 import './styles.scss';
 
@@ -22,12 +31,17 @@ export const ImageUploader = ({
   const [files, setFiles] = useState<File[]>(initialFiles);
   const [errors, setErrors] = useState<string[]>([]);
 
+  useEffect(() => {
+    setFiles(initialFiles);
+  }, [initialFiles]);
+
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
     setErrors([]);
 
     if (files.length + selectedFiles.length > countFiles) {
       setErrors((prev) => [...prev, ERR_COUNT_FILES + countFiles]);
+      event.target.value = '';
       return;
     }
 
@@ -41,12 +55,23 @@ export const ImageUploader = ({
         const byteArray = new Uint8Array(arrayBuffer);
 
         if (isImageFile(byteArray)) {
+          if (!isFileSizeValid(file)) {
+            setErrors((prev) => [...prev, ERR_INVALID_SIZE]);
+            return;
+          }
+
+          const dimensionsValid = await isImageDimensionsValid(file);
+          if (!dimensionsValid) {
+            setErrors((prev) => [...prev, ERR_INVALID_DIMENSIONS]);
+            return;
+          }
+
           newFiles.push(file);
         } else {
           setErrors((prev) => [...prev, ERR_INVALID_FILE]);
         }
 
-        if (newFiles.length + errors.length === selectedFiles.length) {
+        if (newFiles.length + errors.length >= selectedFiles.length) {
           const updatedFiles = [...files, ...newFiles];
           setFiles(updatedFiles);
         }
@@ -54,7 +79,6 @@ export const ImageUploader = ({
 
       fileReader.readAsArrayBuffer(file);
     });
-
     event.target.value = '';
   };
   useEffect(() => {
@@ -73,35 +97,39 @@ export const ImageUploader = ({
     setFiles(updatedFiles);
   };
 
+  const renderFiles = () => {
+    return files.map((file, ind) => (
+      <div key={ind} className="selected-image-item">
+        <img alt={file.name} src={URL.createObjectURL(file)} />
+        <button
+          onClick={() => handleRemoveFile(ind)}
+          className="delete-img-button"
+        >
+          <img src={images.deleteIcon} alt="delete" />
+        </button>
+      </div>
+    ));
+  };
+
   return (
     <div>
-      <label className="post-add-img" htmlFor={name}>
-        <img src={imagesIcons.addImg} alt="add-img" />
-      </label>
-      <input
-        id={name}
-        className="img-input"
-        accept=".png, .jpg, .jpeg"
-        multiple
-        type="file"
-        onChange={handleFileChange}
-      />
-      <div>{renderErrors()}</div>
+      <div className="add-img-button">
+        <label className="post-add-img" htmlFor={name}>
+          <img src={imagesIcons.addImg} alt="add-img" />
+        </label>
+        <input
+          id={name}
+          className="img-input"
+          accept=".png, .jpg, .jpeg"
+          multiple
+          type="file"
+          onChange={handleFileChange}
+        />
+        <div>{renderErrors()}</div>
+      </div>
+
       <div className="selected-images-block">
-        {files.length > 0 && <h3>Selected Images:</h3>}
-        <div className="selected-images">
-          {files.map((file, ind) => (
-            <div key={file.name} className="selected-image-item">
-              <img alt={file.name} src={URL.createObjectURL(file)} />
-              <button
-                onClick={() => handleRemoveFile(ind)}
-                className="delete-img-button"
-              >
-                <img src={images.deleteIcon} alt="delete" />
-              </button>
-            </div>
-          ))}
-        </div>
+        <div className="selected-images">{renderFiles()}</div>
       </div>
     </div>
   );

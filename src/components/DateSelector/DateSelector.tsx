@@ -30,6 +30,9 @@ export const DateSelector = memo(
     const [isSetDate, setIsSetDate] = useState(true);
     const [error, setError] = useState('');
 
+    const isEmptyDate =
+      month === DEFAULT_MONTH && year === DEFAULT_YEAR && day === DEFAULT_DAY;
+
     const daysInMonth = useMemo(() => {
       const totalDays =
         month !== DEFAULT_MONTH && year !== DEFAULT_YEAR
@@ -55,6 +58,12 @@ export const DateSelector = memo(
         onDateChange(month, day, year);
       }
     };
+
+    useEffect(() => {
+      if (!isEmptyDate) {
+        checkValidation();
+      }
+    }, [day, month, year]);
 
     const dispatch = useDispatch();
     const handleChange =
@@ -86,7 +95,7 @@ export const DateSelector = memo(
         onChange={handleChange(key)}
       >
         {options.map(({ label, value }) => (
-          <option key={value} value={value}>
+          <option className="date-option" key={value} value={value}>
             {label}
           </option>
         ))}

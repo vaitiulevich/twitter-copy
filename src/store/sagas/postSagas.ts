@@ -1,12 +1,13 @@
-import { images } from '@constants/images';
-import { fetchPostsSuccess } from '@store/actions/userActions';
-import { PostState } from '@store/reducers/userReducer';
+import { POSTS_PER_PAGE } from '@constants/constants';
+import { PostState } from '@store/reducers/postReducer';
+import { RootState } from '@store/types';
 import {
   ADD_POST_REQUEST,
   DELETE_POST_REQUEST,
   FETCH_POSTS_REQUEST,
   UPDATE_POST_LIKES_REQUEST,
 } from '@store/types/posts/actionTypes';
+import { userAllPostsQuery } from '@utils/querys';
 import {
   addDoc,
   collection,
@@ -15,12 +16,9 @@ import {
   DocumentData,
   getDocs,
   onSnapshot,
-  orderBy,
   Query,
-  query,
   QuerySnapshot,
   updateDoc,
-  where,
 } from 'firebase/firestore';
 import {
   deleteObject,
@@ -33,6 +31,7 @@ import {
   call,
   cancelled,
   put,
+  select,
   take,
   takeEvery,
   takeLatest,
@@ -47,6 +46,9 @@ import {
   deletePostRequest,
   fetchPostsFailure,
   fetchPostsRequest,
+  fetchPostsSuccess,
+  setIsMorePosts,
+  setLastVisible,
   updatePostLikesFailure,
   updatePostLikesRequest,
   updatePostLikesSuccess,
@@ -66,9 +68,16 @@ export function* uploadImages(files: File[]): Generator {
   return urls;
 }
 
+export function* getUserPostCount(userId: string): Generator {
+  const postsQuery = userAllPostsQuery(userId);
+  const querySnapshot = yield getDocs(postsQuery);
+  console.log(querySnapshot.size);
+  return querySnapshot.size;
+}
+
 function* addPost(action: ReturnType<typeof addPostRequest>): Generator {
   try {
-    const { files, ...postFields } = action.payload;
+    const { files, ...postFields } = action.payload.postData;
     let postData = { ...postFields };
 
     if (files && files.length > 0) {
@@ -83,6 +92,9 @@ function* addPost(action: ReturnType<typeof addPostRequest>): Generator {
   } catch (error) {
     console.log(error);
     yield put(addPostFailure());
+  }
+  if (action.payload.onClose) {
+    yield action.payload.onClose();
   }
 }
 
@@ -139,20 +151,37 @@ function createPostsChannel(postsQuery: Query<DocumentData>) {
 }
 
 function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
-  const userId = action.payload;
   let channel;
+  const { posts, lastVisible } = yield select(
+    (state: RootState) => state.posts
+  );
+  let postsQuery;
+
   try {
-    const postsQuery = query(
-      collection(db, 'posts'),
-      where('userId', '==', userId),
-      orderBy('timestamp', 'desc')
-    );
-    yield getDocs(postsQuery);
+    if (!action.payload.query || !action.payload.firstQuery) {
+      return;
+    }
+    if (!lastVisible) {
+      postsQuery = action.payload.query();
+    } else {
+      const firstQuery = action.payload.firstQuery();
+      postsQuery = firstQuery(lastVisible, action.payload.id);
+    }
+    const querySnapshot = yield getDocs(postsQuery);
+    const isEndOfPosts = querySnapshot.docs.length >= POSTS_PER_PAGE;
+    const newLastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+    yield put(setIsMorePosts(isEndOfPosts));
+    yield put(setLastVisible(newLastVisible));
 
     channel = yield call(createPostsChannel, postsQuery);
     while (true) {
       const updatedPosts = yield take(channel);
-      yield put(fetchPostsSuccess(updatedPosts));
+      if (posts.length > 0 && lastVisible) {
+        yield put(fetchPostsSuccess([...posts, ...updatedPosts]));
+      } else {
+        yield put(fetchPostsSuccess(updatedPosts));
+      }
     }
   } catch (error) {
     yield put(fetchPostsFailure());

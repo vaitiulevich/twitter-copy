@@ -1,8 +1,10 @@
 import { Maybe } from 'yup';
 
 import { AuthState } from './reducers/authRedicer';
+import { OtherUserState } from './reducers/otherUserReducer';
+import { PostsState } from './reducers/postReducer';
 import { ThemeState } from './reducers/themeReducer';
-import { PostState, UserState } from './reducers/userReducer';
+import { UserState } from './reducers/userReducer';
 import { AuthAction } from './types/auth/actionTypes';
 import { ThemeAction } from './types/theme/actionTypes';
 import { UserAction } from './types/user/actionTypes';
@@ -30,7 +32,8 @@ export type RootState = {
   theme: ThemeState;
   auth: AuthState;
   user: UserState;
-  post: { loading: boolean };
+  posts: PostsState;
+  otherUser: OtherUserState;
 };
 
 export type RootAction = AuthAction | UserAction | ThemeAction;

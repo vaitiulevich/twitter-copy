@@ -1,22 +1,33 @@
 import { sessionPeriod } from '@constants/constants';
 import { loginSuccess, logoutRequest } from '@store/actions/authActions';
-import { fetchPostsRequest } from '@store/actions/postActions';
+import { fetchPostsRequest, setTotalPosts } from '@store/actions/postActions';
 import {
+  changePasswordFailure,
+  changePasswordRequest,
+  changePasswordSuccess,
   getUserData,
   getUserDataSuccess,
   updateUserDataRequest,
+  updateUserDataSuccess,
 } from '@store/actions/userActions';
 import {
+  CHANGE_PASSWORD_REQUEST,
   GET_USER_DATA,
   UPDATE_USER_DATA_REQUEST,
 } from '@store/types/user/actionTypes';
+import { userCursorPostsQuery, userPostsQuery } from '@utils/querys';
 import { FirebaseError } from 'firebase/app';
+import {
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword,
+} from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { eventChannel } from 'redux-saga';
-import { call, put, take, takeEvery } from 'redux-saga/effects';
+import { call, delay, put, take, takeEvery } from 'redux-saga/effects';
 
 import { auth, db } from '../../firebase';
-import { uploadImages } from './postSagas';
+import { getUserPostCount, uploadImages } from './postSagas';
 
 function createAuthChannel() {
   return eventChannel((emit) => {
@@ -47,8 +58,9 @@ export function* fetchUserData(id: string): Generator {
   const userDocRef = doc(db, 'users', id);
   const userDoc = yield getDoc(userDocRef);
   const userData = userDoc.data();
-
   if (userData) {
+    const postsCount = yield call(getUserPostCount, id);
+    yield put(setTotalPosts(postsCount));
     delete userData.password;
     return userData;
   }
@@ -61,8 +73,15 @@ function* getUserDataRequest(
   const id = action.payload;
   try {
     const userData = yield call(fetchUserData, id);
+
+    yield put(
+      fetchPostsRequest(
+        id,
+        () => userPostsQuery(id),
+        () => userCursorPostsQuery
+      )
+    );
     yield put(getUserDataSuccess(userData));
-    yield put(fetchPostsRequest(id));
   } catch (error) {
     if (error instanceof FirebaseError) {
       console.log(error.message);
@@ -87,9 +106,48 @@ function* updateUserData(
     }
     const userDocRef = doc(db, 'users', action.payload.userId);
     yield updateDoc(userDocRef, postData);
+    const newUserData = yield call(fetchUserData, action.payload.userId);
+    yield put(getUserDataSuccess(newUserData));
+    yield put(updateUserDataSuccess());
   } catch (error) {
     console.error(error);
   }
+  if (action.payload.closeModal) {
+    action.payload.closeModal();
+  }
+}
+
+function* changePasswordSaga(
+  action: ReturnType<typeof changePasswordRequest>
+): Generator {
+  try {
+    const user = auth.currentUser;
+    if (user) {
+      const credential = EmailAuthProvider.credential(
+        user.email as string,
+        action.payload.oldPassword
+      );
+      yield reauthenticateWithCredential(user, credential);
+      yield call(updatePassword, user, action.payload.newPassword);
+
+      const userRef = doc(db, 'users', user.uid);
+      yield updateDoc(userRef, { password: action.payload.newPassword });
+
+      yield put(changePasswordSuccess('success'));
+      yield delay(3000);
+      yield put(changePasswordSuccess(null));
+    }
+  } catch (error) {
+    if (error instanceof FirebaseError) {
+      if (error.code === 'auth/invalid-credential') {
+        yield put(changePasswordFailure('invalid old password'));
+      }
+    }
+  }
+}
+
+export function* watchChangePassword() {
+  yield takeEvery(CHANGE_PASSWORD_REQUEST, changePasswordSaga);
 }
 
 export function* watchAuth() {

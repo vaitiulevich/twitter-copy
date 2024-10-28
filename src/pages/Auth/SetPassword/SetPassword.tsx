@@ -86,7 +86,7 @@ export const SetPassword = () => {
             text="Log Up"
           />
         </form>
-        <div>
+        <div className="sign-up-link-block">
           <Link
             to={'/sign-up'}
             onClick={handleToSignUp}

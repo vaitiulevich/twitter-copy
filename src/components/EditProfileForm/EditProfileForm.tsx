@@ -4,15 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@components/Button/Button';
 import { ControlledInput } from '@components/ControlledInput/ControlledInput';
 import { ImageUploader } from '@components/ImageUploader/ImageUploader';
-import { ERR_INCORRECT_FILL, ERR_REQUIRED } from '@constants/messages';
+import { images } from '@constants/images';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { updateUserDataRequest } from '@store/actions/userActions';
-import { selectUserSelector } from '@store/selectors';
-import {
-  editProfileValidationSchema,
-  phoneValidation,
-  stringRequired,
-} from '@utils/validationSchemas';
+import { selectUserLoad, selectUserSelector } from '@store/selectors';
+import { formatDate } from '@utils/formatDate';
+import { editProfileValidationSchema } from '@utils/validationSchemas';
 import * as yup from 'yup';
 
 import './styles.scss';
@@ -21,25 +18,37 @@ interface FormData {
   name: string;
   phone: string;
   description?: yup.Maybe<string | undefined>;
-  dateBirth: string;
+  dateBirth: Date;
 }
 
-export const EditProfileForm = () => {
+export const EditProfileForm = ({
+  onCloseModal,
+}: {
+  onCloseModal?: () => void;
+}) => {
   const { control, handleSubmit } = useForm({
     mode: 'all',
     resolver: yupResolver(editProfileValidationSchema),
   });
-  const { name, description, dateBirth, phone, userId } =
+  const { name, description, dateBirth, phone, userId, avatar, profileImg } =
     useSelector(selectUserSelector);
   const onSubmit = (data: FormData) => {
+    const { dateBirth } = data;
+    const dateString = formatDate(dateBirth);
     const newData = {
       ...data,
+      dateBirth: dateString,
       avatarFile: selectedAvatar[0] ?? null,
       bannerFile: selectedBanner[0] ?? null,
     };
-    dispatch(updateUserDataRequest(userId, newData));
+    if (onCloseModal) {
+      dispatch(updateUserDataRequest(userId, newData, onCloseModal));
+    } else {
+      dispatch(updateUserDataRequest(userId, newData));
+    }
   };
   const dispatch = useDispatch();
+  const loading = useSelector(selectUserLoad);
   const [selectedBanner, setSelectedBanner] = useState<File[]>([]);
   const [selectedAvatar, setSelectedAvatar] = useState<File[]>([]);
 
@@ -48,21 +57,34 @@ export const EditProfileForm = () => {
     <div>
       <div>
         <div className="edit-profile-set-img">
-          <span>Set banner image</span>
-
-          <ImageUploader
-            name="profile-banner"
-            setImagesSelected={setSelectedBanner}
-            initialFiles={selectedBanner}
-          />
+          <span className="edit-profile-imgs-label">Set banner image</span>
+          <div className="edit-profile-imgs">
+            <ImageUploader
+              name="profile-banner"
+              setImagesSelected={setSelectedBanner}
+              initialFiles={selectedBanner}
+            />
+            {selectedBanner.length < 1 && (
+              <div className="image-from-profile">
+                <img src={profileImg ?? images.banner} />
+              </div>
+            )}
+          </div>
         </div>
         <div className="edit-profile-set-img">
-          <span>Set profile image</span>
-          <ImageUploader
-            name="profile-avatar"
-            setImagesSelected={setSelectedAvatar}
-            initialFiles={selectedAvatar}
-          />
+          <span className="edit-profile-imgs-label">Set profile image</span>
+          <div className="edit-profile-imgs">
+            <ImageUploader
+              name="profile-avatar"
+              setImagesSelected={setSelectedAvatar}
+              initialFiles={selectedAvatar}
+            />
+            {selectedAvatar.length < 1 && (
+              <div className="image-from-profile">
+                <img src={avatar ?? images.avatar} />
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <form className="sign-up-form" onSubmit={handleSubmit(onSubmit)}>
@@ -92,7 +114,12 @@ export const EditProfileForm = () => {
           control={control}
           placeholder="dateBirth"
         />
-        <Button type="submit" text="Update" />
+        <Button
+          type="submit"
+          loading={loading}
+          disabled={loading}
+          text="Update"
+        />
       </form>
     </div>
   );

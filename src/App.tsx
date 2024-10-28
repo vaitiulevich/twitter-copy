@@ -1,13 +1,21 @@
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ErrorBoundary from '@components/ErrorBoundary/ErrorBoundary';
+import { HomePageWrapper } from '@components/HomePageWrapper/HomePageWrapper';
 import { ProtectedRoute } from '@components/ProtectedRoute/ProtectedRoute';
 import { Entry } from '@pages/Auth/Entry/Entry';
 import { SetPassword } from '@pages/Auth/SetPassword/SetPassword';
 import { SignIn } from '@pages/Auth/SignIn/SignIn';
 import { SignUp } from '@pages/Auth/SignUp/SignUp';
+import { Home } from '@pages/Home/Home';
 import { NoPageYet } from '@pages/NoPageYet/NoPageYet';
+import { PostPage } from '@pages/PostPage/PostPage';
 import { Profile } from '@pages/Profile/Profile';
+import { Settings } from '@pages/Settings/Settings';
+import { User } from '@pages/User/User';
 import { UserAppWrapper } from '@pages/UserAppWrapper/UserAppWrapper';
+import { selectThemeType } from '@store/selectors';
 
 const router = createBrowserRouter([
   {
@@ -70,11 +78,29 @@ const router = createBrowserRouter([
         path: 'profile',
         element: <Profile />,
       },
+      {
+        path: 'home',
+        element: <HomePageWrapper />,
+        children: [
+          { path: '/home', element: <Home /> },
+          { path: 'posts/:id', element: <PostPage /> },
+          { path: 'user/:id', element: <User /> },
+        ],
+      },
+      {
+        path: 'settings',
+        element: <Settings />,
+      },
     ],
   },
 ]);
 
 const App = () => {
+  const theme = useSelector(selectThemeType);
+
+  useEffect(() => {
+    document.body.setAttribute('data-theme', theme);
+  }, [theme]);
   return <RouterProvider router={router} />;
 };
 

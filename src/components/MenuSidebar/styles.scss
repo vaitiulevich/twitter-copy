@@ -11,8 +11,15 @@
   gap: 1rem;
   margin: 1rem 0;
 }
-.nav-list-item a {
+.nav-list-item-link {
   color: var(--text);
+  &:hover {
+    color: var(--link-text);
+  }
+
+  &.active {
+    color: var(--link-text);
+  }
 }
 
 .header-menu-sidebar {
@@ -22,6 +29,9 @@
   @include respond-to(tablet) {
     display: none;
   }
+}
+.nav-list-item img {
+  height: 2rem;
 }
 .mobile-menu-sidebar {
   display: none;

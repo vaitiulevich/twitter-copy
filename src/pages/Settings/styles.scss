@@ -1,0 +1,23 @@
+@import '@styles/breakpoints';
+.settings-headline {
+  padding: 0.5rem 5rem;
+  border-bottom: 0.01rem solid var(--border-color);
+
+  @include respond-to(tablet) {
+    padding: 1rem;
+  }
+}
+
+.change-password {
+  padding: 0 5rem;
+
+  @include respond-to(tablet) {
+    padding: 1rem;
+  }
+}
+.succes-status {
+  background-color: #1b682069;
+  color: #1c9b24;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}

@@ -6,7 +6,7 @@ import { selectUserSelector } from '@store/selectors';
 
 import './styles.scss';
 export const UserShortInfo = () => {
-  const user = useSelector(selectUserSelector);
+  const { avatar, name, userSlug } = useSelector(selectUserSelector);
   const dispatch = useDispatch();
 
   const handleLogOut = () => {
@@ -16,11 +16,11 @@ export const UserShortInfo = () => {
     <div>
       <div className="user-info-panel">
         <div className="user-info-img">
-          <img src={user.avatar ?? images.avatar} alt="avatar" />
+          <img src={avatar ?? images.avatar} alt="avatar" />
         </div>
         <div className="user-info">
-          <h3 className="user-info-name">{user.name}</h3>
-          <p className="user-info-slug">{user.userSlug} </p>
+          <h3 className="user-info-name">{name}</h3>
+          <p className="user-info-slug">{userSlug} </p>
         </div>
       </div>
       <Button
