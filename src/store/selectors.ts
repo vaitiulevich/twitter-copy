@@ -13,6 +13,16 @@ export const selectPostLoad = createSelector(
   [selectPosts],
   (post) => post.loading
 );
+
+export const selectCountPosts = createSelector(
+  [selectPosts],
+  (post) => post.total
+);
+
+export const selectIsMorePost = createSelector(
+  [selectPosts],
+  (post) => post.isMorePosts
+);
 export const selectUserPosts = createSelector(
   [selectPosts],
   (post) => post.posts
@@ -68,8 +78,6 @@ export const selectOtherUserLoad = createSelector(
 export const isUserFollowing = createSelector(
   [otherUser, (state: RootState, userId: string) => userId],
   (user, userId) => {
-    console.log(user.otherUser);
-    console.log(userId);
     return user?.otherUser?.followers.includes(userId);
   }
 );

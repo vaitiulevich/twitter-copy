@@ -26,6 +26,8 @@ export const DEFAULT_YEAR = 'Year';
 export const YEAR_RANGE = 100;
 export const DEFAULT_COUNT_DAYS_IN_MONTH = 30;
 
+export const POSTS_PER_PAGE = 5;
+
 const COUNT_SESSION_HOUR = 24;
 export const sessionPeriod = COUNT_SESSION_HOUR * 60 * 60 * 1000;
 

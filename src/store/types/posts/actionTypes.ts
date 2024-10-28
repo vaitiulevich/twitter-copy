@@ -17,4 +17,8 @@ export const DELETE_POST_REQUEST = 'DELETE_POST_REQUEST';
 export const DELETE_POST_SUCCESS = 'DELETE_POST_SUCCESS';
 export const DELETE_POST_FAILURE = 'DELETE_POST_FAILURE';
 
+export const SET_LAST_VISIBLE = 'SET_LAST_VISIBLE';
+export const SET_IS_MORE_POSTS = 'SET_IS_MORE_POSTS';
+export const SET_TOTAL_POSTS = 'SET_TOTAL_POSTS';
+
 export type PostAction = ReturnType<InferValueTypes<typeof actions>>;

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { PostHeader } from '@components/PostHeader/PostHeader';
 import { images } from '@constants/images';
 import { updatePostLikesRequest } from '@store/actions/postActions';
-import { PostState } from '@store/reducers/userReducer';
+import { PostState } from '@store/reducers/postReducer';
 import classNames from 'classnames';
 
 import './styles.scss';

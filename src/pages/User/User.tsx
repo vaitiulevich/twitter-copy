@@ -5,11 +5,11 @@ import { Feed } from '@components/Feed/Feed';
 import { ProfileHead } from '@components/ProfileHead/ProfileHead';
 import { fetchOtherUserDataRequest } from '@store/actions/otherUserActions';
 import {
+  selectCountPosts,
   selectOtherUser,
   selectUserId,
-  selectUserPosts,
 } from '@store/selectors';
-import { userPostsQuery } from '@utils/querys';
+import { userCursorPostsQuery, userPostsQuery } from '@utils/querys';
 
 import './styles.scss';
 
@@ -30,7 +30,7 @@ export const User = () => {
   }, [id]);
 
   const otherUser = useSelector(selectOtherUser);
-  const posts = useSelector(selectUserPosts);
+  const countPosts = useSelector(selectCountPosts);
 
   return (
     <section className="user">
@@ -38,10 +38,13 @@ export const User = () => {
         <>
           <ProfileHead
             user={otherUser}
-            countPosts={posts.length}
+            countPosts={countPosts}
             isOriginUser={false}
           />
-          <Feed query={() => userPostsQuery(id as string)} />
+          <Feed
+            query={() => userPostsQuery(id as string)}
+            firstQuery={() => userCursorPostsQuery}
+          />
         </>
       )}
     </section>

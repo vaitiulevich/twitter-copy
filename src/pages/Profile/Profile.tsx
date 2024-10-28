@@ -6,16 +6,16 @@ import { ProfileHead } from '@components/ProfileHead/ProfileHead';
 import { getUserData } from '@store/actions/userActions';
 import {
   selectAuthUid,
-  selectUserPosts,
+  selectCountPosts,
   selectUserSelector,
 } from '@store/selectors';
-import { userPostsQuery } from '@utils/querys';
+import { userCursorPostsQuery, userPostsQuery } from '@utils/querys';
 
 import './styles.scss';
 
 export const Profile = () => {
   const user = useSelector(selectUserSelector);
-  const posts = useSelector(selectUserPosts);
+  const countPosts = useSelector(selectCountPosts);
   const dispatch = useDispatch();
   const fetchUser = (uid: string) => {
     if (uid) {
@@ -30,10 +30,13 @@ export const Profile = () => {
   }, [authId]);
   return (
     <>
-      <ProfileHead user={user} countPosts={posts.length} isOriginUser={true} />
+      <ProfileHead user={user} countPosts={countPosts} isOriginUser={true} />
       <AddPostPanel />
       <h2 className="headline-tweets">Tweets</h2>
-      <Feed query={() => userPostsQuery(user.userId)} />
+      <Feed
+        query={() => userPostsQuery(user.userId)}
+        firstQuery={() => userCursorPostsQuery}
+      />
     </>
   );
 };

@@ -1,6 +1,6 @@
 import { sessionPeriod } from '@constants/constants';
 import { loginSuccess, logoutRequest } from '@store/actions/authActions';
-import { fetchPostsRequest } from '@store/actions/postActions';
+import { fetchPostsRequest, setTotalPosts } from '@store/actions/postActions';
 import {
   changePasswordFailure,
   changePasswordRequest,
@@ -15,7 +15,7 @@ import {
   GET_USER_DATA,
   UPDATE_USER_DATA_REQUEST,
 } from '@store/types/user/actionTypes';
-import { userPostsQuery } from '@utils/querys';
+import { userCursorPostsQuery, userPostsQuery } from '@utils/querys';
 import { FirebaseError } from 'firebase/app';
 import {
   EmailAuthProvider,
@@ -27,7 +27,7 @@ import { eventChannel } from 'redux-saga';
 import { call, delay, put, take, takeEvery } from 'redux-saga/effects';
 
 import { auth, db } from '../../firebase';
-import { uploadImages } from './postSagas';
+import { getUserPostCount, uploadImages } from './postSagas';
 
 function createAuthChannel() {
   return eventChannel((emit) => {
@@ -58,8 +58,9 @@ export function* fetchUserData(id: string): Generator {
   const userDocRef = doc(db, 'users', id);
   const userDoc = yield getDoc(userDocRef);
   const userData = userDoc.data();
-
   if (userData) {
+    const postsCount = yield call(getUserPostCount, id);
+    yield put(setTotalPosts(postsCount));
     delete userData.password;
     return userData;
   }
@@ -72,7 +73,14 @@ function* getUserDataRequest(
   const id = action.payload;
   try {
     const userData = yield call(fetchUserData, id);
-    yield put(fetchPostsRequest(id, () => userPostsQuery(id)));
+
+    yield put(
+      fetchPostsRequest(
+        id,
+        () => userPostsQuery(id),
+        () => userCursorPostsQuery
+      )
+    );
     yield put(getUserDataSuccess(userData));
   } catch (error) {
     if (error instanceof FirebaseError) {

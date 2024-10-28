@@ -1,10 +1,13 @@
+import { POSTS_PER_PAGE } from '@constants/constants';
 import { PostState } from '@store/reducers/postReducer';
+import { RootState } from '@store/types';
 import {
   ADD_POST_REQUEST,
   DELETE_POST_REQUEST,
   FETCH_POSTS_REQUEST,
   UPDATE_POST_LIKES_REQUEST,
 } from '@store/types/posts/actionTypes';
+import { userAllPostsQuery } from '@utils/querys';
 import {
   addDoc,
   collection,
@@ -28,6 +31,7 @@ import {
   call,
   cancelled,
   put,
+  select,
   take,
   takeEvery,
   takeLatest,
@@ -43,6 +47,8 @@ import {
   fetchPostsFailure,
   fetchPostsRequest,
   fetchPostsSuccess,
+  setIsMorePosts,
+  setLastVisible,
   updatePostLikesFailure,
   updatePostLikesRequest,
   updatePostLikesSuccess,
@@ -60,6 +66,13 @@ export function* uploadImages(files: File[]): Generator {
   }
 
   return urls;
+}
+
+export function* getUserPostCount(userId: string): Generator {
+  const postsQuery = userAllPostsQuery(userId);
+  const querySnapshot = yield getDocs(postsQuery);
+  console.log(querySnapshot.size);
+  return querySnapshot.size;
 }
 
 function* addPost(action: ReturnType<typeof addPostRequest>): Generator {
@@ -139,16 +152,36 @@ function createPostsChannel(postsQuery: Query<DocumentData>) {
 
 function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
   let channel;
+  const { posts, lastVisible } = yield select(
+    (state: RootState) => state.posts
+  );
+  let postsQuery;
+
   try {
-    if (!action.payload.query) {
+    if (!action.payload.query || !action.payload.firstQuery) {
       return;
     }
-    const postsQuery = action.payload.query();
-    yield getDocs(postsQuery);
+    if (!lastVisible) {
+      postsQuery = action.payload.query();
+    } else {
+      const firstQuery = action.payload.firstQuery();
+      postsQuery = firstQuery(lastVisible, action.payload.id);
+    }
+    const querySnapshot = yield getDocs(postsQuery);
+    const isEndOfPosts = querySnapshot.docs.length >= POSTS_PER_PAGE;
+    const newLastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+    yield put(setIsMorePosts(isEndOfPosts));
+    yield put(setLastVisible(newLastVisible));
+
     channel = yield call(createPostsChannel, postsQuery);
     while (true) {
       const updatedPosts = yield take(channel);
-      yield put(fetchPostsSuccess(updatedPosts));
+      if (posts.length > 0 && lastVisible) {
+        yield put(fetchPostsSuccess([...posts, ...updatedPosts]));
+      } else {
+        yield put(fetchPostsSuccess(updatedPosts));
+      }
     }
   } catch (error) {
     yield put(fetchPostsFailure());
