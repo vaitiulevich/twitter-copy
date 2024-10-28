@@ -7,6 +7,10 @@ import {
   watchUserExists,
 } from '@store/sagas/authSaga';
 import {
+  watchFetchOtherUserData,
+  watchSetFollowingStatus,
+} from '@store/sagas/otherUserSaga';
+import {
   watchAddPost,
   watchDeletePost,
   watchFetchPosts,
@@ -38,5 +42,7 @@ export default function* rootSaga() {
     watchUpdateUserData(),
     watchGoogleLogup(),
     watchChangePassword(),
+    watchFetchOtherUserData(),
+    watchSetFollowingStatus(),
   ]);
 }

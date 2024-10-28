@@ -1,4 +1,3 @@
-import { PostState } from '@store/reducers/userReducer';
 import { ProfileFiles, User } from '@store/types';
 import * as actions from '@store/types/user/actionTypes';
 
@@ -61,11 +60,6 @@ export const getUserDataSuccess = (user: User) =>
 export const getUserDataFailure = () =>
   ({
     type: actions.GET_USER_DATA_FAILURE,
-  }) as const;
-export const fetchPostsSuccess = (posts: PostState[]) =>
-  ({
-    type: actions.FETCH_POSTS_SUCCESS,
-    payload: posts,
   }) as const;
 
 export const clearUserData = () =>

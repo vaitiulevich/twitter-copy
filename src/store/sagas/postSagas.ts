@@ -1,6 +1,4 @@
-import { images } from '@constants/images';
-import { fetchPostsSuccess } from '@store/actions/userActions';
-import { PostState } from '@store/reducers/userReducer';
+import { PostState } from '@store/reducers/postReducer';
 import {
   ADD_POST_REQUEST,
   DELETE_POST_REQUEST,
@@ -15,12 +13,9 @@ import {
   DocumentData,
   getDocs,
   onSnapshot,
-  orderBy,
   Query,
-  query,
   QuerySnapshot,
   updateDoc,
-  where,
 } from 'firebase/firestore';
 import {
   deleteObject,
@@ -47,6 +42,7 @@ import {
   deletePostRequest,
   fetchPostsFailure,
   fetchPostsRequest,
+  fetchPostsSuccess,
   updatePostLikesFailure,
   updatePostLikesRequest,
   updatePostLikesSuccess,
@@ -142,7 +138,6 @@ function createPostsChannel(postsQuery: Query<DocumentData>) {
 }
 
 function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
-  const userId = action.payload.id;
   let channel;
   try {
     if (!action.payload.query) {

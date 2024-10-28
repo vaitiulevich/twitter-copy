@@ -16,6 +16,4 @@ export const CHANGE_PASSWORD_FAILURE = 'CHANGE_PASSWORD_FAILURE';
 export const CLEAR_USER_DATA = 'CLEAR_USER_DATA';
 export const CLEAR_ERROR = 'CLEAR_ERROR';
 
-export const FETCH_POSTS_SUCCESS = 'FETCH_POSTS_SUCCESS';
-
 export type UserAction = ReturnType<InferValueTypes<typeof actions>>;

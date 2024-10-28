@@ -1,4 +1,4 @@
-import { PostState } from '@store/reducers/userReducer';
+import { PostState } from '@store/reducers/postReducer';
 import * as actions from '@store/types/posts/actionTypes';
 import { DocumentData, Query } from 'firebase/firestore';
 
@@ -72,4 +72,9 @@ export const fetchPostsRequest = (
 export const fetchPostsFailure = () =>
   ({
     type: actions.FETCH_POSTS_FAILURE,
+  }) as const;
+export const fetchPostsSuccess = (posts: PostState[]) =>
+  ({
+    type: actions.FETCH_POSTS_SUCCESS,
+    payload: posts,
   }) as const;

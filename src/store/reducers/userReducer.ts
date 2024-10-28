@@ -4,14 +4,12 @@ import {
   CHANGE_PASSWORD_SUCCESS,
   CLEAR_ERROR,
   CLEAR_USER_DATA,
-  FETCH_POSTS_SUCCESS,
   GET_USER_DATA_SUCCESS,
   UPDATE_USER_DATA_FAILURE,
   UPDATE_USER_DATA_REQUEST,
   UPDATE_USER_DATA_SUCCESS,
   UserAction,
 } from '@store/types/user/actionTypes';
-import { string } from 'yup';
 
 export interface User {
   uid?: string;
@@ -35,21 +33,6 @@ export interface UserState extends StatusRequest {
   description?: string;
   followers: string[];
   following: string[];
-  posts: PostState[];
-}
-
-export interface PostState {
-  id?: string;
-  files?: File[];
-  postId: string;
-  userId: string;
-  userName: string;
-  userSlug: string;
-  timestamp: number;
-  images?: string[];
-  likes: string[];
-  content: string;
-  userAvatar: string | null;
 }
 
 interface StatusRequest {
@@ -58,7 +41,7 @@ interface StatusRequest {
   status?: string | null;
 }
 
-const initialState: UserState & StatusRequest = {
+const initialState: UserState = {
   userId: '',
   userSlug: '@user',
   avatar: null,
@@ -70,7 +53,6 @@ const initialState: UserState & StatusRequest = {
   phone: '',
   followers: [],
   following: [],
-  posts: [],
   loading: false,
   status: null,
   error: null,
@@ -94,8 +76,6 @@ const userReducer = (state = initialState, action: UserAction) => {
       return { ...state, loading: false };
     case UPDATE_USER_DATA_FAILURE:
       return { ...state, loading: false };
-    case FETCH_POSTS_SUCCESS:
-      return { ...state, posts: action.payload };
     case CLEAR_USER_DATA:
       return initialState;
     default:

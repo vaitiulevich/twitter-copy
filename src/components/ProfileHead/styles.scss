@@ -38,8 +38,13 @@
   top: 10rem;
   left: 0.3rem;
   background-color: var(--secondary-text);
+  border: 1px solid var(--border-color);
 }
-
+.profile-edit-options {
+  text-align: end;
+  padding: 1rem;
+  min-height: 2rem;
+}
 .profile-edit-btn:hover {
   background-color: var(--border-color);
 }

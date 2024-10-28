@@ -13,6 +13,7 @@ import { NoPageYet } from '@pages/NoPageYet/NoPageYet';
 import { PostPage } from '@pages/PostPage/PostPage';
 import { Profile } from '@pages/Profile/Profile';
 import { Settings } from '@pages/Settings/Settings';
+import { User } from '@pages/User/User';
 import { UserAppWrapper } from '@pages/UserAppWrapper/UserAppWrapper';
 import { selectThemeType } from '@store/selectors';
 
@@ -83,6 +84,7 @@ const router = createBrowserRouter([
         children: [
           { path: '/home', element: <Home /> },
           { path: 'posts/:id', element: <PostPage /> },
+          { path: 'user/:id', element: <User /> },
         ],
       },
       {

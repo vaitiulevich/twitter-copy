@@ -1,15 +1,13 @@
-import React, { ComponentType, ReactNode, useState } from 'react';
+import { ComponentType, ReactNode, useState } from 'react';
 import { Modal } from '@components/Modal/Modal';
 
 interface WithModalProps {
-  openModal: (content: React.ReactNode) => void;
+  openModal: (content: ReactNode) => void;
   onCloseModal: () => void;
 }
 
-const withModal = <P extends object>(
-  WrappedComponent: ComponentType<P & WithModalProps>
-) => {
-  const WithModal = (props: P) => {
+const withModal = (WrappedComponent: ComponentType<WithModalProps>) => {
+  const WithModal = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [modalContent, setModalContent] = useState<ReactNode>(null);
 
@@ -25,11 +23,7 @@ const withModal = <P extends object>(
 
     return (
       <>
-        <WrappedComponent
-          {...(props as P)}
-          openModal={openModal}
-          onCloseModal={closeModal}
-        />
+        <WrappedComponent openModal={openModal} onCloseModal={closeModal} />
         <Modal isOpen={isOpen} onClose={closeModal}>
           {modalContent}
         </Modal>

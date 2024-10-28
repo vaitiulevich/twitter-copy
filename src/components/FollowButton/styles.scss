@@ -1,0 +1,14 @@
+.follow-button {
+  background-color: var(--text);
+  color: var(--background);
+  border: none;
+  outline: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.follow-button:hover {
+  background-color: var(--secondary-text);
+}

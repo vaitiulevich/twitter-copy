@@ -15,6 +15,7 @@ import {
   GET_USER_DATA,
   UPDATE_USER_DATA_REQUEST,
 } from '@store/types/user/actionTypes';
+import { userPostsQuery } from '@utils/querys';
 import { FirebaseError } from 'firebase/app';
 import {
   EmailAuthProvider,
@@ -71,7 +72,7 @@ function* getUserDataRequest(
   const id = action.payload;
   try {
     const userData = yield call(fetchUserData, id);
-    yield put(fetchPostsRequest(id));
+    yield put(fetchPostsRequest(id, () => userPostsQuery(id)));
     yield put(getUserDataSuccess(userData));
   } catch (error) {
     if (error instanceof FirebaseError) {

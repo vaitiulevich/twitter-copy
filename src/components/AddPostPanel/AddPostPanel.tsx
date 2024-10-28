@@ -5,7 +5,7 @@ import { ImageUploader } from '@components/ImageUploader/ImageUploader';
 import { MAX_CHARS_IN_POST, MAX_POST_FILES } from '@constants/constants';
 import { images } from '@constants/images';
 import { addPostRequest } from '@store/actions/postActions';
-import { PostState } from '@store/reducers/userReducer';
+import { PostState } from '@store/reducers/postReducer';
 import { selectPostLoad } from '@store/selectors';
 import { RootState } from '@store/types';
 

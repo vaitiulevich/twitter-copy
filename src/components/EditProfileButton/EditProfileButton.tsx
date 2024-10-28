@@ -15,11 +15,9 @@ export const EditProfileButton = withModal(
       openModal(<EditProfileForm onCloseModal={onCloseModal} />);
     };
     return (
-      <div className="profile-edit-options">
-        <button onClick={handleOpenModal} className="profile-edit-btn">
-          Edit profile
-        </button>
-      </div>
+      <button onClick={handleOpenModal} className="profile-edit-btn">
+        Edit profile
+      </button>
     );
   }
 );

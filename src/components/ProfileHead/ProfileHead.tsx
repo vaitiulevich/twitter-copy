@@ -1,18 +1,27 @@
-import { useSelector } from 'react-redux';
 import { EditProfileButton } from '@components/EditProfileButton/EditProfileButton';
+import { FollowButton } from '@components/FollowButton/FollowButton';
 import { images } from '@constants/images';
-import { selectUserPosts, selectUserSelector } from '@store/selectors';
+import { User } from '@store/types';
 
 import './styles.scss';
-export const ProfileHead = () => {
-  const user = useSelector(selectUserSelector);
-  const posts = useSelector(selectUserPosts);
-
+export const ProfileHead = ({
+  user,
+  countPosts,
+  isOriginUser,
+}: {
+  user: User & {
+    userSlug: string;
+    following: string[];
+    followers: string[];
+  };
+  countPosts: number;
+  isOriginUser: boolean;
+}) => {
   return (
     <div>
       <header className="profile-header">
         <h3>{user.name}</h3>
-        <p>{posts.length} Tweets</p>
+        <p>{countPosts} Tweets</p>
       </header>
       <div className="profile-hero-panel">
         <div className="profile-hero">
@@ -27,7 +36,9 @@ export const ProfileHead = () => {
           <div className="profile-avatar">
             <img src={user.avatar ?? images.avatar} alt="avatar" />
           </div>
-          <EditProfileButton />
+          <div className="profile-edit-options">
+            {isOriginUser ? <EditProfileButton /> : <FollowButton />}
+          </div>
         </div>
         <div className="profile-bio">
           <h3 className="profile-name">{user.name}</h3>
