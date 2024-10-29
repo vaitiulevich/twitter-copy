@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { PostHeader } from '@components/PostHeader/PostHeader';
@@ -57,6 +57,7 @@ export const Post = ({
       </div>
     );
   };
+
   const postContent = (
     <div>
       <div className="post-text">
@@ -65,7 +66,6 @@ export const Post = ({
       {renderImages()}
     </div>
   );
-
   return (
     <div className="post">
       <div className="post-avatar">

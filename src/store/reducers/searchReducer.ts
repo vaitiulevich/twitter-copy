@@ -33,7 +33,6 @@ const searchReducer = (state = initialState, action: SearchAction) => {
     case SEARCH_REQUEST:
       return { ...state, loading: true, error: null };
     case SEARCH_SUCCESS:
-      console.log(action.payload);
       return {
         ...state,
         loading: false,

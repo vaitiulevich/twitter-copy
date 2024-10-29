@@ -25,6 +25,7 @@ export const PostHeader = ({ post, isOriginPost }: PostHeaderProps) => {
   const optionImg = () => {
     return <img src={optionIcon} alt="options" />;
   };
+
   const linkFromUserName = isOriginPost
     ? '/profile'
     : `/home/user/${post.userId}`;

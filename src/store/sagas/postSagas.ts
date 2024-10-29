@@ -17,8 +17,10 @@ import {
   getDocs,
   onSnapshot,
   Query,
+  query,
   QuerySnapshot,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 import {
   deleteObject,
@@ -31,6 +33,7 @@ import {
   call,
   cancelled,
   put,
+  race,
   select,
   take,
   takeEvery,
@@ -139,6 +142,7 @@ function createPostsChannel(postsQuery: Query<DocumentData>) {
           id: doc.id,
           ...doc.data(),
         }));
+
         emitter(updatedPosts);
       }
     );
@@ -149,8 +153,38 @@ function createPostsChannel(postsQuery: Query<DocumentData>) {
   });
 }
 
+const createUsersChannel = (visibleUserIds: string[]) => {
+  if (!visibleUserIds || visibleUserIds.length === 0) {
+    return eventChannel((emitter) => {
+      emitter([]);
+      return () => {};
+    });
+  }
+
+  return eventChannel((emitter) => {
+    const usersQuery = query(
+      collection(db, 'users'),
+      where('userId', 'in', visibleUserIds)
+    );
+
+    const unsubscribe = onSnapshot(usersQuery, (snapshot) => {
+      const updatedUsers = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      emitter(updatedUsers);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  });
+};
+
 function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
   let channel;
+  let usersChannel;
   const { posts, lastVisible } = yield select(
     (state: RootState) => state.posts
   );
@@ -166,6 +200,7 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
       const firstQuery = action.payload.firstQuery();
       postsQuery = firstQuery(lastVisible, action.payload.id);
     }
+
     const querySnapshot = yield getDocs(postsQuery);
     const isEndOfPosts = querySnapshot.docs.length >= POSTS_PER_PAGE;
     const newLastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
@@ -174,20 +209,49 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
     yield put(setLastVisible(newLastVisible));
 
     channel = yield call(createPostsChannel, postsQuery);
+
     while (true) {
-      const updatedPosts = yield take(channel);
-      if (posts.length > 0 && lastVisible) {
-        yield put(fetchPostsSuccess([...posts, ...updatedPosts]));
-      } else {
-        yield put(fetchPostsSuccess(updatedPosts));
+      let userIds = posts.map((post: any) => post.userId);
+      usersChannel = yield call(createUsersChannel, userIds);
+
+      const { updatedPosts, updatedUsers } = yield race({
+        updatedPosts: take(channel),
+      });
+
+      if (updatedPosts) {
+        const visiblePosts =
+          posts.length > 0 && lastVisible
+            ? [...posts, ...updatedPosts]
+            : updatedPosts;
+        const newUserIds = visiblePosts.map((post: any) => post.userId);
+        userIds = newUserIds;
+        usersChannel = yield call(createUsersChannel, userIds);
+        const updatedUsers = yield take(usersChannel);
+        const updatedPostsWithUsers = visiblePosts.map((post: any) => {
+          const user = updatedUsers.find(
+            (user: any) => user.id === post.userId
+          );
+          return {
+            ...post,
+            userAvatar: user ? user.avatar : null,
+            userName: user ? user.name : null,
+            userSlug: user ? user.userSlug : null,
+          };
+        });
+        yield put(fetchPostsSuccess(updatedPostsWithUsers));
       }
+
+      // if (updatedUsers) {
+      //   console.log('Updated Users', updatedUsers);
+      // }
     }
   } catch (error) {
     yield put(fetchPostsFailure());
     console.error(error);
   } finally {
     if (yield cancelled()) {
-      channel.close();
+      if (channel) channel.close();
+      if (usersChannel) usersChannel.close();
     }
   }
 }
