@@ -57,10 +57,11 @@ export const Post = ({
       </div>
     );
   };
-
   const postContent = (
     <div>
-      <div className="post-text">{post.content}</div>
+      <div className="post-text">
+        {Array.isArray(post.content) && post.content.join(' ')}
+      </div>
       {renderImages()}
     </div>
   );

@@ -13,7 +13,7 @@ $breakpoint-large-desktop: 1440px;
       @content;
     }
   } @else if $breakpoint == desktop {
-    @media (min-width: $breakpoint-desktop) {
+    @media (min-width: $breakpoint-tablet) {
       @content;
     }
   } @else if $breakpoint == large-desktop {

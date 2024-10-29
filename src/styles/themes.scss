@@ -5,6 +5,8 @@
 
 [data-theme='dark'] {
   --background: #1a1924;
+  --background-opasity: #ffffff1a;
+
   --modal-overlay: #34343480;
   --text: #ffffff;
   --secondary-text: #cfcfcf;
@@ -22,6 +24,8 @@
 }
 [data-theme='light'] {
   --background: #ffffff;
+  --background-opasity: #1a192411;
+
   --modal-overlay: #00000080;
 
   --text: #000000;

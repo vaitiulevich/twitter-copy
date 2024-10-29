@@ -1,17 +1,18 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { Button } from '@components/Button/Button';
+import { Link } from 'react-router-dom';
 import { images } from '@constants/images';
-import { logoutRequest } from '@store/actions/authActions';
-import { selectUserSelector } from '@store/selectors';
 
 import './styles.scss';
-export const UserShortInfo = () => {
-  const { avatar, name, userSlug } = useSelector(selectUserSelector);
-  const dispatch = useDispatch();
-
-  const handleLogOut = () => {
-    dispatch(logoutRequest());
-  };
+export const UserShortInfo = ({
+  avatar,
+  name,
+  userSlug,
+  navTo,
+}: {
+  avatar?: string | null;
+  name: string;
+  userSlug?: string;
+  navTo?: string;
+}) => {
   return (
     <div>
       <div className="user-info-panel">
@@ -19,15 +20,12 @@ export const UserShortInfo = () => {
           <img src={avatar ?? images.avatar} alt="avatar" />
         </div>
         <div className="user-info">
-          <h3 className="user-info-name">{name}</h3>
-          <p className="user-info-slug">{userSlug} </p>
+          <h3 className="user-info-name">
+            {navTo ? <Link to={navTo}>{name}</Link> : name}
+          </h3>
+          {userSlug && <p className="user-info-slug">{userSlug} </p>}
         </div>
       </div>
-      <Button
-        text="Log Out"
-        onClick={handleLogOut}
-        className="menu-sidebar-btn"
-      />
     </div>
   );
 };

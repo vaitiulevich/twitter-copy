@@ -71,7 +71,6 @@ export function* uploadImages(files: File[]): Generator {
 export function* getUserPostCount(userId: string): Generator {
   const postsQuery = userAllPostsQuery(userId);
   const querySnapshot = yield getDocs(postsQuery);
-  console.log(querySnapshot.size);
   return querySnapshot.size;
 }
 

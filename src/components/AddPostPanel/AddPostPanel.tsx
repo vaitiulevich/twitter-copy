@@ -33,7 +33,7 @@ export const AddPostPanel = ({
 
   const handlePostSubmit = () => {
     const postData: PostState = {
-      content: postContent,
+      content: postContent.split(' '),
       images: [],
       files: selectedFiles ?? [],
       likes: [],

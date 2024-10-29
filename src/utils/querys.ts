@@ -10,9 +10,10 @@ import {
 } from 'firebase/firestore';
 
 import { db } from '../firebase';
+const postsRef = collection(db, 'posts');
 export const userPostsQuery = (userId: string) => {
   return query(
-    collection(db, 'posts'),
+    postsRef,
     where('userId', '==', userId),
     orderBy('timestamp', 'desc'),
     limit(POSTS_PER_PAGE)
@@ -20,7 +21,7 @@ export const userPostsQuery = (userId: string) => {
 };
 export const userAllPostsQuery = (userId: string) => {
   return query(
-    collection(db, 'posts'),
+    postsRef,
     where('userId', '==', userId),
     orderBy('timestamp', 'desc')
   );
@@ -31,7 +32,7 @@ export const userCursorPostsQuery = (
   userId: string
 ) => {
   return query(
-    collection(db, 'posts'),
+    postsRef,
     where('userId', '==', userId),
     orderBy('timestamp', 'desc'),
     startAfter(lastVisible),
@@ -40,18 +41,30 @@ export const userCursorPostsQuery = (
 };
 
 export const allPostsQuery = () => {
-  return query(
-    collection(db, 'posts'),
-    orderBy('timestamp', 'desc'),
-    limit(POSTS_PER_PAGE)
-  );
+  return query(postsRef, orderBy('timestamp', 'desc'), limit(POSTS_PER_PAGE));
 };
 
 export const allCursorPostsQuery = (lastVisible: PostState) => {
   return query(
-    collection(db, 'posts'),
+    postsRef,
     orderBy('timestamp', 'desc'),
     startAfter(lastVisible),
     limit(POSTS_PER_PAGE)
+  );
+};
+
+export const postSearchQuery = (searchTerm: string) => {
+  return query(
+    postsRef,
+    where('content', 'array-contains', searchTerm),
+    orderBy('timestamp', 'desc')
+  );
+};
+
+export const userSearchQuery = (searchTerm: string) => {
+  return query(
+    collection(db, 'users'),
+    where('name', '>=', searchTerm),
+    where('name', '<=', searchTerm + '\uf8ff')
   );
 };

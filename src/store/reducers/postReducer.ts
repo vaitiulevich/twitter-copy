@@ -20,9 +20,9 @@ export interface PostState {
   timestamp: number;
   images?: string[];
   likes: string[];
-  content: string;
+  content: string[];
   userAvatar: string | null;
-  isMorePosts: boolean;
+  isMorePosts?: boolean;
 }
 export interface PostsState {
   posts: PostState[];

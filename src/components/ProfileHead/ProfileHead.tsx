@@ -10,6 +10,7 @@ export const ProfileHead = ({
   isOriginUser,
 }: {
   user: User & {
+    id?: string;
     userSlug: string;
     following: string[];
     followers: string[];
@@ -37,7 +38,11 @@ export const ProfileHead = ({
             <img src={user.avatar ?? images.avatar} alt="avatar" />
           </div>
           <div className="profile-edit-options">
-            {isOriginUser ? <EditProfileButton /> : <FollowButton />}
+            {isOriginUser ? (
+              <EditProfileButton />
+            ) : (
+              <FollowButton id={user.id} />
+            )}
           </div>
         </div>
         <div className="profile-bio">
