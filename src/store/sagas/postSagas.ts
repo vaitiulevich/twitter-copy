@@ -1,5 +1,6 @@
 import { POSTS_PER_PAGE } from '@constants/constants';
 import { PostState } from '@store/reducers/postReducer';
+import { UserSearch } from '@store/reducers/searchReducer';
 import { RootState } from '@store/types';
 import {
   ADD_POST_REQUEST,
@@ -189,7 +190,6 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
     (state: RootState) => state.posts
   );
   let postsQuery;
-
   try {
     if (!action.payload.query || !action.payload.firstQuery) {
       return;
@@ -211,11 +211,12 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
     channel = yield call(createPostsChannel, postsQuery);
 
     while (true) {
-      let userIds = posts.map((post: any) => post.userId);
+      let userIds = posts.map((post: PostState) => post.userId);
       usersChannel = yield call(createUsersChannel, userIds);
 
       const { updatedPosts, updatedUsers } = yield race({
         updatedPosts: take(channel),
+        // updatedUsers: take(usersChannel),
       });
 
       if (updatedPosts) {
@@ -223,13 +224,15 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
           posts.length > 0 && lastVisible
             ? [...posts, ...updatedPosts]
             : updatedPosts;
-        const newUserIds = visiblePosts.map((post: any) => post.userId);
+        const newUserIds = visiblePosts.map((post: PostState) => post.userId);
+
         userIds = newUserIds;
         usersChannel = yield call(createUsersChannel, userIds);
         const updatedUsers = yield take(usersChannel);
-        const updatedPostsWithUsers = visiblePosts.map((post: any) => {
+
+        const updatedPostsWithUsers = visiblePosts.map((post: PostState) => {
           const user = updatedUsers.find(
-            (user: any) => user.id === post.userId
+            (user: UserSearch) => user.id === post.userId
           );
           return {
             ...post,
@@ -240,10 +243,6 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
         });
         yield put(fetchPostsSuccess(updatedPostsWithUsers));
       }
-
-      // if (updatedUsers) {
-      //   console.log('Updated Users', updatedUsers);
-      // }
     }
   } catch (error) {
     yield put(fetchPostsFailure());

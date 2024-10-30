@@ -13,8 +13,8 @@ interface StatusRequest {
   error?: string | null;
 }
 
-interface UserSearch extends User {
-  id: number;
+export interface UserSearch extends User {
+  id: string;
   userSlug?: string;
 }
 export interface SearchState extends StatusRequest {
