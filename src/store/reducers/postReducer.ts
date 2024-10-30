@@ -46,10 +46,12 @@ const userReducer = (state = initialState, action: PostAction) => {
     case DELETE_POST_REQUEST:
       return { ...state };
     case FETCH_POSTS_REQUEST:
+      console.log(action.payload);
       return { ...state, loading: true };
     case SET_IS_MORE_POSTS:
       return { ...state, isMorePosts: action.payload };
     case FETCH_POSTS_SUCCESS:
+      console.log(action.payload);
       return {
         ...state,
         posts: action.payload.posts,

@@ -1,5 +1,4 @@
 import {
-  watchGoogleLogin,
   watchGoogleLogup,
   watchRegister,
   watchSignIn,
@@ -31,7 +30,6 @@ export default function* rootSaga() {
   yield all([
     watchToggleTheme(),
     watchSignIn(),
-    watchGoogleLogin(),
     watchSignOut(),
     watchUserExists(),
     watchRegister(),

@@ -1,7 +1,7 @@
 import { POSTS_PER_PAGE } from '@constants/constants';
 import { PostState } from '@store/reducers/postReducer';
 import { UserSearch } from '@store/reducers/searchReducer';
-import { RootState } from '@store/types';
+import { RootState, User } from '@store/types';
 import {
   ADD_POST_REQUEST,
   DELETE_POST_REQUEST,
@@ -54,6 +54,7 @@ import {
   fetchPostsSuccess,
   setIsMorePosts,
   setLastVisible,
+  setTotalPosts,
   updatePostLikesFailure,
   updatePostLikesRequest,
   updatePostLikesSuccess,
@@ -140,11 +141,10 @@ function createPostsChannel(postsQuery: Query<DocumentData>) {
     const unsubscribe = onSnapshot(
       postsQuery,
       (snapshot: QuerySnapshot<DocumentData>) => {
-        const updatedPosts = snapshot.docs.map((doc) => ({
+        const updatedPosts: any = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-
         emitter(updatedPosts);
       }
     );
@@ -175,6 +175,7 @@ const createUsersChannel = (visibleUserIds: string[]) => {
         ...doc.data(),
       }));
 
+      console.log('JJ');
       emitter(updatedUsers);
     });
 
@@ -252,6 +253,8 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
         } else {
           yield put(fetchPostsSuccess(updatedPostsWithUsers));
         }
+      } else {
+        yield put(fetchPostsSuccess([]));
       }
     }
   } catch (error) {

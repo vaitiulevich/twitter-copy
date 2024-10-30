@@ -47,7 +47,7 @@ export const DateSelector = memo(
       const validMonth = month !== DEFAULT_MONTH;
       const validYear = year !== DEFAULT_YEAR;
 
-      if (!validDay) {
+      if (!validDay || !validMonth || !validYear) {
         setError(ERR_REQUIRED);
         setIsSetDate(false);
       } else {

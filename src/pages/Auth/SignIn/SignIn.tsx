@@ -9,7 +9,11 @@ import { GoogleSignButton } from '@components/GoogleSignButton/GoogleSignButton'
 import { images } from '@constants/images';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { loginRequest, resetError } from '@store/actions/authActions';
-import { selectAuthError, selectAuthLoad } from '@store/selectors';
+import {
+  selectAuthError,
+  selectAuthLoad,
+  selectUserId,
+} from '@store/selectors';
 import { signInValidationSchema } from '@utils/validationSchemas';
 
 import './styles.scss';
@@ -23,7 +27,7 @@ interface FormData {
 
 export const SignIn = () => {
   const [isEmailLogin, setIsEmailLogin] = useState(true);
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     mode: 'all',
     resolver: yupResolver(signInValidationSchema),
     context: { isEmailLogin },
@@ -36,6 +40,7 @@ export const SignIn = () => {
   const toggleLiginType = () => {
     dispatch(resetError());
     setIsEmailLogin(!isEmailLogin);
+    reset();
   };
   const onSubmit = (data: FormData) => {
     dispatch(resetError());
@@ -44,6 +49,8 @@ export const SignIn = () => {
     dispatch(loginRequest(loginType, loginData as string, data.password));
   };
   const logUser = auth.currentUser;
+  const user = useSelector(selectUserId);
+
   useEffect(() => {
     return () => {
       dispatch(resetError());
@@ -54,7 +61,7 @@ export const SignIn = () => {
       dispatch(resetError());
       navigate('/profile');
     }
-  }, [logUser]);
+  }, [logUser, user]);
   return (
     <section className="sign-in-section">
       <div className="sign-in-form-container">
@@ -84,7 +91,7 @@ export const SignIn = () => {
         </form>
         <div className="links-to-sign">
           <div className="sign-in-types">
-            <GoogleSignButton type="signin" />
+            <GoogleSignButton />
             <button onClick={toggleLiginType} className="toggle-sign-in">
               {isEmailLogin
                 ? 'Sign in with phone number'

@@ -24,11 +24,13 @@ export const ERR_PASSWORD_RULES =
 export const ERR_MIN_LENTGH_PASSWORD = `Minimum number of characters in a password ${MIN_LENTGH_PASSWORD}`;
 export const ERR_MAX_LENTGH_PASSWORD = `Maximum number of characters in a password ${MAX_LENTGH_PASSWORD}`;
 
-export const ERR_MIN_LENTGH_NAME = `Minimum number of characters in a name ${MIN_LENTGH_NAME}`;
-export const ERR_MAX_LENTGH_NAME = `Maximum number of characters in a name ${MAX_LENTGH_NAME}`;
+export const ERR_MIN_LENTGH_NAME = `Minimum number of characters ${MIN_LENTGH_NAME}`;
+export const ERR_MAX_LENTGH_NAME = `Maximum number of characters ${MAX_LENTGH_NAME}`;
 
 export const ERR_PASSWORD_CONTIN_NUM = 'Must contain a number';
 export const ERR_PASSWORD_CONTIN_UPERCASE = 'Must contain a capital letter';
 
 export const ERR_PASSWORD_MATCH = 'Passwords must match';
 export const ERR_PASSWORD_CONFIRM = 'Please confirm your password';
+
+export const ERR_DATE_FUTURE = 'The date cannot be in the future';

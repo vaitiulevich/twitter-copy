@@ -1,0 +1,48 @@
+.post-sceleton {
+  min-height: 6rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.2rem;
+  border-radius: 5px;
+  margin-bottom: 0.2rem;
+}
+.post-avatar-sceleton {
+  height: 3rem;
+  width: 3rem;
+  background-color: #d5d5d5;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 400% 100%;
+  animation: loading 2s infinite;
+}
+.post-content-sceleton {
+  width: 90%;
+}
+.post-name-sceleton {
+  width: 100%;
+  height: 1.5rem;
+  background-color: #d5d5d5;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 400% 100%;
+  animation: loading 2s infinite;
+}
+.post-text-sceleton {
+  background-color: #d5d5d5;
+  height: 4rem;
+  border-radius: 5px;
+  margin-top: 0.5rem;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 400% 100%;
+  animation: loading 2s infinite;
+}
+@keyframes loading {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}

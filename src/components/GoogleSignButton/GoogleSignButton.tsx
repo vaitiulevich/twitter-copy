@@ -5,22 +5,10 @@ import {
   googleLogupRequest,
 } from '@store/actions/authActions';
 
-export const GoogleSignButton = ({
-  type,
-  text,
-}: {
-  type: 'signin' | 'signup';
-  text?: string;
-}) => {
+export const GoogleSignButton = ({ text }: { text?: string }) => {
   const dispatch = useDispatch();
   const handleGoogleSignIn = () => {
-    console.log(type);
-    if (type === 'signin') {
-      dispatch(googleLoginRequest());
-    }
-    if (type === 'signup') {
-      dispatch(googleLogupRequest());
-    }
+    dispatch(googleLogupRequest());
   };
   return (
     <button onClick={handleGoogleSignIn} className="entry-btn">

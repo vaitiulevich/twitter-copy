@@ -10,6 +10,7 @@ import {
   MIN_LOGIN_LENTGH_PASSWORD,
 } from '@constants/constants';
 import {
+  ERR_DATE_FUTURE,
   ERR_INCORRECT_FILL,
   ERR_MAX_LENTGH_NAME,
   ERR_MAX_LENTGH_PASSWORD,
@@ -66,10 +67,7 @@ export const chandgePasswordValidationSchema = yup.object().shape({
 export const editProfileValidationSchema = yup.object().shape({
   name: stringRequired(MIN_LENTGH_NAME, MAX_LENTGH_NAME),
   phone: phoneValidation,
-  dateBirth: yup
-    .date()
-    .max(new Date(), 'Дата не может быть в будущем')
-    .required('Дата рождения обязательна'),
+  dateBirth: yup.date().max(new Date(), ERR_DATE_FUTURE).required(ERR_REQUIRED),
   description: yup
     .string()
     .min(MIN_LENTGH_DESCRIPTION, ERR_INCORRECT_FILL)
@@ -78,16 +76,16 @@ export const editProfileValidationSchema = yup.object().shape({
 });
 
 export const signInValidationSchema = yup.object().shape({
-  password: stringRequired(
-    MIN_LOGIN_LENTGH_PASSWORD,
-    MAX_LOGIN_LENTGH_PASSWORD
-  ),
+  password: yup
+    .string()
+    .required(ERR_REQUIRED)
+    .min(MIN_LENTGH_PASSWORD, ERR_PASSWORD_RULES),
   isEmailLogin: yup.bool(),
-  email: yup.string().when('isEmailLogin', {
+  email: yup.string().when('$isEmailLogin', {
     is: true,
     then: () => emailValidation,
   }),
-  phone: yup.string().when('isEmailLogin', {
+  phone: yup.string().when('$isEmailLogin', {
     is: false,
     then: () => phoneValidation,
   }),

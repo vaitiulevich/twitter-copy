@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { Post } from '@components/Post/Post';
+import { SkeletonPost } from '@components/SkeletonPost/SkeletonPost';
+import { SCELETON_POST_COUNT } from '@constants/constants';
 import { fetchPostsRequest, setLastVisible } from '@store/actions/postActions';
 import {
   selectIsMorePost,
@@ -76,6 +78,16 @@ export const Feed = ({
 
   const isHasPosts = posts && posts.length > 0;
 
+  const renderWithoutPosts = () => {
+    return loading ? (
+      Array.from({ length: SCELETON_POST_COUNT }).map((_, index) => (
+        <SkeletonPost key={index} />
+      ))
+    ) : (
+      <p>no tweets</p>
+    );
+  };
+
   return (
     <div className="feed">
       {isHasPosts ? (
@@ -84,7 +96,7 @@ export const Feed = ({
           {isMorePosts && <div ref={loadMoreRef} />}
         </>
       ) : (
-        <p>No tweets</p>
+        renderWithoutPosts()
       )}
     </div>
   );

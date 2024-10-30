@@ -2,6 +2,7 @@
   display: flex;
   gap: 0.5rem;
   border-bottom: 0.01rem sild var(--border-color);
+  justify-content: space-between;
 }
 .post-avatar {
   height: 3rem;
@@ -10,7 +11,7 @@
   overflow: hidden;
 }
 .post-content {
-  width: 100%;
+  width: 90%;
 }
 
 .post-text {

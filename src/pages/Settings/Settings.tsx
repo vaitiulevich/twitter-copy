@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@components/Button/Button';
@@ -11,21 +12,44 @@ import {
   selectUserStatus,
 } from '@store/selectors';
 import { chandgePasswordValidationSchema } from '@utils/validationSchemas';
+import { onAuthStateChanged } from 'firebase/auth';
 
 import './styles.scss';
+import { auth } from '../../firebase';
+
 interface FormData {
   password: string;
   newPassword: string;
 }
+
 export const Settings = () => {
   const dispatch = useDispatch();
   const { control, handleSubmit } = useForm({
     mode: 'all',
     resolver: yupResolver(chandgePasswordValidationSchema),
   });
+
+  const [isGoogleAuth, setIsGoogleAuth] = useState<boolean | null>(null);
+
   const onSubmit = (data: FormData) => {
     dispatch(changePasswordRequest(data.newPassword, data.password));
   };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        const googleAuth = currentUser.providerData.some(
+          (provider) => provider.providerId === 'google.com'
+        );
+        setIsGoogleAuth(googleAuth);
+      } else {
+        setIsGoogleAuth(null); // Если пользователь не авторизован
+      }
+    });
+
+    return () => unsubscribe(); // Очистка подписки
+  }, []);
+
   const error = useSelector(selectUserError);
   const status = useSelector(selectUserStatus);
   const loading = useSelector(selectUserLoad);
@@ -33,31 +57,38 @@ export const Settings = () => {
   return (
     <section className="settings">
       <h2 className="settings-headline">Profile settings</h2>
-      <div className="change-password">
-        <h3>Change user password</h3>
-        <form className="sign-up-form" onSubmit={handleSubmit(onSubmit)}>
-          <ControlledInput
-            name="password"
-            type="password"
-            control={control}
-            placeholder="Set Old Password"
-          />
-          <ControlledInput
-            name="newPassword"
-            type="password"
-            control={control}
-            placeholder="Set New password"
-          />
-          <Button
-            loading={loading}
-            type="submit"
-            disabled={loading}
-            text="Change password"
-          />
-        </form>
-        {status !== null && <p className="succes-status">Access</p>}
-        {error && <ErrorBlock message={error} />}
-      </div>
+      {isGoogleAuth === false && (
+        <div className="change-password">
+          <h3>Change user password</h3>
+          <form className="sign-up-form" onSubmit={handleSubmit(onSubmit)}>
+            <ControlledInput
+              name="password"
+              type="password"
+              control={control}
+              placeholder="Set Old Password"
+            />
+            <ControlledInput
+              name="newPassword"
+              type="password"
+              control={control}
+              placeholder="Set New Password"
+            />
+            <Button
+              loading={loading}
+              type="submit"
+              disabled={loading}
+              text="Change password"
+            />
+          </form>
+          {status !== null && <p className="success-status">Access</p>}
+          {error && <ErrorBlock message={error} />}
+        </div>
+      )}
+      {isGoogleAuth === true && (
+        <p className="google-auth-mess">
+          You logged in with Google. Password change is not available.
+        </p>
+      )}
     </section>
   );
 };

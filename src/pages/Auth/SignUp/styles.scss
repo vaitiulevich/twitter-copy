@@ -11,6 +11,9 @@
 }
 .sign-up-form-container {
   width: 30rem;
+  @include respond-to(mobile) {
+    width: 17.5rem;
+  }
 }
 .sign-up-logo {
   text-align: center;
