@@ -31,6 +31,7 @@ import {
 } from 'firebase/storage';
 import { eventChannel } from 'redux-saga';
 import {
+  all,
   call,
   cancelled,
   put,
@@ -211,26 +212,31 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
     channel = yield call(createPostsChannel, postsQuery);
 
     while (true) {
-      let userIds = posts.map((post: PostState) => post.userId);
+      let updatedUsers;
+      let updatedPosts;
+      let updatedOldPosts = [];
+      updatedOldPosts = yield take(channel);
+
+      let userIds = updatedOldPosts.map((post: PostState) => post.userId);
       usersChannel = yield call(createUsersChannel, userIds);
 
-      const { updatedPosts, updatedUsers } = yield race({
-        updatedPosts: take(channel),
-        // updatedUsers: take(usersChannel),
-      });
+      if (userIds.length) {
+        const usersQuery = query(
+          collection(db, 'users'),
+          where('userId', 'in', userIds)
+        );
+        const resUser = yield getDocs(usersQuery);
+        const resUserusers = resUser.docs.map((doc: any) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
 
-      if (updatedPosts) {
-        const visiblePosts =
-          posts.length > 0 && lastVisible
-            ? [...posts, ...updatedPosts]
-            : updatedPosts;
-        const newUserIds = visiblePosts.map((post: PostState) => post.userId);
+        updatedUsers = resUserusers;
+      }
+      updatedPosts = updatedOldPosts;
 
-        userIds = newUserIds;
-        usersChannel = yield call(createUsersChannel, userIds);
-        const updatedUsers = yield take(usersChannel);
-
-        const updatedPostsWithUsers = visiblePosts.map((post: PostState) => {
+      if (updatedPosts && updatedUsers) {
+        const updatedPostsWithUsers = updatedPosts.map((post: PostState) => {
           const user = updatedUsers.find(
             (user: UserSearch) => user.id === post.userId
           );
@@ -241,7 +247,11 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
             userSlug: user ? user.userSlug : null,
           };
         });
-        yield put(fetchPostsSuccess(updatedPostsWithUsers));
+        if (posts.length > 0 && lastVisible) {
+          yield put(fetchPostsSuccess([...posts, ...updatedPostsWithUsers]));
+        } else {
+          yield put(fetchPostsSuccess(updatedPostsWithUsers));
+        }
       }
     }
   } catch (error) {
