@@ -1,13 +1,13 @@
 import { ReactNode } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { AddPostPanel } from '@components/AddPostPanel/AddPostPanel';
 import { Button } from '@components/Button/Button';
+import { ExitAlert } from '@components/ExitAlert/ExitAlert';
 import { UserShortInfo } from '@components/UserShortInfo/UserShortInfo';
 import { NavMenu } from '@constants/constants';
 import { images } from '@constants/images';
 import withModal from '@HOC/withModal';
-import { logoutRequest } from '@store/actions/authActions';
 import { selectThemeType, selectUserSelector } from '@store/selectors';
 import classNames from 'classnames';
 
@@ -20,16 +20,16 @@ interface MenuSidebarProps {
 
 export const MenuSidebar = withModal(
   ({ openModal, onCloseModal }: MenuSidebarProps) => {
-    const dispatch = useDispatch();
     const location = useLocation();
     const handleOpenModal = () => {
       openModal(
         <AddPostPanel location="modal-tweet" onCloseModal={onCloseModal} />
       );
     };
-    const handleLogOut = () => {
-      dispatch(logoutRequest());
+    const handleOpenExitModal = () => {
+      openModal(<ExitAlert />);
     };
+
     const theme = useSelector(selectThemeType);
     const { avatar, name, userSlug } = useSelector(selectUserSelector);
 
@@ -83,7 +83,7 @@ export const MenuSidebar = withModal(
           <UserShortInfo avatar={avatar} name={name} userSlug={userSlug} />
           <Button
             text="Log Out"
-            onClick={handleLogOut}
+            onClick={handleOpenExitModal}
             className="menu-sidebar-btn"
           />
         </div>
@@ -91,7 +91,10 @@ export const MenuSidebar = withModal(
           <nav className="mobile-menu-nav">
             <ul className="nav-list">
               <li>
-                <button className="log-out-button" onClick={handleLogOut}>
+                <button
+                  className="log-out-button"
+                  onClick={handleOpenExitModal}
+                >
                   <img src={images.logOutIcon} alt="log out" />
                 </button>
               </li>

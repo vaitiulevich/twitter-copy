@@ -1,16 +1,21 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { Post } from '@components/Post/Post';
 import { SkeletonPost } from '@components/SkeletonPost/SkeletonPost';
 import { SCELETON_POST_COUNT } from '@constants/constants';
-import { fetchPostsRequest, setLastVisible } from '@store/actions/postActions';
+import {
+  fetchPostsRequest,
+  fetchPostsSuccess,
+  setLastVisible,
+} from '@store/actions/postActions';
 import {
   selectIsMorePost,
   selectPostLoad,
   selectUserId,
   selectUserPosts,
 } from '@store/selectors';
+import { RootState } from '@store/types';
 import { DocumentData, Query } from 'firebase/firestore';
 
 import './styles.scss';
@@ -28,13 +33,14 @@ export const Feed = ({
 }: FeedProps) => {
   const { id } = useParams();
   const userId = id ?? useSelector(selectUserId);
-  const posts = useSelector(selectUserPosts);
+  const { posts } = useSelector((state: RootState) => state.posts);
   const dispatch = useDispatch();
   const loading = useSelector(selectPostLoad);
   const isMorePosts = useSelector(selectIsMorePost);
 
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const location = useLocation();
 
   const getPosts = () => {
     dispatch(fetchPostsRequest(userId, query, firstQuery));
@@ -44,6 +50,12 @@ export const Feed = ({
     dispatch(setLastVisible(null));
     getPosts();
   }, [userId]);
+
+  useEffect(() => {
+    if (location && posts.length > 10) {
+      dispatch(fetchPostsSuccess([]));
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     observerRef.current = new IntersectionObserver((entries) => {

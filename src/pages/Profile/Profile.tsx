@@ -31,7 +31,6 @@ export const Profile = () => {
     }
   }, [authId]);
   useEffect(() => {
-    console.log(posts);
     // countPosts = posts.total;
     // posts=posts.total
   }, [posts]);
