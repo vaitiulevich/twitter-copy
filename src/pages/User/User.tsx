@@ -37,7 +37,7 @@ export const User = () => {
       {otherUser && (
         <>
           <ProfileHead
-            user={otherUser}
+            user={{ ...otherUser, id }}
             countPosts={countPosts}
             isOriginUser={false}
           />

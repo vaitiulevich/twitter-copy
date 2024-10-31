@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { PostHeader } from '@components/PostHeader/PostHeader';
@@ -60,11 +60,12 @@ export const Post = ({
 
   const postContent = (
     <div>
-      <div className="post-text">{post.content}</div>
+      <div className="post-text">
+        {Array.isArray(post.content) && post.content.join(' ')}
+      </div>
       {renderImages()}
     </div>
   );
-
   return (
     <div className="post">
       <div className="post-avatar">

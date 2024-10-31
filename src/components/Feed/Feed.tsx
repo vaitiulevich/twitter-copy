@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { Button } from '@components/Button/Button';
 import { Post } from '@components/Post/Post';
+import { SkeletonPost } from '@components/SkeletonPost/SkeletonPost';
+import { SCELETON_POST_COUNT } from '@constants/constants';
 import { fetchPostsRequest, setLastVisible } from '@store/actions/postActions';
 import {
   selectIsMorePost,
@@ -31,13 +32,38 @@ export const Feed = ({
   const dispatch = useDispatch();
   const loading = useSelector(selectPostLoad);
   const isMorePosts = useSelector(selectIsMorePost);
+
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
   const getPosts = () => {
     dispatch(fetchPostsRequest(userId, query, firstQuery));
   };
+
   useEffect(() => {
     dispatch(setLastVisible(null));
     getPosts();
-  }, [dispatch, userId]);
+  }, [userId]);
+
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      if (entry.isIntersecting && !loading && isMorePosts) {
+        getPosts();
+      }
+    });
+
+    const currentLoadMoreRef = loadMoreRef.current;
+    if (currentLoadMoreRef) {
+      observerRef.current.observe(currentLoadMoreRef);
+    }
+
+    return () => {
+      if (currentLoadMoreRef) {
+        observerRef.current?.unobserve(currentLoadMoreRef);
+      }
+    };
+  }, [loading, isMorePosts]);
 
   const renderTweets = () => {
     return posts.map((post) => (
@@ -49,23 +75,28 @@ export const Feed = ({
       />
     ));
   };
+
   const isHasPosts = posts && posts.length > 0;
+
+  const renderWithoutPosts = () => {
+    return loading ? (
+      Array.from({ length: SCELETON_POST_COUNT }).map((_, index) => (
+        <SkeletonPost key={index} />
+      ))
+    ) : (
+      <p>no tweets</p>
+    );
+  };
+
   return (
     <div className="feed">
       {isHasPosts ? (
         <>
           {renderTweets()}
-          {isMorePosts && (
-            <Button
-              text="Load More"
-              onClick={getPosts}
-              disabled={loading}
-              loading={loading}
-            />
-          )}
+          {isMorePosts && <div ref={loadMoreRef} />}
         </>
       ) : (
-        <p>No tweets</p>
+        renderWithoutPosts()
       )}
     </div>
   );

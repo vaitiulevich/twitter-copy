@@ -61,12 +61,18 @@ function* signInSaga(action: ReturnType<typeof loginRequest>): Generator {
         where('password', '==', password)
       );
       const phoneExists = yield getDocs(phoneQuery);
-      phoneExists?.forEach((doc: any) => {
-        const data = doc.data();
-        if (data.email) {
-          signInWithEmailAndPassword(auth, data.email, password);
-        }
-      });
+
+      if (phoneExists.empty) {
+        console.log(phoneExists);
+        yield put(loginFailure(INCORRECT_CREDS));
+      } else {
+        phoneExists?.forEach((doc: any) => {
+          const data = doc.data();
+          if (data.email) {
+            signInWithEmailAndPassword(auth, data.email, password);
+          }
+        });
+      }
     }
   } catch (err) {
     if (err instanceof FirebaseError) {
@@ -195,21 +201,6 @@ function* googleLogupSaga(): Generator {
   }
 }
 
-function* googleLoginSaga(): Generator {
-  try {
-    const result = yield call(signInWithPopup, auth, provider);
-    const user = result.user;
-    const exists = yield call(checkDocUserExists, user.email);
-    if (exists) {
-      yield put(getUserData(user.uid));
-    }
-  } catch (error) {
-    if (error instanceof FirebaseError) {
-      console.log(error);
-    }
-  }
-}
-
 export function* watchSignIn() {
   yield takeEvery(LOGIN_REQUEST, signInSaga);
 }
@@ -218,9 +209,6 @@ export function* watchSignOut() {
   yield takeEvery(LOGOUT_REQUEST, logOutSaga);
 }
 
-export function* watchGoogleLogin() {
-  yield takeLatest(GOOGLE_LOGIN_REQUEST, googleLoginSaga);
-}
 export function* watchGoogleLogup() {
   yield takeLatest(GOOGLE_LOGUP_REQUEST, googleLogupSaga);
 }

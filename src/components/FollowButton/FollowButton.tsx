@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 import { setFollowingStatus } from '@store/actions/otherUserActions';
 import {
   isUserFollowing,
@@ -10,8 +9,7 @@ import { RootState } from '@store/types';
 
 import './styles.scss';
 
-export const FollowButton = () => {
-  const { id } = useParams();
+export const FollowButton = ({ id = '' }: { id?: string }) => {
   const originId = useSelector(selectUserId);
   const loading = useSelector(selectOtherUserLoad);
   const dispatch = useDispatch();

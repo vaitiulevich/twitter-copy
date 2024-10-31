@@ -1,7 +1,12 @@
+@import '@styles/breakpoints';
+
 .date-panel {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: 1rem;
+  @include respond-to(mobile) {
+    gap: 0.1rem;
+  }
 }
 .date-select {
   padding: 1rem;

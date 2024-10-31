@@ -8,7 +8,7 @@ import { NavMenu } from '@constants/constants';
 import { images } from '@constants/images';
 import withModal from '@HOC/withModal';
 import { logoutRequest } from '@store/actions/authActions';
-import { selectThemeType } from '@store/selectors';
+import { selectThemeType, selectUserSelector } from '@store/selectors';
 import classNames from 'classnames';
 
 import './styles.scss';
@@ -31,6 +31,8 @@ export const MenuSidebar = withModal(
       dispatch(logoutRequest());
     };
     const theme = useSelector(selectThemeType);
+    const { avatar, name, userSlug } = useSelector(selectUserSelector);
+
     const renderMenu = () => {
       return NavMenu.map((item) => {
         const isActive = location.pathname === item.link;
@@ -78,7 +80,12 @@ export const MenuSidebar = withModal(
               className="menu-sidebar-btn"
             />
           </div>
-          <UserShortInfo />
+          <UserShortInfo avatar={avatar} name={name} userSlug={userSlug} />
+          <Button
+            text="Log Out"
+            onClick={handleLogOut}
+            className="menu-sidebar-btn"
+          />
         </div>
         <div className="mobile-menu-sidebar">
           <nav className="mobile-menu-nav">

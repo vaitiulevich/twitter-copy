@@ -1,9 +1,10 @@
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { defineConfig } from 'vite';
+import svgr from 'vite-plugin-svgr';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), svgr()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
@@ -15,14 +16,6 @@ export default defineConfig({
       '@constants': path.resolve(__dirname, 'src/constants'),
       '@HOC': path.resolve(__dirname, 'src/HOC'),
       '@store': path.resolve(__dirname, 'src/store'),
-    },
-  },
-  build: {
-    outDir: 'build',
-    rollupOptions: {
-      output: {
-        entryFileNames: 'bundle.js',
-      },
     },
   },
   server: {

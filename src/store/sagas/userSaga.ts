@@ -1,6 +1,6 @@
 import { sessionPeriod } from '@constants/constants';
 import { loginSuccess, logoutRequest } from '@store/actions/authActions';
-import { fetchPostsRequest, setTotalPosts } from '@store/actions/postActions';
+import { setTotalPosts } from '@store/actions/postActions';
 import {
   changePasswordFailure,
   changePasswordRequest,
@@ -73,14 +73,13 @@ function* getUserDataRequest(
   const id = action.payload;
   try {
     const userData = yield call(fetchUserData, id);
-
-    yield put(
-      fetchPostsRequest(
-        id,
-        () => userPostsQuery(id),
-        () => userCursorPostsQuery
-      )
-    );
+    // yield put(
+    //   fetchPostsRequest(
+    //     id,
+    //     () => userPostsQuery(id),
+    //     () => userCursorPostsQuery
+    //   )
+    // );
     yield put(getUserDataSuccess(userData));
   } catch (error) {
     if (error instanceof FirebaseError) {

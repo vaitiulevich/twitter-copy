@@ -1,6 +1,7 @@
 import { POSTS_PER_PAGE } from '@constants/constants';
 import { PostState } from '@store/reducers/postReducer';
-import { RootState } from '@store/types';
+import { UserSearch } from '@store/reducers/searchReducer';
+import { RootState, User } from '@store/types';
 import {
   ADD_POST_REQUEST,
   DELETE_POST_REQUEST,
@@ -17,8 +18,10 @@ import {
   getDocs,
   onSnapshot,
   Query,
+  query,
   QuerySnapshot,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 import {
   deleteObject,
@@ -28,9 +31,11 @@ import {
 } from 'firebase/storage';
 import { eventChannel } from 'redux-saga';
 import {
+  all,
   call,
   cancelled,
   put,
+  race,
   select,
   take,
   takeEvery,
@@ -49,6 +54,7 @@ import {
   fetchPostsSuccess,
   setIsMorePosts,
   setLastVisible,
+  setTotalPosts,
   updatePostLikesFailure,
   updatePostLikesRequest,
   updatePostLikesSuccess,
@@ -71,7 +77,6 @@ export function* uploadImages(files: File[]): Generator {
 export function* getUserPostCount(userId: string): Generator {
   const postsQuery = userAllPostsQuery(userId);
   const querySnapshot = yield getDocs(postsQuery);
-  console.log(querySnapshot.size);
   return querySnapshot.size;
 }
 
@@ -136,7 +141,7 @@ function createPostsChannel(postsQuery: Query<DocumentData>) {
     const unsubscribe = onSnapshot(
       postsQuery,
       (snapshot: QuerySnapshot<DocumentData>) => {
-        const updatedPosts = snapshot.docs.map((doc) => ({
+        const updatedPosts: any = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
@@ -150,13 +155,43 @@ function createPostsChannel(postsQuery: Query<DocumentData>) {
   });
 }
 
+const createUsersChannel = (visibleUserIds: string[]) => {
+  if (!visibleUserIds || visibleUserIds.length === 0) {
+    return eventChannel((emitter) => {
+      emitter([]);
+      return () => {};
+    });
+  }
+
+  return eventChannel((emitter) => {
+    const usersQuery = query(
+      collection(db, 'users'),
+      where('userId', 'in', visibleUserIds)
+    );
+
+    const unsubscribe = onSnapshot(usersQuery, (snapshot) => {
+      const updatedUsers = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      console.log('JJ');
+      emitter(updatedUsers);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  });
+};
+
 function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
   let channel;
+  let usersChannel;
   const { posts, lastVisible } = yield select(
     (state: RootState) => state.posts
   );
   let postsQuery;
-
   try {
     if (!action.payload.query || !action.payload.firstQuery) {
       return;
@@ -167,6 +202,7 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
       const firstQuery = action.payload.firstQuery();
       postsQuery = firstQuery(lastVisible, action.payload.id);
     }
+
     const querySnapshot = yield getDocs(postsQuery);
     const isEndOfPosts = querySnapshot.docs.length >= POSTS_PER_PAGE;
     const newLastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
@@ -175,12 +211,50 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
     yield put(setLastVisible(newLastVisible));
 
     channel = yield call(createPostsChannel, postsQuery);
+
     while (true) {
-      const updatedPosts = yield take(channel);
-      if (posts.length > 0 && lastVisible) {
-        yield put(fetchPostsSuccess([...posts, ...updatedPosts]));
+      let updatedUsers;
+      let updatedPosts;
+      let updatedOldPosts = [];
+      updatedOldPosts = yield take(channel);
+
+      let userIds = updatedOldPosts.map((post: PostState) => post.userId);
+      usersChannel = yield call(createUsersChannel, userIds);
+
+      if (userIds.length) {
+        const usersQuery = query(
+          collection(db, 'users'),
+          where('userId', 'in', userIds)
+        );
+        const resUser = yield getDocs(usersQuery);
+        const resUserusers = resUser.docs.map((doc: any) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        updatedUsers = resUserusers;
+      }
+      updatedPosts = updatedOldPosts;
+
+      if (updatedPosts && updatedUsers) {
+        const updatedPostsWithUsers = updatedPosts.map((post: PostState) => {
+          const user = updatedUsers.find(
+            (user: UserSearch) => user.id === post.userId
+          );
+          return {
+            ...post,
+            userAvatar: user ? user.avatar : null,
+            userName: user ? user.name : null,
+            userSlug: user ? user.userSlug : null,
+          };
+        });
+        if (posts.length > 0 && lastVisible) {
+          yield put(fetchPostsSuccess([...posts, ...updatedPostsWithUsers]));
+        } else {
+          yield put(fetchPostsSuccess(updatedPostsWithUsers));
+        }
       } else {
-        yield put(fetchPostsSuccess(updatedPosts));
+        yield put(fetchPostsSuccess([]));
       }
     }
   } catch (error) {
@@ -188,7 +262,8 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
     console.error(error);
   } finally {
     if (yield cancelled()) {
-      channel.close();
+      if (channel) channel.close();
+      if (usersChannel) usersChannel.close();
     }
   }
 }

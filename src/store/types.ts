@@ -3,6 +3,7 @@ import { Maybe } from 'yup';
 import { AuthState } from './reducers/authRedicer';
 import { OtherUserState } from './reducers/otherUserReducer';
 import { PostsState } from './reducers/postReducer';
+import { SearchState } from './reducers/searchReducer';
 import { ThemeState } from './reducers/themeReducer';
 import { UserState } from './reducers/userReducer';
 import { AuthAction } from './types/auth/actionTypes';
@@ -34,6 +35,7 @@ export type RootState = {
   user: UserState;
   posts: PostsState;
   otherUser: OtherUserState;
+  search: SearchState;
 };
 
 export type RootAction = AuthAction | UserAction | ThemeAction;

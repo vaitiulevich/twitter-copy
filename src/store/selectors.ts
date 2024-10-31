@@ -81,3 +81,20 @@ export const isUserFollowing = createSelector(
     return user?.otherUser?.followers.includes(userId);
   }
 );
+
+const search = (state: RootState) => state.search;
+
+export const selectSearchLoad = createSelector(
+  [search],
+  (search) => search.loading
+);
+
+export const selectSearchUsers = createSelector(
+  [search],
+  (search) => search.users
+);
+
+export const selectSearchPosts = createSelector(
+  [search],
+  (search) => search.posts
+);

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deletePostRequest } from '@store/actions/postActions';
-import { PostState } from '@store/reducers/userReducer';
+import { PostState } from '@store/reducers/postReducer';
 import { selectUserId } from '@store/selectors';
 
 import './styles.scss';

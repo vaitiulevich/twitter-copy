@@ -9,13 +9,15 @@ import {
   selectCountPosts,
   selectUserSelector,
 } from '@store/selectors';
+import { RootState } from '@store/types';
 import { userCursorPostsQuery, userPostsQuery } from '@utils/querys';
 
 import './styles.scss';
 
 export const Profile = () => {
   const user = useSelector(selectUserSelector);
-  const countPosts = useSelector(selectCountPosts);
+  let countPosts = useSelector(selectCountPosts);
+  const posts = useSelector((state: RootState) => state.posts.total);
   const dispatch = useDispatch();
   const fetchUser = (uid: string) => {
     if (uid) {
@@ -28,6 +30,11 @@ export const Profile = () => {
       fetchUser(authId);
     }
   }, [authId]);
+  useEffect(() => {
+    console.log(posts);
+    // countPosts = posts.total;
+    // posts=posts.total
+  }, [posts]);
   return (
     <>
       <ProfileHead user={user} countPosts={countPosts} isOriginUser={true} />

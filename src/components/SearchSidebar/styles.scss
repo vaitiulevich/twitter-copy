@@ -3,7 +3,7 @@
 .search-sidebar {
   padding: 1rem 0 0 0.5rem;
   @include respond-to(tablet) {
-    padding: 0.5rem;
+    padding: 1rem 0.5rem 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -34,4 +34,56 @@
   outline: none;
   border: none;
   background-color: transparent;
+}
+.search-headline {
+  margin: 0;
+}
+.search-results {
+  padding: 0.5rem;
+  background-color: var(--background-opasity);
+  margin-top: 0.5rem;
+  border-radius: 10px;
+  @include respond-to(tablet) {
+    display: none;
+    position: absolute;
+    top: 3rem;
+    width: 83%;
+    background-color: var(--background);
+    border: 0.01rem solid var(--border-color);
+  }
+  @include respond-to(mobile) {
+    width: 90%;
+  }
+}
+.search-results.visible {
+  @include respond-to(tablet) {
+    display: block;
+  }
+}
+.search-results a {
+  color: var(--text);
+}
+.search-results .user-info-panel {
+  margin: 0;
+  gap: 0.5rem;
+}
+.search-post-results p {
+  margin: 0.5rem 0;
+}
+.search-post-results {
+  background-color: var(--background-opasity);
+  padding: 0.2rem;
+  margin-bottom: 0.5rem;
+  border-radius: 5px;
+}
+.search-user-results {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 0.5rem;
+}
+.search-item-headline {
+  margin: 1rem 0 0.5rem;
+  border-bottom: 0.01rem solid var(--border-color);
 }

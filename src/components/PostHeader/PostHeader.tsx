@@ -25,6 +25,7 @@ export const PostHeader = ({ post, isOriginPost }: PostHeaderProps) => {
   const optionImg = () => {
     return <img src={optionIcon} alt="options" />;
   };
+
   const linkFromUserName = isOriginPost
     ? '/profile'
     : `/home/user/${post.userId}`;
@@ -37,7 +38,7 @@ export const PostHeader = ({ post, isOriginPost }: PostHeaderProps) => {
         <span className="post-author-slug">{post.userSlug}</span>
         <span className="post-date">{formatTimestamp(post.timestamp)}</span>
       </div>
-      {isOriginPost ? (
+      {isOriginPost && (
         <>
           <button onClick={togglePostMenu} className="post-options-btn">
             {optionImg()}
@@ -48,8 +49,6 @@ export const PostHeader = ({ post, isOriginPost }: PostHeaderProps) => {
             togglePostMenu={togglePostMenu}
           />
         </>
-      ) : (
-        optionImg()
       )}
     </div>
   );

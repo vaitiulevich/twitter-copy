@@ -13,6 +13,9 @@
 .user-info-name,
 .user-info-slug {
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .user-info-slug {

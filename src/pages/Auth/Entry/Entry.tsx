@@ -30,7 +30,7 @@ export const Entry = () => {
             <h1 className="entry-title">Happening now</h1>
             <h2 className="entry-subtitle">Join Twitter today</h2>
             <div className="entry-btns-panel">
-              <GoogleSignButton text="Sign up with Google" type="signup" />
+              <GoogleSignButton text="Sign up with Google" />
               <Link to={'/sign-up'} className="entry-btn">
                 Sign up with email
               </Link>

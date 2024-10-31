@@ -99,6 +99,7 @@ export const EditProfileForm = ({
           name="phone"
           control={control}
           placeholder="Phone"
+          type="phone"
         />
         <ControlledInput
           name="description"
