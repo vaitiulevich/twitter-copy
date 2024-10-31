@@ -175,7 +175,6 @@ const createUsersChannel = (visibleUserIds: string[]) => {
         ...doc.data(),
       }));
 
-      console.log('JJ');
       emitter(updatedUsers);
     });
 
@@ -254,7 +253,10 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
           yield put(fetchPostsSuccess(updatedPostsWithUsers));
         }
       } else {
-        yield put(fetchPostsSuccess([]));
+        const isEmptyPosts = posts.length < 1 && updatedPosts.length < 1;
+        if (isEmptyPosts || posts.length <= 10) {
+          yield put(fetchPostsSuccess([]));
+        }
       }
     }
   } catch (error) {
