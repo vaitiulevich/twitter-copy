@@ -6,7 +6,7 @@ import themeReducer from '@store/reducers/themeReducer';
 import userReducer from '@store/reducers/userReducer';
 import { combineReducers } from 'redux';
 
-const rootReducer = combineReducers({
+const rootReducer: any = combineReducers({
   theme: themeReducer,
   auth: authReducer,
   user: userReducer,
