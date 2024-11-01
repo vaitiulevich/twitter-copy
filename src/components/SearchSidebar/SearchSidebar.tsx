@@ -1,21 +1,18 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { FollowButton } from '@components/FollowButton/FollowButton';
-import { PostHeader } from '@components/PostHeader/PostHeader';
-import { UserShortInfo } from '@components/UserShortInfo/UserShortInfo';
 import { images } from '@constants/images';
 import { searchRequest } from '@store/actions/searchActions';
 import {
   selectSearchLoad,
   selectSearchPosts,
   selectSearchUsers,
-  selectUserId,
 } from '@store/selectors';
 import { debounce } from '@utils/debounce';
 import classNames from 'classnames';
 
 import './styles.scss';
+import { SearchPostsResults } from './components/SearchPostsResults/SearchPostsResults';
+import { SearchUsersResults } from './components/SearchUsersResults/SearchUsersResults';
 
 export const SearchSidebar = () => {
   const dispatch = useDispatch();
@@ -25,7 +22,6 @@ export const SearchSidebar = () => {
   const loading = useSelector(selectSearchLoad);
   const users = useSelector(selectSearchUsers);
   const posts = useSelector(selectSearchPosts);
-  const originId = useSelector(selectUserId);
 
   const debouncedSearch = debounce((value: string) => {
     dispatch(searchRequest(value.trim() ? value : ''));
@@ -61,33 +57,6 @@ export const SearchSidebar = () => {
     };
   }, [timeoutId]);
 
-  const renderUsersResults = () => {
-    return users.map((user) => (
-      <div className="search-user-results" key={user.id}>
-        <UserShortInfo
-          avatar={user.avatar}
-          name={user.name}
-          userSlug={user.userSlug}
-          navTo={`/home/user/${user.id}`}
-        />
-        {originId !== `${user.id}` && <FollowButton id={`${user.id}`} />}
-      </div>
-    ));
-  };
-
-  const renderPostssResults = () => {
-    return posts.map((post) => (
-      <div className="search-post-results" key={post.id}>
-        <PostHeader post={post} isOriginPost={false} />
-        {post.content && (
-          <Link to={`/home/posts/${post.id}`}>
-            <p>{post.content.join(' ')}</p>
-          </Link>
-        )}
-      </div>
-    ));
-  };
-
   return (
     <aside className="search-sidebar">
       <img src={images.logo} alt="logo" className="mobile-header-logo" />
@@ -114,13 +83,13 @@ export const SearchSidebar = () => {
           {posts.length > 0 && (
             <>
               <h3 className="search-item-headline">Tweets</h3>
-              {renderPostssResults()}
+              <SearchPostsResults posts={posts} />
             </>
           )}
           {users.length > 0 && (
             <>
               <h3 className="search-item-headline">Users</h3>
-              {renderUsersResults()}
+              <SearchUsersResults users={users} />
             </>
           )}
           {loading && <p>Loading...</p>}

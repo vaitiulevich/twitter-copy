@@ -1,9 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { images } from '@constants/images';
-import {
-  googleLoginRequest,
-  googleLogupRequest,
-} from '@store/actions/authActions';
+import { googleLogupRequest } from '@store/actions/authActions';
 
 export const GoogleSignButton = ({ text }: { text?: string }) => {
   const dispatch = useDispatch();

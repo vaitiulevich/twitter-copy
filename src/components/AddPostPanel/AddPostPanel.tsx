@@ -44,11 +44,7 @@ export const AddPostPanel = ({
       timestamp: new Date().getTime(),
       postId: '',
     };
-    if (onCloseModal) {
-      dispatch(addPostRequest(postData, onCloseModal));
-    } else {
-      dispatch(addPostRequest(postData));
-    }
+    dispatch(addPostRequest(postData, onCloseModal ?? undefined));
     setPostContent('');
     setSelectedFiles([]);
   };

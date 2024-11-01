@@ -10,7 +10,7 @@ import {
 import { DocumentSnapshot, getDocs } from 'firebase/firestore';
 import { call, put, takeLatest } from 'redux-saga/effects';
 
-function* searchPosts(action: ReturnType<typeof searchRequest>): Generator {
+function* searchTwetter(action: ReturnType<typeof searchRequest>): Generator {
   if (action.payload === '') {
     yield put(searchSuccess({ posts: [], users: [] }));
     return;
@@ -64,5 +64,5 @@ function* searchPosts(action: ReturnType<typeof searchRequest>): Generator {
 }
 
 export function* watchSearch() {
-  yield takeLatest(SEARCH_REQUEST, searchPosts);
+  yield takeLatest(SEARCH_REQUEST, searchTwetter);
 }

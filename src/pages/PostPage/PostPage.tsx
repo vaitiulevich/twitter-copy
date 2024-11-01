@@ -14,7 +14,7 @@ export const PostPage = () => {
   const userId = useSelector(selectUserId);
   return (
     <section className="posat-page">
-      {post ? <Post post={post} userId={userId} /> : <div>no tweets</div>}
+      {post ? <Post post={post} userId={userId} /> : <div>no tweet</div>}
     </section>
   );
 };

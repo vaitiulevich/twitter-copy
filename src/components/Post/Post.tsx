@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { PostHeader } from '@components/PostHeader/PostHeader';
+import { PostLikeButton } from '@components/PostLikeButton/PostLikeButton';
+import { UPLOAD_IMG_COUNT } from '@constants/constants';
 import { images } from '@constants/images';
 import { updatePostLikesRequest } from '@store/actions/postActions';
 import { PostState } from '@store/reducers/postReducer';
@@ -23,7 +25,7 @@ export const Post = ({
   const dispatch = useDispatch();
   const isOriginPost = post.userId === userId;
 
-  const handleLikeToggle = () => {
+  const handleLikeToggle = useCallback(() => {
     const updatedLikes = userHasLiked
       ? likes.filter((id) => id !== userId)
       : [...likes, userId];
@@ -32,16 +34,15 @@ export const Post = ({
     if (post.id) {
       dispatch(updatePostLikesRequest(post.id, updatedLikes));
     }
-  };
+  }, [likes]);
 
   const renderImages = () => {
-    if (!post.images || post.images.length === 0) return null;
+    if (!post.images || !post.images.length) return null;
 
+    const imageCount = post.images.length;
+    const calssesRange = imageCount > 0 && imageCount <= UPLOAD_IMG_COUNT;
     const classes = classNames('post-images', {
-      'one-image': post.images.length === 1,
-      'two-images': post.images.length === 2,
-      'three-images': post.images.length === 3,
-      'four-images': post.images.length === 4,
+      [`image-number-${imageCount}`]: calssesRange,
     });
 
     return (
@@ -74,15 +75,11 @@ export const Post = ({
       <div className="post-content">
         <PostHeader post={post} isOriginPost={isOriginPost} />
         {navigateTo ? <Link to={navigateTo}>{postContent}</Link> : postContent}
-        <div className="post-like">
-          <img
-            className="post-like-img"
-            onClick={handleLikeToggle}
-            src={userHasLiked ? images.likeFill : images.likeEmpty}
-            alt="like"
-          />
-          {post.likes.length}
-        </div>
+        <PostLikeButton
+          userHasLiked={userHasLiked}
+          onToggleLike={handleLikeToggle}
+          likesCount={likes.length}
+        />
       </div>
     </div>
   );

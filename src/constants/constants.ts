@@ -118,3 +118,4 @@ export const pngSignature = [137, 80, 78, 71, 13, 10, 26, 10];
 export const jpgSignature = [255, 216];
 
 export const SCELETON_POST_COUNT = 2;
+export const UPLOAD_IMG_COUNT = 4;
