@@ -8,6 +8,7 @@ import {
   FETCH_OTHER_USER_REQUEST,
   SET_FOLLOWING_STATUS,
 } from '@store/types/otherUser/actionTypes';
+import { fetchUserData } from '@store/utils/userUtils';
 import { FirebaseError } from 'firebase/app';
 import {
   arrayRemove,
@@ -18,7 +19,6 @@ import {
 import { call, put, takeEvery } from 'redux-saga/effects';
 
 import { db } from '../../firebase';
-import { fetchUserData } from './userSaga';
 
 function* fetchOtherUserData(
   action: ReturnType<typeof fetchOtherUserDataRequest>

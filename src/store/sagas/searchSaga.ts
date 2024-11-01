@@ -2,11 +2,13 @@ import { searchRequest, searchSuccess } from '@store/actions/searchActions';
 import { PostState } from '@store/reducers/postReducer';
 import { UserSearch } from '@store/reducers/searchReducer';
 import { SEARCH_REQUEST } from '@store/types/search/actionTypes';
-import { postSearchQuery, userSearchQuery } from '@utils/querys';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import {
+  postSearchQuery,
+  usersByIdsQuery,
+  userSearchQuery,
+} from '@utils/querys';
+import { DocumentSnapshot, getDocs } from 'firebase/firestore';
 import { call, put, takeLatest } from 'redux-saga/effects';
-
-import { db } from '../../firebase';
 
 function* searchPosts(action: ReturnType<typeof searchRequest>): Generator {
   if (action.payload === '') {
@@ -18,19 +20,15 @@ function* searchPosts(action: ReturnType<typeof searchRequest>): Generator {
 
     const postsQuery = postSearchQuery(searchTerm);
     const querySnapshot = yield call(getDocs, postsQuery);
-    const postsResults = querySnapshot.docs.map((doc: any) => ({
+    const postsResults = querySnapshot.docs.map((doc: DocumentSnapshot) => ({
       id: doc.id,
       ...doc.data(),
     }));
     let postsWithUserNames = postsResults;
     if (postsResults.length) {
       let userIds = postsResults.map((post: PostState) => post.userId);
-      const usersPostQuery = query(
-        collection(db, 'users'),
-        where('userId', 'in', userIds)
-      );
-      const usersSnapshot = yield call(getDocs, usersPostQuery);
-      const users = usersSnapshot.docs.map((doc: any) => ({
+      const usersSnapshot = yield call(getDocs, usersByIdsQuery(userIds));
+      const users = usersSnapshot.docs.map((doc: DocumentSnapshot) => ({
         id: doc.id,
         ...doc.data(),
       }));
@@ -50,10 +48,12 @@ function* searchPosts(action: ReturnType<typeof searchRequest>): Generator {
 
     const usersQuery = userSearchQuery(searchTerm);
     const queryUserSnapshot = yield call(getDocs, usersQuery);
-    const usersResults = queryUserSnapshot.docs.map((doc: any) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const usersResults = queryUserSnapshot.docs.map(
+      (doc: DocumentSnapshot) => ({
+        id: doc.id,
+        ...doc.data(),
+      })
+    );
 
     yield put(
       searchSuccess({ posts: postsWithUserNames, users: usersResults })
