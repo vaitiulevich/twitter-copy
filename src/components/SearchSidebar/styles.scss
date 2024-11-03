@@ -9,6 +9,14 @@
     justify-content: space-between;
   }
 }
+.clear-inp-btn {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.clear-inp-btn img {
+  height: 0.7rem;
+}
 .mobile-header-logo {
   display: none;
   @include respond-to(tablet) {
@@ -22,7 +30,8 @@
   background-color: var(--border-color);
   border-radius: 5rem;
 }
-.search-inp-btn {
+.search-inp-btn,
+.clear-inp-btn {
   outline: none;
   border: none;
   background-color: transparent;
@@ -34,6 +43,7 @@
   outline: none;
   border: none;
   background-color: transparent;
+  width: 80%;
 }
 .search-headline {
   margin: 0;

@@ -5,15 +5,23 @@
   position: relative;
 }
 .post-header-author {
+  width: 90%;
   display: flex;
   align-items: center;
 }
 .post-author-name {
   margin: 0 0.5rem 0 0;
+  max-width: 50%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .post-author-name a {
   color: var(--text);
   font-size: 1.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .post-author-slug {
   margin: 0;

@@ -10,14 +10,22 @@
   border-radius: 50%;
   overflow: hidden;
 }
+.user-info {
+  width: 70%;
+}
 .user-info-name,
 .user-info-slug {
+  max-width: 70%;
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
+.user-name-link {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .user-info-slug {
   color: var(--secondary-text);
 }

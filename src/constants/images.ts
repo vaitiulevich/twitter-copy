@@ -3,6 +3,7 @@ import banner from '@assets/banner.png';
 import addImg from '@assets/icons/addImg.svg';
 import bookmarksDark from '@assets/icons/bookmarks-dark.svg';
 import bookmarks from '@assets/icons/bookmarks-light.svg';
+import clear from '@assets/icons/clear-cros.png';
 import deleteIcon from '@assets/icons/delete.png';
 import exploreDark from '@assets/icons/explore-dark.svg';
 import explore from '@assets/icons/explore-light.svg';
@@ -39,6 +40,7 @@ export const images = {
   logOutIcon: logOutIcon,
   visible: visible,
   unvisible: unvisible,
+  clear: clear,
 
   settingsDark: settingsDark,
   settings: settings,

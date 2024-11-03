@@ -1,23 +1,31 @@
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { EditProfileButton } from '@components/EditProfileButton/EditProfileButton';
 import { FollowButton } from '@components/FollowButton/FollowButton';
 import { images } from '@constants/images';
-import { User } from '@store/types';
+import { getTotalUsersPosts } from '@store/actions/postActions';
+import { UserState } from '@store/reducers/userReducer';
+import { selectCountPosts } from '@store/selectors';
+import { RootState } from '@store/types';
 
 import './styles.scss';
 export const ProfileHead = ({
   user,
-  countPosts,
   isOriginUser,
 }: {
-  user: User & {
-    id?: string;
-    userSlug: string;
-    following: string[];
-    followers: string[];
-  };
-  countPosts: number;
+  user: UserState;
   isOriginUser: boolean;
 }) => {
+  const dispatch = useDispatch();
+  const { userId } = user;
+  let countPosts = useSelector(selectCountPosts);
+  const { posts } = useSelector((state: RootState) => state.posts);
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(getTotalUsersPosts(userId));
+    }
+  }, [posts]);
   return (
     <div>
       <header className="profile-header">
@@ -41,7 +49,7 @@ export const ProfileHead = ({
             {isOriginUser ? (
               <EditProfileButton />
             ) : (
-              <FollowButton id={user.id} />
+              <FollowButton id={user.userId} user={user} />
             )}
           </div>
         </div>

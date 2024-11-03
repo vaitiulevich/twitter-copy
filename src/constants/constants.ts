@@ -1,7 +1,7 @@
 import { images } from '@constants/images';
 
 export const MAX_CHARS_IN_POST = 500;
-export const MAX_FILE_SIZE = 160 * 1024;
+export const MAX_FILE_SIZE = 200 * 1024;
 export const MAX_WIDTH = 1920;
 export const MAX_HEIGHT = 1080;
 
@@ -118,3 +118,6 @@ export const pngSignature = [137, 80, 78, 71, 13, 10, 26, 10];
 export const jpgSignature = [255, 216];
 
 export const SCELETON_POST_COUNT = 2;
+export const UPLOAD_IMG_COUNT = 4;
+
+export const COUNT_MAX_DATE_BIRTH_YEARS = 150;

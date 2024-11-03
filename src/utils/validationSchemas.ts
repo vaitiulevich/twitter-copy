@@ -1,5 +1,5 @@
 import {
-  DATE_BIRTH_LENGTH,
+  COUNT_MAX_DATE_BIRTH_YEARS,
   MAX_LENTGH_DESCRIPTION,
   MAX_LENTGH_NAME,
   MAX_LENTGH_PASSWORD,
@@ -11,19 +11,18 @@ import {
 } from '@constants/constants';
 import {
   ERR_DATE_FUTURE,
+  ERR_DATE_MIN_BIRTH,
   ERR_INCORRECT_FILL,
   ERR_MAX_LENTGH_NAME,
-  ERR_MAX_LENTGH_PASSWORD,
   ERR_MIN_LENTGH_NAME,
-  ERR_MIN_LENTGH_PASSWORD,
   ERR_PASSWORD_CONFIRM,
-  ERR_PASSWORD_CONTIN_NUM,
-  ERR_PASSWORD_CONTIN_UPERCASE,
   ERR_PASSWORD_MATCH,
   ERR_PASSWORD_RULES,
   ERR_REQUIRED,
 } from '@constants/messages';
 import * as yup from 'yup';
+
+import { formatDate } from './formatDate';
 
 export const stringRequired = (min: number, max: number) =>
   yup
@@ -63,11 +62,22 @@ export const chandgePasswordValidationSchema = yup.object().shape({
   ),
   newPassword: passwordValidation,
 });
+const todayDate = new Date();
+const today = formatDate(todayDate);
+const minDateBirt = formatDate(
+  new Date(
+    todayDate.setFullYear(todayDate.getFullYear() - COUNT_MAX_DATE_BIRTH_YEARS)
+  )
+);
 
 export const editProfileValidationSchema = yup.object().shape({
   name: stringRequired(MIN_LENTGH_NAME, MAX_LENTGH_NAME),
   phone: phoneValidation,
-  dateBirth: yup.date().max(new Date(), ERR_DATE_FUTURE).required(ERR_REQUIRED),
+  dateBirth: yup
+    .date()
+    .max(today, ERR_DATE_FUTURE)
+    .min(minDateBirt, ERR_DATE_MIN_BIRTH)
+    .required(ERR_REQUIRED),
   description: yup
     .string()
     .min(MIN_LENTGH_DESCRIPTION, ERR_INCORRECT_FILL)
@@ -76,10 +86,7 @@ export const editProfileValidationSchema = yup.object().shape({
 });
 
 export const signInValidationSchema = yup.object().shape({
-  password: yup
-    .string()
-    .required(ERR_REQUIRED)
-    .min(MIN_LENTGH_PASSWORD, ERR_PASSWORD_RULES),
+  password: yup.string().required(ERR_REQUIRED),
   isEmailLogin: yup.bool(),
   email: yup.string().when('$isEmailLogin', {
     is: true,

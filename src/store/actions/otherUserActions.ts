@@ -22,7 +22,7 @@ export const fetchOtherUserDataSuccess = (user: User) =>
     type: actions.FETCH_OTHER_USER_SUCCESS,
     payload: { user },
   }) as const;
-export const fetchOtherUserDataError = (error: string) =>
+export const fetchOtherUserDataError = (error: string | null) =>
   ({
     type: actions.FETCH_OTHER_USER_FAILURE,
     payload: { error },
@@ -31,11 +31,12 @@ export const fetchOtherUserDataError = (error: string) =>
 export const setFollowingStatus = (
   isFollowing: boolean,
   id: string,
-  originId: string
+  originId: string,
+  searchTerm?: string
 ) =>
   ({
     type: actions.SET_FOLLOWING_STATUS,
-    payload: { isFollowing, id, originId },
+    payload: { isFollowing, id, originId, searchTerm },
   }) as const;
 export const setFollowingStatusSuccess = () =>
   ({

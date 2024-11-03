@@ -21,7 +21,13 @@ export const UserShortInfo = ({
         </div>
         <div className="user-info">
           <h3 className="user-info-name">
-            {navTo ? <Link to={navTo}>{name}</Link> : name}
+            {navTo ? (
+              <Link className="user-name-link" to={navTo}>
+                {name}
+              </Link>
+            ) : (
+              name
+            )}
           </h3>
           {userSlug && <p className="user-info-slug">{userSlug} </p>}
         </div>

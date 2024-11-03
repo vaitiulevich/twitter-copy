@@ -1,0 +1,21 @@
+.search-post-name,
+.search-post-content {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.search-post-name {
+  max-width: 60%;
+}
+.search-post-avatar {
+  overflow: hidden;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+}
+.search-post-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

@@ -34,3 +34,4 @@ export const ERR_PASSWORD_MATCH = 'Passwords must match';
 export const ERR_PASSWORD_CONFIRM = 'Please confirm your password';
 
 export const ERR_DATE_FUTURE = 'The date cannot be in the future';
+export const ERR_DATE_MIN_BIRTH = 'Date of birth is invalid';

@@ -2,9 +2,11 @@ import { ChangeEvent, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@components/Button/Button';
 import { ImageUploader } from '@components/ImageUploader/ImageUploader';
+import { NotificationPopUp } from '@components/NotificationPopUp/NotificationPopUp';
 import { MAX_CHARS_IN_POST, MAX_POST_FILES } from '@constants/constants';
 import { images } from '@constants/images';
-import { addPostRequest } from '@store/actions/postActions';
+import { hideErrorPopUp } from '@store/actions/popUpActions';
+import { addPostFailure, addPostRequest } from '@store/actions/postActions';
 import { PostState } from '@store/reducers/postReducer';
 import { selectPostLoad } from '@store/selectors';
 import { RootState } from '@store/types';
@@ -21,6 +23,7 @@ export const AddPostPanel = ({
   const [postContent, setPostContent] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const user = useSelector((state: RootState) => state.user);
+  const { error } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
   const loading = useSelector(selectPostLoad);
 
@@ -44,15 +47,15 @@ export const AddPostPanel = ({
       timestamp: new Date().getTime(),
       postId: '',
     };
-    if (onCloseModal) {
-      dispatch(addPostRequest(postData, onCloseModal));
-    } else {
-      dispatch(addPostRequest(postData));
-    }
+    dispatch(addPostRequest(postData, onCloseModal ?? undefined));
     setPostContent('');
     setSelectedFiles([]);
   };
 
+  const handleClose = () => {
+    dispatch(hideErrorPopUp());
+    dispatch(addPostFailure(null));
+  };
   const currentLength = postContent.length;
   const isDisableBtn =
     (!postContent.trim() && selectedFiles.length === 0) || loading;
@@ -92,6 +95,7 @@ export const AddPostPanel = ({
           />
         </div>
       </div>
+      {error && <NotificationPopUp message={error} onClose={handleClose} />}
     </div>
   );
 };

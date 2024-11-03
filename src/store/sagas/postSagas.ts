@@ -1,57 +1,59 @@
 import { POSTS_PER_PAGE } from '@constants/constants';
 import { PostState } from '@store/reducers/postReducer';
 import { UserSearch } from '@store/reducers/searchReducer';
-import { RootState, User } from '@store/types';
+import { RootState } from '@store/types';
 import {
   ADD_POST_REQUEST,
   DELETE_POST_REQUEST,
   FETCH_POSTS_REQUEST,
+  GET_POST_REQUEST,
+  GET_TOTAL_POSTS,
   UPDATE_POST_LIKES_REQUEST,
 } from '@store/types/posts/actionTypes';
-import { userAllPostsQuery } from '@utils/querys';
+import {
+  createPostsChannel,
+  createUsersChannel,
+  getUserPostCount,
+  uploadImages,
+} from '@store/utils/postsUtils';
+import { fetchUserData } from '@store/utils/userUtils';
 import {
   addDoc,
   collection,
   deleteDoc,
   doc,
-  DocumentData,
+  DocumentSnapshot,
+  getDoc,
   getDocs,
-  onSnapshot,
-  Query,
   query,
-  QuerySnapshot,
   updateDoc,
   where,
 } from 'firebase/firestore';
+import { deleteObject, ref } from 'firebase/storage';
 import {
-  deleteObject,
-  getDownloadURL,
-  ref,
-  uploadBytes,
-} from 'firebase/storage';
-import { eventChannel } from 'redux-saga';
-import {
-  all,
   call,
   cancelled,
   put,
-  race,
   select,
   take,
   takeEvery,
   takeLatest,
 } from 'redux-saga/effects';
-import { v4 as uuidv4 } from 'uuid';
 
 import { db, storage } from '../../firebase';
 import {
   addPostFailure,
   addPostRequest,
   addPostSuccess,
+  deletePostFailure,
   deletePostRequest,
   fetchPostsFailure,
   fetchPostsRequest,
   fetchPostsSuccess,
+  getPostFailure,
+  getPostRequest,
+  getPostSuccess,
+  getTotalUsersPosts,
   setIsMorePosts,
   setLastVisible,
   setTotalPosts,
@@ -59,130 +61,6 @@ import {
   updatePostLikesRequest,
   updatePostLikesSuccess,
 } from '../actions/postActions';
-
-export function* uploadImages(files: File[]): Generator {
-  const urls: string[] = [];
-
-  for (const file of files) {
-    const uniqueName = `${uuidv4()}_${file.name}`;
-    const storageRef = ref(storage, `images/${uniqueName}`);
-    yield call(uploadBytes, storageRef, file);
-    const downloadURL = yield call(getDownloadURL, storageRef);
-    urls.push(downloadURL);
-  }
-
-  return urls;
-}
-
-export function* getUserPostCount(userId: string): Generator {
-  const postsQuery = userAllPostsQuery(userId);
-  const querySnapshot = yield getDocs(postsQuery);
-  return querySnapshot.size;
-}
-
-function* addPost(action: ReturnType<typeof addPostRequest>): Generator {
-  try {
-    const { files, ...postFields } = action.payload.postData;
-    let postData = { ...postFields };
-
-    if (files && files.length > 0) {
-      const imageUrls = yield call(uploadImages, files);
-      postData = { ...postFields, images: imageUrls };
-    }
-
-    const postsCollectionRef = collection(db, 'posts');
-    const newPost: PostState = yield call(addDoc, postsCollectionRef, postData);
-
-    yield put(addPostSuccess(newPost));
-  } catch (error) {
-    console.log(error);
-    yield put(addPostFailure());
-  }
-  if (action.payload.onClose) {
-    yield action.payload.onClose();
-  }
-}
-
-function* updatePostLikes(action: ReturnType<typeof updatePostLikesRequest>) {
-  const { postId, likes } = action.payload;
-  try {
-    const postRef = doc(db, 'posts', postId);
-    yield updateDoc(postRef, { likes });
-
-    yield put(updatePostLikesSuccess());
-  } catch (error) {
-    console.log(error);
-    yield put(updatePostLikesFailure());
-  }
-}
-
-function* deletePostSaga(action: ReturnType<typeof deletePostRequest>) {
-  const { id, ownerId, userId, images } = action.payload;
-
-  if (ownerId !== userId) {
-    return;
-  }
-  try {
-    const postRef = doc(db, 'posts', id);
-    if (images) {
-      for (const imageUrl of images) {
-        const imageRef = ref(storage, imageUrl);
-        yield call(deleteObject, imageRef);
-      }
-    }
-    yield call(deleteDoc, postRef);
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-function createPostsChannel(postsQuery: Query<DocumentData>) {
-  return eventChannel((emitter: (data: DocumentData[]) => void) => {
-    const unsubscribe = onSnapshot(
-      postsQuery,
-      (snapshot: QuerySnapshot<DocumentData>) => {
-        const updatedPosts: any = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        emitter(updatedPosts);
-      }
-    );
-
-    return () => {
-      unsubscribe();
-    };
-  });
-}
-
-const createUsersChannel = (visibleUserIds: string[]) => {
-  if (!visibleUserIds || visibleUserIds.length === 0) {
-    return eventChannel((emitter) => {
-      emitter([]);
-      return () => {};
-    });
-  }
-
-  return eventChannel((emitter) => {
-    const usersQuery = query(
-      collection(db, 'users'),
-      where('userId', 'in', visibleUserIds)
-    );
-
-    const unsubscribe = onSnapshot(usersQuery, (snapshot) => {
-      const updatedUsers = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      emitter(updatedUsers);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  });
-};
 
 function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
   let channel;
@@ -226,7 +104,7 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
           where('userId', 'in', userIds)
         );
         const resUser = yield getDocs(usersQuery);
-        const resUserusers = resUser.docs.map((doc: any) => ({
+        const resUserusers = resUser.docs.map((doc: DocumentSnapshot) => ({
           id: doc.id,
           ...doc.data(),
         }));
@@ -234,7 +112,6 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
         updatedUsers = resUserusers;
       }
       updatedPosts = updatedOldPosts;
-
       if (updatedPosts && updatedUsers) {
         const updatedPostsWithUsers = updatedPosts.map((post: PostState) => {
           const user = updatedUsers.find(
@@ -260,14 +137,108 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
       }
     }
   } catch (error) {
-    yield put(fetchPostsFailure());
-    console.error(error);
+    yield put(fetchPostsFailure('Error fetching posts'));
   } finally {
     if (yield cancelled()) {
       if (channel) channel.close();
       if (usersChannel) usersChannel.close();
     }
   }
+}
+
+function* getPost(action: ReturnType<typeof getPostRequest>): Generator {
+  try {
+    const id = action.payload;
+    const postDocRef = doc(db, 'posts', id);
+    const postDoc = yield call(getDoc, postDocRef);
+    const postData = postDoc.data();
+
+    const userData = yield call(fetchUserData, postData.userId);
+    const updatePostData = {
+      ...postData,
+      userAvatar: userData ? userData.avatar : null,
+      userName: userData ? userData.name : null,
+      userSlug: userData ? userData.userSlug : null,
+    };
+    if (postDoc.exists()) {
+      yield put(getPostSuccess(updatePostData));
+    } else {
+      yield put(getPostFailure('Error receiving post'));
+    }
+  } catch (err) {
+    yield put(getPostFailure('Error receiving post'));
+  }
+}
+function* updatePostLikes(action: ReturnType<typeof updatePostLikesRequest>) {
+  const { postId, likes } = action.payload;
+  try {
+    const postRef = doc(db, 'posts', postId);
+    yield updateDoc(postRef, { likes });
+    yield put(updatePostLikesSuccess());
+  } catch (error) {
+    yield put(updatePostLikesFailure('Like error'));
+  }
+}
+function* addPost(action: ReturnType<typeof addPostRequest>): Generator {
+  try {
+    const { files, ...postFields } = action.payload.postData;
+    let postData = { ...postFields };
+
+    if (files && files.length > 0) {
+      const imageUrls = yield call(uploadImages, files);
+      postData = { ...postFields, images: imageUrls };
+    }
+
+    const postsCollectionRef = collection(db, 'posts');
+    const newPost: PostState = yield call(addDoc, postsCollectionRef, postData);
+
+    yield put(addPostSuccess(newPost));
+  } catch (error) {
+    yield put(addPostFailure('Error creating post'));
+  }
+  if (action.payload.onClose) {
+    yield action.payload.onClose();
+  }
+}
+
+function* deletePostSaga(action: ReturnType<typeof deletePostRequest>) {
+  const { id, ownerId, userId, images } = action.payload;
+
+  if (ownerId !== userId) {
+    yield put(deletePostFailure('Error deleting post'));
+    return;
+  }
+  try {
+    const postRef = doc(db, 'posts', id);
+    if (images) {
+      for (const imageUrl of images) {
+        const imageRef = ref(storage, imageUrl);
+        yield call(deleteObject, imageRef);
+      }
+    }
+    yield call(deleteDoc, postRef);
+  } catch (error) {
+    yield put(deletePostFailure('Error deleting post'));
+  }
+}
+
+function* getTotalUsersPostsSaga(
+  action: ReturnType<typeof getTotalUsersPosts>
+): Generator {
+  const { id } = action.payload;
+  try {
+    const postsCount = yield call(getUserPostCount, id);
+    yield put(setTotalPosts(postsCount));
+  } catch (error) {
+    yield put(getPostFailure('Error fetching posts'));
+  }
+}
+
+export function* watchGetTotalUsersPosts() {
+  yield takeEvery(GET_TOTAL_POSTS, getTotalUsersPostsSaga);
+}
+export function* watchGetPost() {
+  yield takeEvery(GET_POST_REQUEST, getPost);
 }
 
 export function* watchFetchPosts() {

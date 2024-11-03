@@ -1,13 +1,17 @@
 import {
+  fetchOtherUserDataError,
   fetchOtherUserDataRequest,
   fetchOtherUserDataSuccess,
   setFollowingStatus,
   setFollowingStatusSuccess,
 } from '@store/actions/otherUserActions';
+import { searchRequest } from '@store/actions/searchActions';
+import { RootState } from '@store/types';
 import {
   FETCH_OTHER_USER_REQUEST,
   SET_FOLLOWING_STATUS,
 } from '@store/types/otherUser/actionTypes';
+import { fetchUserData } from '@store/utils/userUtils';
 import { FirebaseError } from 'firebase/app';
 import {
   arrayRemove,
@@ -15,10 +19,9 @@ import {
   doc,
   runTransaction,
 } from 'firebase/firestore';
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, select, takeEvery } from 'redux-saga/effects';
 
 import { db } from '../../firebase';
-import { fetchUserData } from './userSaga';
 
 function* fetchOtherUserData(
   action: ReturnType<typeof fetchOtherUserDataRequest>
@@ -29,7 +32,7 @@ function* fetchOtherUserData(
     yield put(fetchOtherUserDataSuccess(user));
   } catch (error) {
     if (error instanceof FirebaseError) {
-      console.log(error.message);
+      yield put(fetchOtherUserDataError('Error fetching user'));
     }
   }
 }
@@ -37,7 +40,7 @@ function* fetchOtherUserData(
 function* handleFollowingStatus(
   action: ReturnType<typeof setFollowingStatus>
 ): Generator {
-  const { isFollowing, id, originId } = action.payload;
+  const { isFollowing, id, originId, searchTerm } = action.payload;
 
   try {
     yield call(runTransaction, db, async (transaction) => {
@@ -48,7 +51,7 @@ function* handleFollowingStatus(
       const originUserDoc = await transaction.get(originUserRef);
 
       if (!targetUserDoc.exists() || !originUserDoc.exists()) {
-        throw new Error('User not found');
+        await put(fetchOtherUserDataError('Error fetching user'));
       }
 
       if (isFollowing) {
@@ -68,10 +71,23 @@ function* handleFollowingStatus(
       }
     });
 
-    yield put(fetchOtherUserDataRequest(id));
+    const { userId } = yield select(
+      (state: RootState) => state.otherUser.otherUser
+    );
+    if (userId === id && searchTerm) {
+      yield put(searchRequest(searchTerm.trim() ? searchTerm : ''));
+      yield put(fetchOtherUserDataRequest(id));
+      return;
+    }
+
+    if (searchTerm) {
+      yield put(searchRequest(searchTerm.trim() ? searchTerm : ''));
+    } else {
+      yield put(fetchOtherUserDataRequest(id));
+    }
     yield put(setFollowingStatusSuccess());
   } catch (error) {
-    console.error('Error unsubscribing:', error);
+    yield put(fetchOtherUserDataError('Error unsubscribing'));
   }
 }
 

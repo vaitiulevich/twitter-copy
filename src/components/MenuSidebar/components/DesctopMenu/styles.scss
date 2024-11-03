@@ -1,0 +1,7 @@
+@import '@styles/breakpoints';
+
+.desctop-menu-sidebar {
+  @include respond-to(tablet) {
+    display: none;
+  }
+}

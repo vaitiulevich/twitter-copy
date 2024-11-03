@@ -32,9 +32,10 @@ export const addPostSuccess = (post: PostState) =>
     payload: post,
   }) as const;
 
-export const addPostFailure = () =>
+export const addPostFailure = (error: string | null) =>
   ({
     type: actions.ADD_POST_FAILURE,
+    payload: error,
   }) as const;
 
 export const updatePostLikesRequest = (postId: string, likes: string[]) =>
@@ -48,9 +49,10 @@ export const updatePostLikesSuccess = () =>
     type: actions.UPDATE_POST_LIKES_SUCCESS,
   }) as const;
 
-export const updatePostLikesFailure = () =>
+export const updatePostLikesFailure = (error: string | null) =>
   ({
     type: actions.UPDATE_POST_LIKES_FAILURE,
+    payload: error,
   }) as const;
 
 export const deletePostRequest = (
@@ -85,9 +87,11 @@ export const fetchPostsRequest = (
     type: actions.FETCH_POSTS_REQUEST,
     payload: { id, query, firstQuery },
   }) as const;
-export const fetchPostsFailure = () =>
+
+export const fetchPostsFailure = (error: string | null) =>
   ({
     type: actions.FETCH_POSTS_FAILURE,
+    payload: error,
   }) as const;
 export const fetchPostsSuccess = (
   posts: PostState[],
@@ -96,4 +100,26 @@ export const fetchPostsSuccess = (
   ({
     type: actions.FETCH_POSTS_SUCCESS,
     payload: { posts, totalUserPosts },
+  }) as const;
+
+export const getPostRequest = (id: string) =>
+  ({
+    type: actions.GET_POST_REQUEST,
+    payload: id,
+  }) as const;
+export const getPostSuccess = (post: PostState) =>
+  ({
+    type: actions.GET_POST_SUCCESS,
+    payload: post,
+  }) as const;
+export const getPostFailure = (error: string | null) =>
+  ({
+    type: actions.GET_POST_FAILURE,
+    payload: error,
+  }) as const;
+
+export const getTotalUsersPosts = (id: string) =>
+  ({
+    type: actions.GET_TOTAL_POSTS,
+    payload: { id },
   }) as const;

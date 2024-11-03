@@ -27,7 +27,7 @@ class ErrorBoundary extends Component<Props, State> {
       return (
         <section className="error-boundary">
           <img src={images.logo} alt="logo" />
-          <p>Something went wrong</p>
+          <p>{ERR_BOUNDARY_MESS}</p>
         </section>
       );
     }

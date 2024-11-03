@@ -1,21 +1,18 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { FollowButton } from '@components/FollowButton/FollowButton';
-import { PostHeader } from '@components/PostHeader/PostHeader';
-import { UserShortInfo } from '@components/UserShortInfo/UserShortInfo';
 import { images } from '@constants/images';
-import { searchRequest } from '@store/actions/searchActions';
+import { searchRequest, searchSuccess } from '@store/actions/searchActions';
 import {
   selectSearchLoad,
   selectSearchPosts,
   selectSearchUsers,
-  selectUserId,
 } from '@store/selectors';
 import { debounce } from '@utils/debounce';
 import classNames from 'classnames';
 
 import './styles.scss';
+import { SearchPostsResults } from './components/SearchPostsResults/SearchPostsResults';
+import { SearchUsersResults } from './components/SearchUsersResults/SearchUsersResults';
 
 export const SearchSidebar = () => {
   const dispatch = useDispatch();
@@ -25,7 +22,6 @@ export const SearchSidebar = () => {
   const loading = useSelector(selectSearchLoad);
   const users = useSelector(selectSearchUsers);
   const posts = useSelector(selectSearchPosts);
-  const originId = useSelector(selectUserId);
 
   const debouncedSearch = debounce((value: string) => {
     dispatch(searchRequest(value.trim() ? value : ''));
@@ -51,7 +47,13 @@ export const SearchSidebar = () => {
     setTimeoutId(id);
   };
 
-  const isHasResults = posts.length > 0 || users.length > 0;
+  const isHasResults =
+    (posts && posts.length > 0) || (users && users.length > 0);
+
+  const handleClearInput = () => {
+    setSearchTerm('');
+    dispatch(searchSuccess({ users: null, posts: null }));
+  };
 
   useEffect(() => {
     return () => {
@@ -60,33 +62,6 @@ export const SearchSidebar = () => {
       }
     };
   }, [timeoutId]);
-
-  const renderUsersResults = () => {
-    return users.map((user) => (
-      <div className="search-user-results" key={user.id}>
-        <UserShortInfo
-          avatar={user.avatar}
-          name={user.name}
-          userSlug={user.userSlug}
-          navTo={`/home/user/${user.id}`}
-        />
-        {originId !== `${user.id}` && <FollowButton id={`${user.id}`} />}
-      </div>
-    ));
-  };
-
-  const renderPostssResults = () => {
-    return posts.map((post) => (
-      <div className="search-post-results" key={post.id}>
-        <PostHeader post={post} isOriginPost={false} />
-        {post.content && (
-          <Link to={`/home/posts/${post.id}`}>
-            <p>{post.content.join(' ')}</p>
-          </Link>
-        )}
-      </div>
-    ));
-  };
 
   return (
     <aside className="search-sidebar">
@@ -103,7 +78,15 @@ export const SearchSidebar = () => {
           onBlur={handleBlur}
           className="search-inp"
         />
+        {searchTerm && (
+          <button onClick={handleClearInput} className="clear-inp-btn">
+            <img src={images.clear} alt="clear" />
+          </button>
+        )}
       </div>
+      {(users === null || posts === null) && searchTerm.trim() && (
+        <div className="search-results">Nothing found</div>
+      )}
       {(isHasResults || loading) && (
         <div
           className={classNames('search-results', {
@@ -111,16 +94,16 @@ export const SearchSidebar = () => {
           })}
         >
           {isHasResults && <h2 className="search-headline">Search results</h2>}
-          {posts.length > 0 && (
+          {posts && posts.length > 0 && (
             <>
               <h3 className="search-item-headline">Tweets</h3>
-              {renderPostssResults()}
+              <SearchPostsResults posts={posts} />
             </>
           )}
-          {users.length > 0 && (
+          {users && users.length > 0 && (
             <>
               <h3 className="search-item-headline">Users</h3>
-              {renderUsersResults()}
+              <SearchUsersResults searchTerm={searchTerm} users={users} />
             </>
           )}
           {loading && <p>Loading...</p>}

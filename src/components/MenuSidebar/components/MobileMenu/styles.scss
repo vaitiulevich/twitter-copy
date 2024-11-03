@@ -1,0 +1,19 @@
+@import '@styles/breakpoints';
+
+.mobile-menu-sidebar {
+  display: none;
+  @include respond-to(tablet) {
+    display: block;
+  }
+}
+.mobile-menu-nav .nav-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mobile-menu-item-link {
+  &.active {
+    border-bottom: 0.1rem solid var(--link-text);
+  }
+}

@@ -37,7 +37,7 @@ export const logoutSuccess = () =>
     type: types.LOGOUT_SUCCESS,
   }) as const;
 
-export const logoutFailure = (error: string) =>
+export const logoutFailure = (error: string | null) =>
   ({
     type: types.LOGOUT_FAILURE,
     payload: error,

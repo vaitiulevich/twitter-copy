@@ -25,25 +25,11 @@
 .header-menu-sidebar {
   margin: 1rem 0 1.5rem;
 }
-.desctop-menu-sidebar {
-  @include respond-to(tablet) {
-    display: none;
-  }
-}
+
 .nav-list-item img {
   height: 2rem;
 }
-.mobile-menu-sidebar {
-  display: none;
-  @include respond-to(tablet) {
-    display: block;
-  }
-}
-.mobile-menu-nav .nav-list {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+
 .menu-sidebar {
   padding-right: 1rem;
   @include respond-to(tablet) {

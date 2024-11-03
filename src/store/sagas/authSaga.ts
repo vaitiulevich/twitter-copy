@@ -5,21 +5,24 @@ import {
   checkUserExistsSuccess,
   loginFailure,
   loginRequest,
+  logoutFailure,
   logoutSuccess,
   registerFailure,
   registerRequest,
 } from '@store/actions/authActions';
 import { clearUserData, getUserData } from '@store/actions/userActions';
-import { User } from '@store/types';
 import {
   CHECK_USER_EXISTS,
-  GOOGLE_LOGIN_REQUEST,
   GOOGLE_LOGUP_REQUEST,
   LOGIN_REQUEST,
   LOGOUT_REQUEST,
   REGISTER_REQUEST,
 } from '@store/types/auth/actionTypes';
-import { generateSlug } from '@utils/generateSlug';
+import {
+  addUserToDatabase,
+  checkDocUserExists,
+  createUserData,
+} from '@store/utils/authUtils';
 import { FirebaseError } from 'firebase/app';
 import {
   createUserWithEmailAndPassword,
@@ -27,25 +30,11 @@ import {
   signInWithPopup,
   signOut,
 } from 'firebase/auth';
-import {
-  collection,
-  doc,
-  getDocs,
-  query,
-  setDoc,
-  where,
-} from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 
 import { auth, db, provider } from '../../firebase';
 
-interface UserDataProps extends User {
-  userId: string;
-  userSlug: string;
-  followers: string[];
-  following: string[];
-  posts: string[];
-}
 function* signInSaga(action: ReturnType<typeof loginRequest>): Generator {
   try {
     const { type, login, password } = action.payload;
@@ -63,15 +52,23 @@ function* signInSaga(action: ReturnType<typeof loginRequest>): Generator {
       const phoneExists = yield getDocs(phoneQuery);
 
       if (phoneExists.empty) {
-        console.log(phoneExists);
         yield put(loginFailure(INCORRECT_CREDS));
       } else {
-        phoneExists?.forEach((doc: any) => {
+        for (const doc of phoneExists.docs) {
           const data = doc.data();
           if (data.email) {
-            signInWithEmailAndPassword(auth, data.email, password);
+            try {
+              yield call(
+                signInWithEmailAndPassword,
+                auth,
+                data.email,
+                password
+              );
+            } catch (error) {
+              yield put(loginFailure(INCORRECT_CREDS));
+            }
           }
-        });
+        }
       }
     }
   } catch (err) {
@@ -88,29 +85,10 @@ function* logOutSaga(): Generator {
     yield put(logoutSuccess());
   } catch (error) {
     if (error instanceof FirebaseError) {
-      console.log(error);
+      yield put(logoutFailure('Error with logout'));
     }
+    yield put(logoutFailure('Error with logout'));
   }
-}
-
-function createUserData(uid: string, payload: User & { password?: string }) {
-  const userSlug = generateSlug(payload.name, uid);
-  const userData = {
-    userId: uid,
-    userSlug,
-    ...payload,
-    avatar: null,
-    profileImg: null,
-    followers: [],
-    following: [],
-    posts: [],
-  };
-  return userData;
-}
-
-function* addUserToDatabase(uid: string, userData: UserDataProps): Generator {
-  const userRef = doc(db, 'users', uid);
-  yield setDoc(userRef, userData);
 }
 
 function* registerSaga(action: ReturnType<typeof registerRequest>): Generator {
@@ -138,27 +116,6 @@ function* registerSaga(action: ReturnType<typeof registerRequest>): Generator {
   }
 }
 
-async function checkDocUserExists(
-  email?: string,
-  phone?: string
-): Promise<boolean | null> {
-  const usersRef = collection(db, 'users');
-  const emailQuery = email
-    ? query(usersRef, where('email', '==', email))
-    : null;
-  const phoneQuery = phone
-    ? query(usersRef, where('phone', '==', phone))
-    : null;
-
-  const emailExists = emailQuery ? await getDocs(emailQuery) : null;
-  const phoneExists = phoneQuery ? await getDocs(phoneQuery) : null;
-
-  return (
-    !!(emailExists && !emailExists.empty) ||
-    !!(phoneExists && !phoneExists.empty)
-  );
-}
-
 function* checkUserExistsSaga(
   action: ReturnType<typeof checkUserExists>
 ): Generator {
@@ -173,6 +130,8 @@ function* checkUserExistsSaga(
   } catch (error) {
     if (error instanceof FirebaseError) {
       yield put(checkUserExistsFailure(error.message));
+    } else {
+      yield put(registerFailure('An unexpected error occurred.'));
     }
   }
 }
@@ -196,7 +155,9 @@ function* googleLogupSaga(): Generator {
     }
   } catch (error) {
     if (error instanceof FirebaseError) {
-      console.log(error);
+      yield put(checkUserExistsFailure(error.message));
+    } else {
+      yield put(registerFailure('An unexpected error occurred.'));
     }
   }
 }

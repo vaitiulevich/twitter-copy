@@ -11,7 +11,7 @@
   overflow: hidden;
 }
 .post-content {
-  width: 90%;
+  width: 87%;
 }
 
 .post-text {
@@ -19,17 +19,6 @@
   word-wrap: break-word;
   text-wrap: initial;
   color: var(--text);
-  width: 44vw;
-}
-
-.post-like {
-  display: flex;
-  align-items: center;
-  margin: 0.5rem 0;
-}
-.post-like-img {
-  height: 1.5rem;
-  cursor: pointer;
 }
 
 .post-images img {
@@ -40,21 +29,21 @@
   display: grid;
   gap: 0.5rem;
 
-  &.one-image {
+  &.image-number-1 {
     grid-template-areas: 'img1';
   }
 
-  &.two-images {
+  &.image-number-2 {
     grid-template-areas: 'img1 img2';
   }
 
-  &.three-images {
+  &.image-number-3 {
     grid-template-areas:
       'img1 img2'
       'img3 img2';
   }
 
-  &.four-images {
+  &.image-number-4 {
     grid-template-areas:
       'img1 img2'
       'img3 img4';

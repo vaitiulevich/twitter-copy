@@ -68,3 +68,7 @@ export const userSearchQuery = (searchTerm: string) => {
     where('name', '<=', searchTerm + '\uf8ff')
   );
 };
+
+export const usersByIdsQuery = (visibleUserIds: string[]) => {
+  return query(collection(db, 'users'), where('userId', 'in', visibleUserIds));
+};

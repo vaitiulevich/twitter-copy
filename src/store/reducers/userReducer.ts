@@ -4,12 +4,15 @@ import {
   CHANGE_PASSWORD_SUCCESS,
   CLEAR_ERROR,
   CLEAR_USER_DATA,
+  GET_USER_DATA,
+  GET_USER_DATA_FAILURE,
   GET_USER_DATA_SUCCESS,
   UPDATE_USER_DATA_FAILURE,
   UPDATE_USER_DATA_REQUEST,
   UPDATE_USER_DATA_SUCCESS,
   UserAction,
 } from '@store/types/user/actionTypes';
+import { Maybe } from 'yup';
 
 export interface User {
   uid?: string;
@@ -23,14 +26,14 @@ export interface UserState extends StatusRequest {
   user?: string;
   userId: string;
   userSlug: string;
-  avatar: null | string;
-  profileImg: null | string;
+  avatar?: null | string;
+  profileImg?: null | string;
   dateBirth: string;
   email: string;
   name: string;
-  password: string;
+  password?: string;
   phone: string;
-  description?: string;
+  description?: Maybe<string | undefined>;
   followers: string[];
   following: string[];
 }
@@ -66,6 +69,8 @@ const userReducer = (state = initialState, action: UserAction) => {
       return { ...state, loading: false, ...action.payload, error: null };
     case CHANGE_PASSWORD_FAILURE:
       return { ...state, loading: false, error: action.payload };
+    case GET_USER_DATA_FAILURE:
+      return { ...state, loading: false, error: action.payload };
     case CHANGE_PASSWORD_REQUEST:
       return { ...state, loading: true, error: null };
     case GET_USER_DATA_SUCCESS:
@@ -75,7 +80,7 @@ const userReducer = (state = initialState, action: UserAction) => {
     case UPDATE_USER_DATA_SUCCESS:
       return { ...state, loading: false };
     case UPDATE_USER_DATA_FAILURE:
-      return { ...state, loading: false };
+      return { ...state, loading: false, error: action.payload };
     case CLEAR_USER_DATA:
       return initialState;
     default:

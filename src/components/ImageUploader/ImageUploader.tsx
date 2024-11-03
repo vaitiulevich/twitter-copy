@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { DEFAULT_POST_FILES } from '@constants/constants';
 import { images, images as imagesIcons } from '@constants/images';
 import {
@@ -15,7 +15,7 @@ import {
 
 import './styles.scss';
 
-interface ImageUploaderProps {
+export interface ImageUploaderProps {
   name: string;
   setImagesSelected: (files: File[]) => void;
   initialFiles?: File[];
@@ -31,9 +31,18 @@ export const ImageUploader = ({
   const [files, setFiles] = useState<File[]>(initialFiles);
   const [errors, setErrors] = useState<string[]>([]);
 
-  useEffect(() => {
-    setFiles(initialFiles);
-  }, [initialFiles]);
+  const checkValidateImg = async (file: File) => {
+    if (!isFileSizeValid(file)) {
+      setErrors((prev) => [...prev, ERR_INVALID_SIZE]);
+      return false;
+    }
+    const dimensionsValid = await isImageDimensionsValid(file);
+    if (!dimensionsValid) {
+      setErrors((prev) => [...prev, ERR_INVALID_DIMENSIONS]);
+      return false;
+    }
+    return true;
+  };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
@@ -55,14 +64,8 @@ export const ImageUploader = ({
         const byteArray = new Uint8Array(arrayBuffer);
 
         if (isImageFile(byteArray)) {
-          if (!isFileSizeValid(file)) {
-            setErrors((prev) => [...prev, ERR_INVALID_SIZE]);
-            return;
-          }
-
-          const dimensionsValid = await isImageDimensionsValid(file);
-          if (!dimensionsValid) {
-            setErrors((prev) => [...prev, ERR_INVALID_DIMENSIONS]);
+          const isValidateImg = checkValidateImg(file);
+          if (!isValidateImg) {
             return;
           }
 
@@ -85,6 +88,10 @@ export const ImageUploader = ({
     setImagesSelected(files);
   }, [files]);
 
+  useEffect(() => {
+    setFiles(initialFiles);
+  }, [initialFiles]);
+
   const renderErrors = () => {
     return errors.map((error, index) => (
       <p key={index} className="error-messages">
@@ -98,11 +105,11 @@ export const ImageUploader = ({
   };
 
   const renderFiles = () => {
-    return files.map((file, ind) => (
-      <div key={ind} className="selected-image-item">
+    return files.map((file, index) => (
+      <div key={index} className="selected-image-item">
         <img alt={file.name} src={URL.createObjectURL(file)} />
         <button
-          onClick={() => handleRemoveFile(ind)}
+          onClick={() => handleRemoveFile(index)}
           className="delete-img-button"
         >
           <img src={images.deleteIcon} alt="delete" />

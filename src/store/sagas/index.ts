@@ -13,6 +13,8 @@ import {
   watchAddPost,
   watchDeletePost,
   watchFetchPosts,
+  watchGetPost,
+  watchGetTotalUsersPosts,
   watchUpdatePostLikes,
 } from '@store/sagas/postSagas';
 import watchToggleTheme from '@store/sagas/themeSaga';
@@ -45,5 +47,7 @@ export default function* rootSaga() {
     watchFetchOtherUserData(),
     watchSetFollowingStatus(),
     watchSearch(),
+    watchGetPost(),
+    watchGetTotalUsersPosts(),
   ]);
 }

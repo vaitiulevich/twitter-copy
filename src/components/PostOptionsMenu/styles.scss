@@ -18,7 +18,7 @@
 }
 
 .post-menu-item:hover {
-  background-color: #f0f0f0;
+  background-color: var(--background-opasity);
 }
 
 @keyframes fadeIn {
