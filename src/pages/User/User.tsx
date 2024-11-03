@@ -1,14 +1,16 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Feed } from '@components/Feed/Feed';
+import { NotificationPopUp } from '@components/NotificationPopUp/NotificationPopUp';
 import { ProfileHead } from '@components/ProfileHead/ProfileHead';
-import { fetchOtherUserDataRequest } from '@store/actions/otherUserActions';
 import {
-  selectCountPosts,
-  selectOtherUser,
-  selectUserId,
-} from '@store/selectors';
+  fetchOtherUserDataError,
+  fetchOtherUserDataRequest,
+} from '@store/actions/otherUserActions';
+import { hideErrorPopUp } from '@store/actions/popUpActions';
+import { selectOtherUser, selectUserId } from '@store/selectors';
+import { RootState } from '@store/types';
 import { userCursorPostsQuery, userPostsQuery } from '@utils/querys';
 
 import './styles.scss';
@@ -18,6 +20,12 @@ export const User = () => {
   const originId = useSelector(selectUserId);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const error = useSelector((state: RootState) => state.otherUser.error);
+
+  const handleClose = useCallback(() => {
+    dispatch(hideErrorPopUp());
+    dispatch(fetchOtherUserDataError(null));
+  }, []);
   useEffect(() => {
     if (id === originId) {
       navigate('/profile');
@@ -30,21 +38,20 @@ export const User = () => {
   }, [id]);
 
   const otherUser = useSelector(selectOtherUser);
-  const countPosts = useSelector(selectCountPosts);
 
   return (
     <section className="user">
       {otherUser && (
         <>
           <ProfileHead
-            user={{ ...otherUser, id }}
-            countPosts={countPosts}
+            user={{ ...otherUser, userId: id ?? '' }}
             isOriginUser={false}
           />
           <Feed
             query={() => userPostsQuery(id as string)}
             firstQuery={() => userCursorPostsQuery}
           />
+          {error && <NotificationPopUp message={error} onClose={handleClose} />}
         </>
       )}
     </section>

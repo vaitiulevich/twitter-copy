@@ -6,19 +6,24 @@ import {
   ADD_POST_REQUEST,
   DELETE_POST_REQUEST,
   FETCH_POSTS_REQUEST,
+  GET_POST_REQUEST,
+  GET_TOTAL_POSTS,
   UPDATE_POST_LIKES_REQUEST,
 } from '@store/types/posts/actionTypes';
 import {
   createPostsChannel,
   createUsersChannel,
+  getUserPostCount,
   uploadImages,
 } from '@store/utils/postsUtils';
+import { fetchUserData } from '@store/utils/userUtils';
 import {
   addDoc,
   collection,
   deleteDoc,
   doc,
   DocumentSnapshot,
+  getDoc,
   getDocs,
   query,
   updateDoc,
@@ -40,12 +45,18 @@ import {
   addPostFailure,
   addPostRequest,
   addPostSuccess,
+  deletePostFailure,
   deletePostRequest,
   fetchPostsFailure,
   fetchPostsRequest,
   fetchPostsSuccess,
+  getPostFailure,
+  getPostRequest,
+  getPostSuccess,
+  getTotalUsersPosts,
   setIsMorePosts,
   setLastVisible,
+  setTotalPosts,
   updatePostLikesFailure,
   updatePostLikesRequest,
   updatePostLikesSuccess,
@@ -101,7 +112,6 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
         updatedUsers = resUserusers;
       }
       updatedPosts = updatedOldPosts;
-
       if (updatedPosts && updatedUsers) {
         const updatedPostsWithUsers = updatedPosts.map((post: PostState) => {
           const user = updatedUsers.find(
@@ -127,8 +137,7 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
       }
     }
   } catch (error) {
-    yield put(fetchPostsFailure());
-    console.error(error);
+    yield put(fetchPostsFailure('Error fetching posts'));
   } finally {
     if (yield cancelled()) {
       if (channel) channel.close();
@@ -136,16 +145,38 @@ function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
     }
   }
 }
+
+function* getPost(action: ReturnType<typeof getPostRequest>): Generator {
+  try {
+    const id = action.payload;
+    const postDocRef = doc(db, 'posts', id);
+    const postDoc = yield call(getDoc, postDocRef);
+    const postData = postDoc.data();
+
+    const userData = yield call(fetchUserData, postData.userId);
+    const updatePostData = {
+      ...postData,
+      userAvatar: userData ? userData.avatar : null,
+      userName: userData ? userData.name : null,
+      userSlug: userData ? userData.userSlug : null,
+    };
+    if (postDoc.exists()) {
+      yield put(getPostSuccess(updatePostData));
+    } else {
+      yield put(getPostFailure('Error receiving post'));
+    }
+  } catch (err) {
+    yield put(getPostFailure('Error receiving post'));
+  }
+}
 function* updatePostLikes(action: ReturnType<typeof updatePostLikesRequest>) {
   const { postId, likes } = action.payload;
   try {
     const postRef = doc(db, 'posts', postId);
     yield updateDoc(postRef, { likes });
-
     yield put(updatePostLikesSuccess());
   } catch (error) {
-    console.log(error);
-    yield put(updatePostLikesFailure());
+    yield put(updatePostLikesFailure('Like error'));
   }
 }
 function* addPost(action: ReturnType<typeof addPostRequest>): Generator {
@@ -163,8 +194,7 @@ function* addPost(action: ReturnType<typeof addPostRequest>): Generator {
 
     yield put(addPostSuccess(newPost));
   } catch (error) {
-    console.log(error);
-    yield put(addPostFailure());
+    yield put(addPostFailure('Error creating post'));
   }
   if (action.payload.onClose) {
     yield action.payload.onClose();
@@ -175,6 +205,7 @@ function* deletePostSaga(action: ReturnType<typeof deletePostRequest>) {
   const { id, ownerId, userId, images } = action.payload;
 
   if (ownerId !== userId) {
+    yield put(deletePostFailure('Error deleting post'));
     return;
   }
   try {
@@ -187,8 +218,27 @@ function* deletePostSaga(action: ReturnType<typeof deletePostRequest>) {
     }
     yield call(deleteDoc, postRef);
   } catch (error) {
-    console.log(error);
+    yield put(deletePostFailure('Error deleting post'));
   }
+}
+
+function* getTotalUsersPostsSaga(
+  action: ReturnType<typeof getTotalUsersPosts>
+): Generator {
+  const { id } = action.payload;
+  try {
+    const postsCount = yield call(getUserPostCount, id);
+    yield put(setTotalPosts(postsCount));
+  } catch (error) {
+    yield put(getPostFailure('Error fetching posts'));
+  }
+}
+
+export function* watchGetTotalUsersPosts() {
+  yield takeEvery(GET_TOTAL_POSTS, getTotalUsersPostsSaga);
+}
+export function* watchGetPost() {
+  yield takeEvery(GET_POST_REQUEST, getPost);
 }
 
 export function* watchFetchPosts() {

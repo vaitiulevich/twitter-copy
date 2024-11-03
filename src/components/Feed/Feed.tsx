@@ -1,10 +1,16 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { NotificationPopUp } from '@components/NotificationPopUp/NotificationPopUp';
 import { Post } from '@components/Post/Post';
 import { SkeletonPost } from '@components/SkeletonPost/SkeletonPost';
 import { POSTS_PER_PAGE, SCELETON_POST_COUNT } from '@constants/constants';
-import { fetchPostsSuccess } from '@store/actions/postActions';
+import { hideErrorPopUp } from '@store/actions/popUpActions';
+import {
+  fetchPostsRequest,
+  fetchPostsSuccess,
+  updatePostLikesFailure,
+} from '@store/actions/postActions';
 import {
   selectIsMorePost,
   selectPostLoad,
@@ -27,9 +33,8 @@ export const Feed = ({
   firstQuery,
   isNavigateFeed = false,
 }: FeedProps) => {
-  const { id } = useParams();
-  const userId = id ?? useSelector(selectUserId);
-  const { posts } = useSelector((state: RootState) => state.posts);
+  const userId = useSelector(selectUserId);
+  const { posts, error } = useSelector((state: RootState) => state.posts);
   const dispatch = useDispatch();
   const loading = useSelector(selectPostLoad);
   const isMorePosts = useSelector(selectIsMorePost);
@@ -43,6 +48,11 @@ export const Feed = ({
       dispatch(fetchPostsSuccess([]));
     }
   }, [location.pathname]);
+
+  const handleClose = () => {
+    dispatch(hideErrorPopUp());
+    dispatch(updatePostLikesFailure(null));
+  };
 
   const renderTweets = () => {
     return posts.map((post) => (
@@ -71,10 +81,12 @@ export const Feed = ({
         <>
           {renderTweets()}
           {isMorePosts && <div ref={loadMoreRef} />}
+          {loading && <SkeletonPost />}
         </>
       ) : (
         renderWithoutPosts()
       )}
+      {error && <NotificationPopUp message={error} onClose={handleClose} />}
     </div>
   );
 };

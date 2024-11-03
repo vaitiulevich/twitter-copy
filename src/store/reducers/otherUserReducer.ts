@@ -17,7 +17,12 @@ interface StatusRequest {
 }
 export interface OtherUserState extends StatusRequest {
   otherUser:
-    | (User & { userSlug: string; following: string[]; followers: string[] })
+    | (User & {
+        userSlug: string;
+        following: string[];
+        followers: string[];
+        userId?: string;
+      })
     | null;
 }
 const initialState: OtherUserState = {

@@ -24,15 +24,20 @@ interface FormData {
 
 export const Settings = () => {
   const dispatch = useDispatch();
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     mode: 'all',
     resolver: yupResolver(chandgePasswordValidationSchema),
   });
-
   const [isGoogleAuth, setIsGoogleAuth] = useState<boolean | null>(null);
+  const error = useSelector(selectUserError);
+  const status = useSelector(selectUserStatus);
+  const loading = useSelector(selectUserLoad);
 
   const onSubmit = (data: FormData) => {
     dispatch(changePasswordRequest(data.newPassword, data.password));
+    if (status) {
+      reset();
+    }
   };
 
   useEffect(() => {
@@ -43,16 +48,12 @@ export const Settings = () => {
         );
         setIsGoogleAuth(googleAuth);
       } else {
-        setIsGoogleAuth(null); // Если пользователь не авторизован
+        setIsGoogleAuth(null);
       }
     });
 
-    return () => unsubscribe(); // Очистка подписки
+    return () => unsubscribe();
   }, []);
-
-  const error = useSelector(selectUserError);
-  const status = useSelector(selectUserStatus);
-  const loading = useSelector(selectUserLoad);
 
   return (
     <section className="settings">
@@ -80,7 +81,9 @@ export const Settings = () => {
               text="Change password"
             />
           </form>
-          {status !== null && <p className="success-status">Access</p>}
+          {status !== null && (
+            <p className="success-status">Password changed successfully</p>
+          )}
           {error && <ErrorBlock message={error} />}
         </div>
       )}

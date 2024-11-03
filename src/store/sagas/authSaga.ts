@@ -5,6 +5,7 @@ import {
   checkUserExistsSuccess,
   loginFailure,
   loginRequest,
+  logoutFailure,
   logoutSuccess,
   registerFailure,
   registerRequest,
@@ -51,15 +52,23 @@ function* signInSaga(action: ReturnType<typeof loginRequest>): Generator {
       const phoneExists = yield getDocs(phoneQuery);
 
       if (phoneExists.empty) {
-        console.log(phoneExists);
         yield put(loginFailure(INCORRECT_CREDS));
       } else {
-        phoneExists?.forEach((doc: any) => {
+        for (const doc of phoneExists.docs) {
           const data = doc.data();
           if (data.email) {
-            signInWithEmailAndPassword(auth, data.email, password);
+            try {
+              yield call(
+                signInWithEmailAndPassword,
+                auth,
+                data.email,
+                password
+              );
+            } catch (error) {
+              yield put(loginFailure(INCORRECT_CREDS));
+            }
           }
-        });
+        }
       }
     }
   } catch (err) {
@@ -76,8 +85,9 @@ function* logOutSaga(): Generator {
     yield put(logoutSuccess());
   } catch (error) {
     if (error instanceof FirebaseError) {
-      console.log(error);
+      yield put(logoutFailure('Error with logout'));
     }
+    yield put(logoutFailure('Error with logout'));
   }
 }
 
@@ -120,6 +130,8 @@ function* checkUserExistsSaga(
   } catch (error) {
     if (error instanceof FirebaseError) {
       yield put(checkUserExistsFailure(error.message));
+    } else {
+      yield put(registerFailure('An unexpected error occurred.'));
     }
   }
 }
@@ -143,7 +155,9 @@ function* googleLogupSaga(): Generator {
     }
   } catch (error) {
     if (error instanceof FirebaseError) {
-      console.log(error);
+      yield put(checkUserExistsFailure(error.message));
+    } else {
+      yield put(registerFailure('An unexpected error occurred.'));
     }
   }
 }

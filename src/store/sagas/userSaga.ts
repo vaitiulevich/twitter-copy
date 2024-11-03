@@ -1,3 +1,4 @@
+import { showErrorPopUp } from '@store/actions/popUpActions';
 import {
   changePasswordFailure,
   changePasswordRequest,
@@ -42,7 +43,7 @@ function* getUserDataRequest(
     yield put(getUserDataSuccess(userData));
   } catch (error) {
     if (error instanceof FirebaseError) {
-      console.log(error.message);
+      yield put(showErrorPopUp(error.message));
     }
   }
 }
@@ -68,7 +69,7 @@ function* updateUserData(
     yield put(getUserDataSuccess(newUserData));
     yield put(updateUserDataSuccess());
   } catch (error) {
-    console.error(error);
+    yield put(showErrorPopUp('Error with update'));
   }
   if (action.payload.closeModal) {
     action.payload.closeModal();

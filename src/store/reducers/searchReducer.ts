@@ -7,6 +7,7 @@ import {
 } from '@store/types/search/actionTypes';
 
 import { PostState } from './postReducer';
+import { UserState } from './userReducer';
 
 interface StatusRequest {
   loading?: boolean;
@@ -18,8 +19,8 @@ export interface UserSearch extends User {
   userSlug?: string;
 }
 export interface SearchState extends StatusRequest {
-  users: UserSearch[];
-  posts: PostState[];
+  users: UserState[] | null;
+  posts: PostState[] | null;
 }
 const initialState: SearchState = {
   users: [],

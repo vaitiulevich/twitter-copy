@@ -20,6 +20,7 @@ interface ControlledInputProps<T extends FieldValues> {
   error?: FieldError;
   type?: string;
   max?: string;
+  min?: string;
   defaultValue?: PathValue<T, Path<T>>;
 }
 

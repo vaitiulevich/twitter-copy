@@ -5,6 +5,7 @@ import { Button } from '@components/Button/Button';
 import { ControlledInput } from '@components/ControlledInput/ControlledInput';
 import { ImageUploader } from '@components/ImageUploader/ImageUploader';
 import { ImageUploaderSection } from '@components/ImageUploaderSection/ImageUploaderSection';
+import { COUNT_MAX_DATE_BIRTH_YEARS } from '@constants/constants';
 import { images } from '@constants/images';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { updateUserDataRequest } from '@store/actions/userActions';
@@ -27,7 +28,11 @@ export const EditProfileForm = ({
 }: {
   onCloseModal?: () => void;
 }) => {
-  const { control, handleSubmit } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     mode: 'all',
     resolver: yupResolver(editProfileValidationSchema),
   });
@@ -37,7 +42,13 @@ export const EditProfileForm = ({
   const loading = useSelector(selectUserLoad);
   const [selectedBanner, setSelectedBanner] = useState<File[]>([]);
   const [selectedAvatar, setSelectedAvatar] = useState<File[]>([]);
-  const today = new Date().toISOString().split('T')[0];
+  const todayDate = new Date();
+  const today = todayDate.toISOString().split('T')[0];
+  const minBirthDate = new Date(
+    todayDate.setFullYear(todayDate.getFullYear() - COUNT_MAX_DATE_BIRTH_YEARS)
+  )
+    .toISOString()
+    .split('T')[0];
 
   const onSubmit = (data: FormData) => {
     const { dateBirth } = data;
@@ -59,7 +70,7 @@ export const EditProfileForm = ({
           name="profile-banner"
           setImagesSelected={setSelectedBanner}
           initialFiles={selectedBanner}
-          previewImg={profileImg ?? images.banner}
+          previewImg={profileImg ?? images.profileBanner}
         />
         <ImageUploaderSection
           label="Set profile image"
@@ -93,6 +104,7 @@ export const EditProfileForm = ({
           name="dateBirth"
           type="date"
           max={today}
+          min={minBirthDate}
           defaultValue={dateBirth}
           control={control}
           placeholder="dateBirth"
@@ -100,7 +112,7 @@ export const EditProfileForm = ({
         <Button
           type="submit"
           loading={loading}
-          disabled={loading}
+          disabled={loading || Object.keys(errors).length > 0}
           text="Update"
         />
       </form>

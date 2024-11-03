@@ -3,7 +3,7 @@
 .user-app-wrapper {
   padding: 0 5rem;
   display: grid;
-  grid-template-columns: 1fr 3fr 1fr;
+  grid-template-columns: 20% 55% 25%;
   @include respond-to(tablet) {
     padding: 0;
     display: flex;
@@ -11,7 +11,6 @@
   }
   @include respond-to(desktop) {
     padding: 0 3rem;
-    grid-template-columns: 1fr 3fr 1.3fr;
   }
 }
 .main-section {

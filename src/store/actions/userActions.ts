@@ -20,7 +20,7 @@ export const changePasswordSuccess = (status: string | null) =>
     payload: { status },
   }) as const;
 
-export const changePasswordFailure = (error: string) =>
+export const changePasswordFailure = (error: string | null) =>
   ({
     type: actions.CHANGE_PASSWORD_FAILURE,
     payload: error,
@@ -40,9 +40,10 @@ export const updateUserDataSuccess = () =>
   ({
     type: actions.UPDATE_USER_DATA_SUCCESS,
   }) as const;
-export const updateUserDataFailure = () =>
+export const updateUserDataFailure = (error: string | null) =>
   ({
     type: actions.UPDATE_USER_DATA_FAILURE,
+    payload: error,
   }) as const;
 
 export const getUserData = (id: string) =>
@@ -57,9 +58,10 @@ export const getUserDataSuccess = (user: User) =>
     payload: user,
   }) as const;
 
-export const getUserDataFailure = () =>
+export const getUserDataFailure = (error: string | null) =>
   ({
     type: actions.GET_USER_DATA_FAILURE,
+    payload: error,
   }) as const;
 
 export const clearUserData = () =>

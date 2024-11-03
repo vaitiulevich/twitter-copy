@@ -1,3 +1,4 @@
+import { showErrorPopUp } from '@store/actions/popUpActions';
 import { searchRequest, searchSuccess } from '@store/actions/searchActions';
 import { PostState } from '@store/reducers/postReducer';
 import { UserSearch } from '@store/reducers/searchReducer';
@@ -7,6 +8,7 @@ import {
   usersByIdsQuery,
   userSearchQuery,
 } from '@utils/querys';
+import { FirebaseError } from 'firebase/app';
 import { DocumentSnapshot, getDocs } from 'firebase/firestore';
 import { call, put, takeLatest } from 'redux-saga/effects';
 
@@ -41,6 +43,7 @@ function* searchTwetter(action: ReturnType<typeof searchRequest>): Generator {
       );
       postsWithUserNames = postsResults.map((post: PostState) => ({
         ...post,
+        userAvatar: usersMap[post.userId]?.avatar || null,
         userName: usersMap[post.userId]?.name || null,
         userSlug: usersMap[post.userId]?.userSlug || null,
       }));
@@ -55,11 +58,20 @@ function* searchTwetter(action: ReturnType<typeof searchRequest>): Generator {
       })
     );
 
-    yield put(
-      searchSuccess({ posts: postsWithUserNames, users: usersResults })
-    );
+    const isHasResults =
+      postsWithUserNames.length > 0 || usersResults.length > 0;
+
+    if (isHasResults) {
+      yield put(
+        searchSuccess({ posts: postsWithUserNames, users: usersResults })
+      );
+    } else {
+      yield put(searchSuccess({ posts: null, users: null }));
+    }
   } catch (error) {
-    console.error(error);
+    if (error instanceof FirebaseError) {
+      yield put(showErrorPopUp(error.message));
+    }
   }
 }
 

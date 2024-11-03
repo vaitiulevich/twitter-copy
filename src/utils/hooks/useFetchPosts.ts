@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPostsRequest, setLastVisible } from '@store/actions/postActions';
 import { selectIsMorePost, selectPostLoad } from '@store/selectors';
+import { RootState } from '@store/types';
 import { DocumentData, Query } from 'firebase/firestore';
 
 export const useFetchPosts = (
@@ -14,6 +15,7 @@ export const useFetchPosts = (
   const isMorePosts = useSelector(selectIsMorePost);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const user = useSelector((state: RootState) => state.user);
 
   const getPosts = () => {
     dispatch(fetchPostsRequest(userId, query, firstQuery));
@@ -22,7 +24,7 @@ export const useFetchPosts = (
   useEffect(() => {
     dispatch(setLastVisible(null));
     getPosts();
-  }, [userId]);
+  }, [userId, user]);
 
   useEffect(() => {
     observerRef.current = new IntersectionObserver((entries) => {

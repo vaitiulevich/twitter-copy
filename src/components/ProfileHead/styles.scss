@@ -10,10 +10,12 @@
 .profile-header h3,
 .profile-header p {
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .profile-description {
   word-wrap: break-word;
-  width: 50vw;
 }
 .profile-header p {
   color: var(--secondary-text);
@@ -60,6 +62,9 @@
 
 .profile-name {
   font-size: 1.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .profile-slug {
   color: var(--secondary-text);

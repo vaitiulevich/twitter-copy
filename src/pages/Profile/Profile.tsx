@@ -1,14 +1,12 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AddPostPanel } from '@components/AddPostPanel/AddPostPanel';
 import { Feed } from '@components/Feed/Feed';
+import { NotificationPopUp } from '@components/NotificationPopUp/NotificationPopUp';
 import { ProfileHead } from '@components/ProfileHead/ProfileHead';
-import { getUserData } from '@store/actions/userActions';
-import {
-  selectAuthUid,
-  selectCountPosts,
-  selectUserSelector,
-} from '@store/selectors';
+import { hideErrorPopUp } from '@store/actions/popUpActions';
+import { getUserData, getUserDataFailure } from '@store/actions/userActions';
+import { selectAuthUid, selectUserSelector } from '@store/selectors';
 import { RootState } from '@store/types';
 import { userCursorPostsQuery, userPostsQuery } from '@utils/querys';
 
@@ -16,8 +14,8 @@ import './styles.scss';
 
 export const Profile = () => {
   const user = useSelector(selectUserSelector);
-  let countPosts = useSelector(selectCountPosts);
-  const posts = useSelector((state: RootState) => state.posts.total);
+  const { error } = useSelector((state: RootState) => state.user);
+
   const dispatch = useDispatch();
   const fetchUser = (uid: string) => {
     if (uid) {
@@ -30,19 +28,21 @@ export const Profile = () => {
       fetchUser(authId);
     }
   }, [authId]);
-  useEffect(() => {
-    // countPosts = posts.total;
-    // posts=posts.total
-  }, [posts]);
+  const handleClose = useCallback(() => {
+    dispatch(hideErrorPopUp());
+    dispatch(getUserDataFailure(null));
+  }, []);
+
   return (
     <>
-      <ProfileHead user={user} countPosts={countPosts} isOriginUser={true} />
+      <ProfileHead user={user} isOriginUser={true} />
       <AddPostPanel />
       <h2 className="headline-tweets">Tweets</h2>
       <Feed
         query={() => userPostsQuery(user.userId)}
         firstQuery={() => userCursorPostsQuery}
       />
+      {error && <NotificationPopUp message={error} onClose={handleClose} />}
     </>
   );
 };

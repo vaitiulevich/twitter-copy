@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { images } from '@constants/images';
-import { searchRequest } from '@store/actions/searchActions';
+import { searchRequest, searchSuccess } from '@store/actions/searchActions';
 import {
   selectSearchLoad,
   selectSearchPosts,
@@ -47,7 +47,13 @@ export const SearchSidebar = () => {
     setTimeoutId(id);
   };
 
-  const isHasResults = posts.length > 0 || users.length > 0;
+  const isHasResults =
+    (posts && posts.length > 0) || (users && users.length > 0);
+
+  const handleClearInput = () => {
+    setSearchTerm('');
+    dispatch(searchSuccess({ users: null, posts: null }));
+  };
 
   useEffect(() => {
     return () => {
@@ -72,7 +78,15 @@ export const SearchSidebar = () => {
           onBlur={handleBlur}
           className="search-inp"
         />
+        {searchTerm && (
+          <button onClick={handleClearInput} className="clear-inp-btn">
+            <img src={images.clear} alt="clear" />
+          </button>
+        )}
       </div>
+      {(users === null || posts === null) && searchTerm.trim() && (
+        <div className="search-results">Nothing found</div>
+      )}
       {(isHasResults || loading) && (
         <div
           className={classNames('search-results', {
@@ -80,16 +94,16 @@ export const SearchSidebar = () => {
           })}
         >
           {isHasResults && <h2 className="search-headline">Search results</h2>}
-          {posts.length > 0 && (
+          {posts && posts.length > 0 && (
             <>
               <h3 className="search-item-headline">Tweets</h3>
               <SearchPostsResults posts={posts} />
             </>
           )}
-          {users.length > 0 && (
+          {users && users.length > 0 && (
             <>
               <h3 className="search-item-headline">Users</h3>
-              <SearchUsersResults users={users} />
+              <SearchUsersResults searchTerm={searchTerm} users={users} />
             </>
           )}
           {loading && <p>Loading...</p>}

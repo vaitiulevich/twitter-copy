@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@components/Button/Button';
 import { UserShortInfo } from '@components/UserShortInfo/UserShortInfo';
 import { NavMenu } from '@constants/constants';
@@ -25,22 +25,25 @@ export const DesctopMenu = memo(
       (state: RootState) => state.user
     );
 
+    const location = useLocation();
+
     const renderMenu = () => {
       return NavMenu.map((item) => {
         const isActive = location.pathname === item.link;
         return (
-          <li className="nav-list-item" key={item.title}>
-            <img
-              src={isLightTheme ? item.img : item.imgDark}
-              alt={item.title}
-            />
-            <Link
-              className={classNames('nav-list-item-link', { active: isActive })}
-              to={item.link}
-            >
+          <Link
+            key={item.title}
+            className={classNames('nav-list-item-link', { active: isActive })}
+            to={item.link}
+          >
+            <li className="nav-list-item">
+              <img
+                src={isLightTheme ? item.img : item.imgDark}
+                alt={item.title}
+              />
               {item.title}
-            </Link>
-          </li>
+            </li>
+          </Link>
         );
       });
     };

@@ -1,5 +1,6 @@
 import authReducer from '@store/reducers/authRedicer';
 import otherUserReducer from '@store/reducers/otherUserReducer';
+import popUpReducer from '@store/reducers/popUpReducer';
 import postReducer from '@store/reducers/postReducer';
 import searchReducer from '@store/reducers/searchReducer';
 import themeReducer from '@store/reducers/themeReducer';
@@ -13,5 +14,6 @@ const rootReducer: any = combineReducers({
   posts: postReducer,
   otherUser: otherUserReducer,
   search: searchReducer,
+  popup: popUpReducer,
 });
 export default rootReducer;

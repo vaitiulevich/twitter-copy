@@ -31,11 +31,7 @@ export const ImageUploader = ({
   const [files, setFiles] = useState<File[]>(initialFiles);
   const [errors, setErrors] = useState<string[]>([]);
 
-  const checkValidateImg = async (byteArray: Uint8Array, file: File) => {
-    if (!isImageFile(byteArray)) {
-      setErrors((prev) => [...prev, ERR_INVALID_FILE]);
-      return false;
-    }
+  const checkValidateImg = async (file: File) => {
     if (!isFileSizeValid(file)) {
       setErrors((prev) => [...prev, ERR_INVALID_SIZE]);
       return false;
@@ -67,12 +63,16 @@ export const ImageUploader = ({
         const arrayBuffer = e.target?.result as ArrayBuffer;
         const byteArray = new Uint8Array(arrayBuffer);
 
-        const isValidateImg = checkValidateImg(byteArray, file);
+        if (isImageFile(byteArray)) {
+          const isValidateImg = checkValidateImg(file);
+          if (!isValidateImg) {
+            return;
+          }
 
-        if (!isValidateImg) {
-          return;
+          newFiles.push(file);
+        } else {
+          setErrors((prev) => [...prev, ERR_INVALID_FILE]);
         }
-        newFiles.push(file);
 
         if (newFiles.length + errors.length >= selectedFiles.length) {
           const updatedFiles = [...files, ...newFiles];
