@@ -2,21 +2,12 @@ import { PostState } from '@store/reducers/postReducer';
 import * as actions from '@store/types/posts/actionTypes';
 import { DocumentData, Query } from 'firebase/firestore';
 
-export const setLastVisible = (lastVisible?: number | null | PostState) =>
-  ({
-    type: actions.SET_LAST_VISIBLE,
-    payload: lastVisible,
-  }) as const;
 export const loadMorePosts = (count: number) =>
   ({
     type: actions.LOAD_MORE_POSTS,
     payload: count,
   }) as const;
-export const setTotalPosts = (total: number | null) =>
-  ({
-    type: actions.SET_TOTAL_POSTS,
-    payload: total,
-  }) as const;
+
 export const setIsMorePosts = (isMorePosts: boolean) =>
   ({
     type: actions.SET_IS_MORE_POSTS,
@@ -85,13 +76,11 @@ export const deletePostFailure = (error: string) =>
 
 export const fetchPostsRequest = (
   id: string,
-  query: () => Query<DocumentData, DocumentData>,
-  firstQuery: () => any,
-  lastVisible?: PostState | null
+  query: () => Query<DocumentData, DocumentData>
 ) =>
   ({
     type: actions.FETCH_POSTS_REQUEST,
-    payload: { id, query, firstQuery, lastVisible },
+    payload: { id, query },
   }) as const;
 
 export const fetchPostsFailure = (error: string | null) =>
@@ -122,10 +111,4 @@ export const getPostFailure = (error: string | null) =>
   ({
     type: actions.GET_POST_FAILURE,
     payload: error,
-  }) as const;
-
-export const getTotalUsersPosts = (id: string) =>
-  ({
-    type: actions.GET_TOTAL_POSTS,
-    payload: { id },
   }) as const;

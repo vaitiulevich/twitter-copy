@@ -1,6 +1,4 @@
 import { POSTS_PER_PAGE } from '@constants/constants';
-import { setIsMorePosts } from '@store/actions/postActions';
-import { selectPostById } from '@store/selectors';
 import {
   ADD_POST_FAILURE,
   ADD_POST_REQUEST,
@@ -17,12 +15,8 @@ import {
   LOAD_MORE_POSTS,
   PostAction,
   SET_IS_MORE_POSTS,
-  SET_LAST_VISIBLE,
-  SET_TOTAL_POSTS,
   UPDATE_POST_LIKES_FAILURE,
 } from '@store/types/posts/actionTypes';
-import { select } from 'redux-saga/effects';
-import { string } from 'yup';
 
 export interface PostState {
   id?: string;
@@ -43,8 +37,6 @@ export interface PostsState {
   visiblePostsCount: number;
   selectPost: PostState | null;
   loading: boolean;
-  total: number;
-  lastVisible: null | undefined | PostState;
   isMorePosts: boolean;
   error: null | string;
 }
@@ -53,8 +45,6 @@ const initialState: PostsState = {
   visiblePostsCount: POSTS_PER_PAGE,
   selectPost: null,
   loading: false,
-  total: 0,
-  lastVisible: null,
   isMorePosts: true,
   error: null,
 };
@@ -132,10 +122,6 @@ const userReducer = (state = initialState, action: PostAction) => {
         loading: false,
         error: null,
       };
-    case SET_TOTAL_POSTS:
-      return { ...state, total: action.payload };
-    case SET_LAST_VISIBLE:
-      return { ...state, lastVisible: action.payload };
     case ADD_POST_SUCCESS:
       return {
         ...state,

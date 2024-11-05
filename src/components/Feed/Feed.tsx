@@ -13,14 +13,9 @@ import './styles.scss';
 interface FeedProps {
   query: () => Query<DocumentData, DocumentData>;
   isNavigateFeed?: boolean;
-  firstQuery: () => void;
 }
 
-export const Feed = ({
-  query,
-  firstQuery,
-  isNavigateFeed = false,
-}: FeedProps) => {
+export const Feed = ({ query, isNavigateFeed = false }: FeedProps) => {
   const userId = useSelector((state: RootState) => state.auth.uid);
   const location = useLocation();
   const {
@@ -31,7 +26,7 @@ export const Feed = ({
     isHasPosts,
     error,
     handleClose,
-  } = useFetchPosts(userId, query, firstQuery, location.pathname);
+  } = useFetchPosts(userId, query, location.pathname);
 
   const renderTweets = () => {
     return visiblePosts.map((post) => (

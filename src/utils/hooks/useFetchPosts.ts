@@ -15,7 +15,6 @@ import { DocumentData, Query } from 'firebase/firestore';
 export const useFetchPosts = (
   userId: string,
   query: () => Query<DocumentData, DocumentData>,
-  firstQuery: () => void,
   location: string
 ) => {
   const dispatch = useDispatch();
@@ -29,7 +28,7 @@ export const useFetchPosts = (
   const user = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
-    dispatch(fetchPostsRequest(userId, query, firstQuery));
+    dispatch(fetchPostsRequest(userId, query));
     dispatch(setIsMorePosts(true));
     dispatch(loadMorePosts(POSTS_PER_PAGE));
     return () => {

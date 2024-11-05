@@ -1,11 +1,8 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { EditProfileButton } from '@components/EditProfileButton/EditProfileButton';
 import { FollowButton } from '@components/FollowButton/FollowButton';
 import { images } from '@constants/images';
-import { getTotalUsersPosts } from '@store/actions/postActions';
 import { UserState } from '@store/reducers/userReducer';
-import { selectCountPosts } from '@store/selectors';
 import { RootState } from '@store/types';
 
 import './styles.scss';
@@ -16,16 +13,7 @@ export const ProfileHead = ({
   user: UserState;
   isOriginUser: boolean;
 }) => {
-  const dispatch = useDispatch();
-  const { userId } = user;
-  let countPosts = useSelector(selectCountPosts);
-  const { posts } = useSelector((state: RootState) => state.posts);
-
-  useEffect(() => {
-    if (userId) {
-      dispatch(getTotalUsersPosts(userId));
-    }
-  }, [posts]);
+  let countPosts = useSelector((state: RootState) => state.posts.posts.length);
   return (
     <div>
       <header className="profile-header">

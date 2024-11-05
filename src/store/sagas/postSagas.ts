@@ -1,18 +1,15 @@
 import { PostState } from '@store/reducers/postReducer';
-import { RootState } from '@store/types';
 import {
   ADD_POST_REQUEST,
   DELETE_POST_REQUEST,
   FETCH_POSTS_REQUEST,
   GET_POST_REQUEST,
-  GET_TOTAL_POSTS,
   UPDATE_POST_LIKES_REQUEST,
 } from '@store/types/posts/actionTypes';
 import {
   createPostsChannel,
   createUsersChannel,
   enrichPostsWithUserData,
-  getUserPostCount,
   monitorUserChannel,
   uploadImages,
 } from '@store/utils/postsUtils';
@@ -30,7 +27,6 @@ import {
   call,
   fork,
   put,
-  select,
   take,
   takeEvery,
   takeLatest,
@@ -49,8 +45,6 @@ import {
   getPostFailure,
   getPostRequest,
   getPostSuccess,
-  getTotalUsersPosts,
-  setTotalPosts,
   updatePostLikesFailure,
   updatePostLikesRequest,
   updatePostLikesSuccess,
@@ -142,7 +136,6 @@ function* addPost(action: ReturnType<typeof addPostRequest>): Generator {
 
 function* deletePostSaga(action: ReturnType<typeof deletePostRequest>) {
   const { id, ownerId, userId, images } = action.payload;
-  const { posts } = yield select((state: RootState) => state.posts);
 
   if (ownerId !== userId) {
     yield put(deletePostFailure('Error deleting post'));
@@ -157,28 +150,11 @@ function* deletePostSaga(action: ReturnType<typeof deletePostRequest>) {
       }
     }
     yield call(deleteDoc, postRef);
-    // const newLastVisible = posts[posts.length];
-    // yield put(setLastVisible(newLastVisible));
   } catch (error) {
     yield put(deletePostFailure('Error deleting post'));
   }
 }
 
-function* getTotalUsersPostsSaga(
-  action: ReturnType<typeof getTotalUsersPosts>
-): Generator {
-  const { id } = action.payload;
-  try {
-    const postsCount = yield call(getUserPostCount, id);
-    yield put(setTotalPosts(postsCount));
-  } catch (error) {
-    yield put(getPostFailure('Error fetching posts'));
-  }
-}
-
-export function* watchGetTotalUsersPosts() {
-  yield takeEvery(GET_TOTAL_POSTS, getTotalUsersPostsSaga);
-}
 export function* watchGetPost() {
   yield takeEvery(GET_POST_REQUEST, getPost);
 }

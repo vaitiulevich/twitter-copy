@@ -1,7 +1,7 @@
 import { fetchPostsSuccess } from '@store/actions/postActions';
 import { PostState } from '@store/reducers/postReducer';
 import { UserState } from '@store/reducers/userReducer';
-import { userAllPostsQuery, usersByIdsQuery } from '@utils/querys';
+import { usersByIdsQuery } from '@utils/querys';
 import {
   collection,
   DocumentData,
@@ -32,13 +32,6 @@ export function* uploadImages(files: File[]): Generator {
 
   return urls;
 }
-
-export function* getUserPostCount(userId: string): Generator {
-  const postsQuery = userAllPostsQuery(userId);
-  const querySnapshot = yield getDocs(postsQuery);
-  return querySnapshot.size;
-}
-
 export function createPostsChannel(postsQuery: Query<DocumentData>) {
   return eventChannel((emitter: (data: DocumentData[]) => void) => {
     const unsubscribe = onSnapshot(
