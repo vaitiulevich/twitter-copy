@@ -11,7 +11,7 @@ import {
 import { hideErrorPopUp } from '@store/actions/popUpActions';
 import { selectOtherUser, selectUserId } from '@store/selectors';
 import { RootState } from '@store/types';
-import { userCursorPostsQuery, userPostsQuery } from '@utils/querys';
+import { userPostsQuery } from '@utils/querys';
 
 import './styles.scss';
 
@@ -47,10 +47,7 @@ export const User = () => {
             user={{ ...otherUser, userId: id ?? '' }}
             isOriginUser={false}
           />
-          <Feed
-            query={() => userPostsQuery(id as string)}
-            firstQuery={() => userCursorPostsQuery}
-          />
+          <Feed query={() => userPostsQuery(id as string)} />
           {error && <NotificationPopUp message={error} onClose={handleClose} />}
         </>
       )}

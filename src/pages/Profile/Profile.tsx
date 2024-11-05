@@ -8,7 +8,7 @@ import { hideErrorPopUp } from '@store/actions/popUpActions';
 import { getUserData, getUserDataFailure } from '@store/actions/userActions';
 import { selectAuthUid, selectUserSelector } from '@store/selectors';
 import { RootState } from '@store/types';
-import { userCursorPostsQuery, userPostsQuery } from '@utils/querys';
+import { userPostsQuery } from '@utils/querys';
 
 import './styles.scss';
 
@@ -38,10 +38,7 @@ export const Profile = () => {
       <ProfileHead user={user} isOriginUser={true} />
       <AddPostPanel />
       <h2 className="headline-tweets">Tweets</h2>
-      <Feed
-        query={() => userPostsQuery(user.userId)}
-        firstQuery={() => userCursorPostsQuery}
-      />
+      <Feed query={() => userPostsQuery(user.userId)} />
       {error && <NotificationPopUp message={error} onClose={handleClose} />}
     </>
   );
