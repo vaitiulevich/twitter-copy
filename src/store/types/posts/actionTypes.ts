@@ -25,5 +25,6 @@ export const SET_LAST_VISIBLE = 'SET_LAST_VISIBLE';
 export const SET_IS_MORE_POSTS = 'SET_IS_MORE_POSTS';
 export const SET_TOTAL_POSTS = 'SET_TOTAL_POSTS';
 export const GET_TOTAL_POSTS = 'GET_TOTAL_POSTS';
+export const LOAD_MORE_POSTS = 'LOAD_MORE_POSTS';
 
 export type PostAction = ReturnType<InferValueTypes<typeof actions>>;

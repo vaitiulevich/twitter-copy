@@ -15,8 +15,8 @@ export const userPostsQuery = (userId: string) => {
   return query(
     postsRef,
     where('userId', '==', userId),
-    orderBy('timestamp', 'desc'),
-    limit(POSTS_PER_PAGE)
+    orderBy('timestamp', 'desc')
+    // limit(POSTS_PER_PAGE)
   );
 };
 export const userAllPostsQuery = (userId: string) => {
@@ -35,21 +35,21 @@ export const userCursorPostsQuery = (
     postsRef,
     where('userId', '==', userId),
     orderBy('timestamp', 'desc'),
-    startAfter(lastVisible),
-    limit(POSTS_PER_PAGE)
+    startAfter(lastVisible)
+    // limit(POSTS_PER_PAGE)
   );
 };
 
 export const allPostsQuery = () => {
-  return query(postsRef, orderBy('timestamp', 'desc'), limit(POSTS_PER_PAGE));
+  return query(postsRef, orderBy('timestamp', 'desc'));
 };
 
 export const allCursorPostsQuery = (lastVisible: PostState) => {
   return query(
     postsRef,
     orderBy('timestamp', 'desc'),
-    startAfter(lastVisible),
-    limit(POSTS_PER_PAGE)
+    startAfter(lastVisible)
+    // limit(POSTS_PER_PAGE)
   );
 };
 

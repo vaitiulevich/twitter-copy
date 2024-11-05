@@ -1,3 +1,5 @@
+import { POSTS_PER_PAGE } from '@constants/constants';
+import { setIsMorePosts } from '@store/actions/postActions';
 import { selectPostById } from '@store/selectors';
 import {
   ADD_POST_FAILURE,
@@ -5,12 +7,14 @@ import {
   ADD_POST_SUCCESS,
   DELETE_POST_FAILURE,
   DELETE_POST_REQUEST,
+  DELETE_POST_SUCCESS,
   FETCH_POSTS_FAILURE,
   FETCH_POSTS_REQUEST,
   FETCH_POSTS_SUCCESS,
   GET_POST_FAILURE,
   GET_POST_REQUEST,
   GET_POST_SUCCESS,
+  LOAD_MORE_POSTS,
   PostAction,
   SET_IS_MORE_POSTS,
   SET_LAST_VISIBLE,
@@ -36,20 +40,22 @@ export interface PostState {
 }
 export interface PostsState {
   posts: PostState[];
+  visiblePostsCount: number;
   selectPost: PostState | null;
   loading: boolean;
   total: number;
-  lastVisible: number | null;
+  lastVisible: null | undefined | PostState;
   isMorePosts: boolean;
   error: null | string;
 }
 const initialState: PostsState = {
   posts: [],
+  visiblePostsCount: POSTS_PER_PAGE,
   selectPost: null,
   loading: false,
   total: 0,
   lastVisible: null,
-  isMorePosts: false,
+  isMorePosts: true,
   error: null,
 };
 
@@ -57,6 +63,12 @@ const userReducer = (state = initialState, action: PostAction) => {
   switch (action.type) {
     case GET_POST_REQUEST:
       return { ...state, loading: true };
+    case LOAD_MORE_POSTS:
+      return {
+        ...state,
+        visiblePostsCount: action.payload,
+        isMorePosts: action.payload < state.posts.length,
+      };
     case GET_POST_SUCCESS:
       return {
         ...state,
@@ -103,6 +115,11 @@ const userReducer = (state = initialState, action: PostAction) => {
       return { ...state, loading: true };
     case DELETE_POST_REQUEST:
       return { ...state };
+    case DELETE_POST_SUCCESS:
+      return {
+        ...state,
+        posts: state.posts.filter((post) => post.id !== action.payload),
+      };
     case FETCH_POSTS_REQUEST:
       return { ...state, loading: true };
     case SET_IS_MORE_POSTS:
@@ -111,6 +128,7 @@ const userReducer = (state = initialState, action: PostAction) => {
       return {
         ...state,
         posts: action.payload.posts,
+        isMorePosts: action.payload.posts.length > 0,
         loading: false,
         error: null,
       };
@@ -119,7 +137,11 @@ const userReducer = (state = initialState, action: PostAction) => {
     case SET_LAST_VISIBLE:
       return { ...state, lastVisible: action.payload };
     case ADD_POST_SUCCESS:
-      return { ...state, loading: false, error: null };
+      return {
+        ...state,
+        loading: false,
+        error: null,
+      };
     default:
       return state;
   }
