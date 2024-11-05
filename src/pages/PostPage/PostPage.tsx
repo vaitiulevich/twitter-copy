@@ -13,6 +13,7 @@ export const PostPage = () => {
   const dispatch = useDispatch();
   const post = useSelector((state: RootState) => state.posts.selectPost);
   const loading = useSelector((state: RootState) => state.posts.loading);
+  const userId = useSelector((state: RootState) => state.user.userId);
   useEffect(() => {
     if (id) {
       dispatch(getPostRequest(id));
@@ -21,9 +22,10 @@ export const PostPage = () => {
   if (loading) {
     return <SkeletonPost />;
   }
+
   return (
     <section className="posat-page">
-      {post ? <Post post={post} userId={post.userId} /> : <div>no tweet</div>}
+      {post ? <Post post={post} userId={userId} /> : <div>no tweet</div>}
     </section>
   );
 };

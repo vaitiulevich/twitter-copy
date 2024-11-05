@@ -21,7 +21,7 @@ export type AuthState = {
   error: string | undefined;
   loading: boolean;
   navigateToSetPassword: boolean;
-  uid: string | undefined;
+  uid: string;
   endSessionTimestamp: number | null;
   user?: User | null;
 };
@@ -30,7 +30,7 @@ const initialState: AuthState = {
   error: undefined,
   loading: false,
   navigateToSetPassword: false,
-  uid: undefined,
+  uid: '',
   endSessionTimestamp: null,
   user: undefined,
 };

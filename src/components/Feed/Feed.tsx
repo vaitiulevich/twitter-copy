@@ -1,21 +1,9 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { NotificationPopUp } from '@components/NotificationPopUp/NotificationPopUp';
 import { Post } from '@components/Post/Post';
 import { SkeletonPost } from '@components/SkeletonPost/SkeletonPost';
-import { POSTS_PER_PAGE, SCELETON_POST_COUNT } from '@constants/constants';
-import { hideErrorPopUp } from '@store/actions/popUpActions';
-import {
-  fetchPostsRequest,
-  fetchPostsSuccess,
-  updatePostLikesFailure,
-} from '@store/actions/postActions';
-import {
-  selectIsMorePost,
-  selectPostLoad,
-  selectUserId,
-} from '@store/selectors';
+import { SCELETON_POST_COUNT } from '@constants/constants';
 import { RootState } from '@store/types';
 import { useFetchPosts } from '@utils/hooks/useFetchPosts';
 import { DocumentData, Query } from 'firebase/firestore';
@@ -25,37 +13,23 @@ import './styles.scss';
 interface FeedProps {
   query: () => Query<DocumentData, DocumentData>;
   isNavigateFeed?: boolean;
-  firstQuery: () => void;
 }
 
-export const Feed = ({
-  query,
-  firstQuery,
-  isNavigateFeed = false,
-}: FeedProps) => {
-  const userId = useSelector(selectUserId);
-  const { posts, error } = useSelector((state: RootState) => state.posts);
-  const dispatch = useDispatch();
-  const loading = useSelector(selectPostLoad);
-  const isMorePosts = useSelector(selectIsMorePost);
+export const Feed = ({ query, isNavigateFeed = false }: FeedProps) => {
+  const userId = useSelector((state: RootState) => state.auth.uid);
   const location = useLocation();
-  const isHasPosts = posts && posts.length;
-
-  const { loadMoreRef } = useFetchPosts(userId, query, firstQuery);
-
-  useEffect(() => {
-    if (location && posts.length > POSTS_PER_PAGE) {
-      dispatch(fetchPostsSuccess([]));
-    }
-  }, [location.pathname]);
-
-  const handleClose = () => {
-    dispatch(hideErrorPopUp());
-    dispatch(updatePostLikesFailure(null));
-  };
+  const {
+    loadMoreRef,
+    loading,
+    visiblePosts,
+    isMorePosts,
+    isHasPosts,
+    error,
+    handleClose,
+  } = useFetchPosts(userId, query, location.pathname);
 
   const renderTweets = () => {
-    return posts.map((post) => (
+    return visiblePosts.map((post) => (
       <Post
         key={post.id}
         post={post}

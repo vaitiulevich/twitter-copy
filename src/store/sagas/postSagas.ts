@@ -1,19 +1,16 @@
-import { POSTS_PER_PAGE } from '@constants/constants';
 import { PostState } from '@store/reducers/postReducer';
-import { UserSearch } from '@store/reducers/searchReducer';
-import { RootState } from '@store/types';
 import {
   ADD_POST_REQUEST,
   DELETE_POST_REQUEST,
   FETCH_POSTS_REQUEST,
   GET_POST_REQUEST,
-  GET_TOTAL_POSTS,
   UPDATE_POST_LIKES_REQUEST,
 } from '@store/types/posts/actionTypes';
 import {
   createPostsChannel,
   createUsersChannel,
-  getUserPostCount,
+  enrichPostsWithUserData,
+  monitorUserChannel,
   uploadImages,
 } from '@store/utils/postsUtils';
 import { fetchUserData } from '@store/utils/userUtils';
@@ -22,19 +19,14 @@ import {
   collection,
   deleteDoc,
   doc,
-  DocumentSnapshot,
   getDoc,
-  getDocs,
-  query,
   updateDoc,
-  where,
 } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import {
   call,
-  cancelled,
+  fork,
   put,
-  select,
   take,
   takeEvery,
   takeLatest,
@@ -53,96 +45,37 @@ import {
   getPostFailure,
   getPostRequest,
   getPostSuccess,
-  getTotalUsersPosts,
-  setIsMorePosts,
-  setLastVisible,
-  setTotalPosts,
   updatePostLikesFailure,
   updatePostLikesRequest,
   updatePostLikesSuccess,
 } from '../actions/postActions';
 
 function* fetchPosts(action: ReturnType<typeof fetchPostsRequest>): Generator {
+  const postsQuery = action.payload.query();
   let channel;
   let usersChannel;
-  const { posts, lastVisible } = yield select(
-    (state: RootState) => state.posts
-  );
-  let postsQuery;
+
   try {
-    if (!action.payload.query || !action.payload.firstQuery) {
-      return;
-    }
-    if (!lastVisible) {
-      postsQuery = action.payload.query();
-    } else {
-      const firstQuery = action.payload.firstQuery();
-      postsQuery = firstQuery(lastVisible, action.payload.id);
-    }
-
-    const querySnapshot = yield getDocs(postsQuery);
-    const isEndOfPosts = querySnapshot.docs.length >= POSTS_PER_PAGE;
-    const newLastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
-
-    yield put(setIsMorePosts(isEndOfPosts));
-    yield put(setLastVisible(newLastVisible));
-
     channel = yield call(createPostsChannel, postsQuery);
 
     while (true) {
-      let updatedUsers;
-      let updatedPosts;
-      let updatedOldPosts = [];
-      updatedOldPosts = yield take(channel);
-
-      let userIds = updatedOldPosts.map((post: PostState) => post.userId);
-      usersChannel = yield call(createUsersChannel, userIds);
-
-      if (userIds.length) {
-        const usersQuery = query(
-          collection(db, 'users'),
-          where('userId', 'in', userIds)
-        );
-        const resUser = yield getDocs(usersQuery);
-        const resUserusers = resUser.docs.map((doc: DocumentSnapshot) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
-        updatedUsers = resUserusers;
-      }
-      updatedPosts = updatedOldPosts;
-      if (updatedPosts && updatedUsers) {
-        const updatedPostsWithUsers = updatedPosts.map((post: PostState) => {
-          const user = updatedUsers.find(
-            (user: UserSearch) => user.id === post.userId
-          );
-          return {
-            ...post,
-            userAvatar: user ? user.avatar : null,
-            userName: user ? user.name : null,
-            userSlug: user ? user.userSlug : null,
-          };
-        });
-        if (posts.length > 0 && lastVisible) {
-          yield put(fetchPostsSuccess([...posts, ...updatedPostsWithUsers]));
-        } else {
-          yield put(fetchPostsSuccess(updatedPostsWithUsers));
-        }
-      } else {
-        const isEmptyPosts = posts.length < 1 && updatedPosts.length < 1;
-        if (isEmptyPosts || posts.length <= 10) {
-          yield put(fetchPostsSuccess([]));
-        }
-      }
+      const posts = yield take(channel);
+      const enrichedPosts = yield call(enrichPostsWithUserData, posts);
+      const userIds: Set<string> = new Set(
+        enrichedPosts.map((post: PostState) => post.userId)
+      );
+      const userIdsArray: string[] = Array.from(userIds);
+      usersChannel = yield call(createUsersChannel, userIdsArray);
+      yield put(fetchPostsSuccess(enrichedPosts));
+      yield fork(monitorUserChannel, usersChannel, enrichedPosts);
     }
   } catch (error) {
-    yield put(fetchPostsFailure('Error fetching posts'));
+    yield put(fetchPostsFailure('Error with fetching posts'));
   } finally {
-    if (yield cancelled()) {
-      if (channel) channel.close();
-      if (usersChannel) usersChannel.close();
+    if (channel) {
+      channel.close();
     }
+    if (usersChannel) usersChannel.close();
   }
 }
 
@@ -222,27 +155,12 @@ function* deletePostSaga(action: ReturnType<typeof deletePostRequest>) {
   }
 }
 
-function* getTotalUsersPostsSaga(
-  action: ReturnType<typeof getTotalUsersPosts>
-): Generator {
-  const { id } = action.payload;
-  try {
-    const postsCount = yield call(getUserPostCount, id);
-    yield put(setTotalPosts(postsCount));
-  } catch (error) {
-    yield put(getPostFailure('Error fetching posts'));
-  }
-}
-
-export function* watchGetTotalUsersPosts() {
-  yield takeEvery(GET_TOTAL_POSTS, getTotalUsersPostsSaga);
-}
 export function* watchGetPost() {
   yield takeEvery(GET_POST_REQUEST, getPost);
 }
 
 export function* watchFetchPosts() {
-  yield takeEvery(FETCH_POSTS_REQUEST, fetchPosts);
+  yield takeLatest(FETCH_POSTS_REQUEST, fetchPosts);
 }
 
 export function* watchUpdatePostLikes() {

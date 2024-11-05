@@ -1,17 +1,23 @@
-import { userAllPostsQuery, usersByIdsQuery } from '@utils/querys';
+import { fetchPostsSuccess } from '@store/actions/postActions';
+import { PostState } from '@store/reducers/postReducer';
+import { UserState } from '@store/reducers/userReducer';
+import { usersByIdsQuery } from '@utils/querys';
 import {
+  collection,
   DocumentData,
+  DocumentSnapshot,
   getDocs,
   onSnapshot,
   Query,
+  query,
   QuerySnapshot,
 } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { eventChannel } from 'redux-saga';
-import { call } from 'redux-saga/effects';
+import { Channel, eventChannel } from 'redux-saga';
+import { call, put, take } from 'redux-saga/effects';
 import { v4 as uuidv4 } from 'uuid';
 
-import { storage } from '../../firebase';
+import { db, storage } from '../../firebase';
 
 export function* uploadImages(files: File[]): Generator {
   const urls: string[] = [];
@@ -26,19 +32,12 @@ export function* uploadImages(files: File[]): Generator {
 
   return urls;
 }
-
-export function* getUserPostCount(userId: string): Generator {
-  const postsQuery = userAllPostsQuery(userId);
-  const querySnapshot = yield getDocs(postsQuery);
-  return querySnapshot.size;
-}
-
 export function createPostsChannel(postsQuery: Query<DocumentData>) {
   return eventChannel((emitter: (data: DocumentData[]) => void) => {
     const unsubscribe = onSnapshot(
       postsQuery,
       (snapshot: QuerySnapshot<DocumentData>) => {
-        const updatedPosts: any = snapshot.docs.map((doc) => ({
+        const updatedPosts = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
@@ -50,6 +49,25 @@ export function createPostsChannel(postsQuery: Query<DocumentData>) {
       unsubscribe();
     };
   });
+}
+export function* enrichPostsWithUserData(posts: PostState[]): Generator {
+  const userIds = new Set(posts.map((post) => post.userId));
+  const usersSnapshot = yield call(getDocs, query(collection(db, 'users')));
+  const usersMap = new Map();
+
+  usersSnapshot.forEach((userDoc: DocumentSnapshot) => {
+    const userData = { id: userDoc.id, ...userDoc.data() };
+    if (userIds.has(userData.id)) {
+      usersMap.set(userData.id, userData);
+    }
+  });
+
+  return posts.map((post: PostState) => ({
+    ...post,
+    userAvatar: usersMap.get(post.userId)?.avatar,
+    userName: usersMap.get(post.userId)?.name,
+    userSlug: usersMap.get(post.userId)?.userSlug,
+  }));
 }
 
 export const createUsersChannel = (visibleUserIds: string[]) => {
@@ -68,7 +86,6 @@ export const createUsersChannel = (visibleUserIds: string[]) => {
           id: doc.id,
           ...doc.data(),
         }));
-
         emitter(updatedUsers);
       }
     );
@@ -78,3 +95,26 @@ export const createUsersChannel = (visibleUserIds: string[]) => {
     };
   });
 };
+interface UserChannelMessage {
+  userId: string;
+  userData: UserState | null;
+}
+export function* monitorUserChannel(
+  userChannel: Channel<UserChannelMessage>,
+  initialPosts: PostState[]
+): Generator {
+  while (true) {
+    const changedUserData = yield take(userChannel);
+    const updatedPostsWithNewData = initialPosts.map((post: PostState) =>
+      post.userId === changedUserData[0].userId
+        ? {
+            ...post,
+            userName: changedUserData[0].name,
+            userAvatar: changedUserData[0].avatar,
+            userSlug: changedUserData[0].userSlug,
+          }
+        : post
+    );
+    yield put(fetchPostsSuccess(updatedPostsWithNewData));
+  }
+}

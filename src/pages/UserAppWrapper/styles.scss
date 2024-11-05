@@ -3,14 +3,11 @@
 .user-app-wrapper {
   padding: 0 5rem;
   display: grid;
-  grid-template-columns: 20% 55% 25%;
+  grid-template-columns: 20% 50% 30%;
   @include respond-to(tablet) {
     padding: 0;
     display: flex;
     flex-direction: column-reverse;
-  }
-  @include respond-to(desktop) {
-    padding: 0 3rem;
   }
 }
 .main-section {

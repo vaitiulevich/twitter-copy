@@ -14,11 +14,6 @@ export const selectPostLoad = createSelector(
   (post) => post.loading
 );
 
-export const selectCountPosts = createSelector(
-  [selectPosts],
-  (post) => post.total
-);
-
 export const selectIsMorePost = createSelector(
   [selectPosts],
   (post) => post.isMorePosts
