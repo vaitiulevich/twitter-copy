@@ -1,0 +1,10 @@
+.exit-alert {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.exit-alert-btns {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+}
