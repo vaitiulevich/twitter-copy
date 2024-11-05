@@ -27,7 +27,7 @@ export const MenuSidebar = withModal(
       );
     }, []);
     const handleOpenExitModal = useCallback(() => {
-      openModal(<ExitAlert />);
+      openModal(<ExitAlert onCloseModal={onCloseModal} />);
     }, []);
     const handleClose = () => {
       dispatch(hideErrorPopUp());
