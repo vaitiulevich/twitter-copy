@@ -1,5 +1,6 @@
 $breakpoint-mobile: 460px;
 $breakpoint-tablet: 820px;
+$breakpoint-pre-tablet: 950px;
 $breakpoint-desktop: 1024px;
 $breakpoint-large-desktop: 1440px;
 
@@ -10,6 +11,10 @@ $breakpoint-large-desktop: 1440px;
     }
   } @else if $breakpoint == tablet {
     @media (max-width: $breakpoint-tablet) {
+      @content;
+    }
+  } @else if $breakpoint == pre-tablet {
+    @media (max-width: $breakpoint-pre-tablet) {
       @content;
     }
   } @else if $breakpoint == desktop {

@@ -63,21 +63,21 @@ export const chandgePasswordValidationSchema = yup.object().shape({
   newPassword: passwordValidation,
 });
 const todayDate = new Date();
-const today = formatDate(todayDate);
-const minDateBirt = formatDate(
-  new Date(
-    todayDate.setFullYear(todayDate.getFullYear() - COUNT_MAX_DATE_BIRTH_YEARS)
-  )
-);
+const todayYear = todayDate.getFullYear();
+const minDateBirt = todayDate.getFullYear() - COUNT_MAX_DATE_BIRTH_YEARS;
 
 export const editProfileValidationSchema = yup.object().shape({
   name: stringRequired(MIN_LENTGH_NAME, MAX_LENTGH_NAME),
   phone: phoneValidation,
   dateBirth: yup
-    .date()
-    .max(today, ERR_DATE_FUTURE)
-    .min(minDateBirt, ERR_DATE_MIN_BIRTH)
-    .required(ERR_REQUIRED),
+    .string()
+    .required(ERR_REQUIRED)
+    .matches(/^\d{4}-\d{2}-\d{2}$/)
+    .test('is-valid-date', ERR_DATE_MIN_BIRTH, (value) => {
+      if (!value) return false;
+      const year = parseInt(value.slice(0, 4), 10);
+      return year >= minDateBirt && year <= todayYear;
+    }),
   description: yup
     .string()
     .min(MIN_LENTGH_DESCRIPTION, ERR_INCORRECT_FILL)

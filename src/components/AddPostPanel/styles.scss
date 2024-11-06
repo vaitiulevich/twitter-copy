@@ -9,6 +9,10 @@
   border-radius: 50%;
   overflow: hidden;
 }
+.add-post-avatar img {
+  object-fit: cover;
+  width: 100%;
+}
 .post-input {
   width: 95%;
   background: transparent;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -56,9 +56,12 @@ export const SignUp = () => {
     }
   }, [selectAuthExist]);
 
-  const handleDateChange = (month: string, day: string, year: string) => {
-    setSelectedDate(`${year}-${month}-${day}`);
-  };
+  const handleDateChange = useCallback(
+    (month: string, day: string, year: string) => {
+      setSelectedDate(`${year}-${month}-${day}`);
+    },
+    []
+  );
   return (
     <section className="sign-up-section">
       <div className="sign-up-form-container">

@@ -10,7 +10,7 @@ interface PostResultsProps {
 
 export const SearchPostsResults = ({ posts }: PostResultsProps) => {
   return (
-    <>
+    <div className="posts-results">
       {posts.map((post) => (
         <div key={post.id} className="search-post-results">
           <Link to={`/home/posts/${post.id}`}>
@@ -18,7 +18,9 @@ export const SearchPostsResults = ({ posts }: PostResultsProps) => {
               <div className="search-post-avatar">
                 <img src={post.userAvatar ?? images.avatar} />
               </div>
-              <h3 className="search-post-name">{post.userName}</h3>
+              <h3 title={post.userName} className="search-post-name">
+                {post.userName}
+              </h3>
             </div>
             {post.content && (
               <p className="search-post-content">{post.content.join(' ')}</p>
@@ -26,6 +28,6 @@ export const SearchPostsResults = ({ posts }: PostResultsProps) => {
           </Link>
         </div>
       ))}
-    </>
+    </div>
   );
 };

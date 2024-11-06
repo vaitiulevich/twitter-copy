@@ -1,7 +1,11 @@
 import { getAnalytics } from 'firebase/analytics';
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import {
+  connectAuthEmulator,
+  getAuth,
+  GoogleAuthProvider,
+} from 'firebase/auth';
+import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 import { getBuildEnvVar } from './env';
@@ -15,11 +19,11 @@ const firebaseConfig = {
   appId: getBuildEnvVar('APP_ID'),
   measurementId: getBuildEnvVar('MEASUR_ID'),
 };
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-const analytics = getAnalytics(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-export { analytics, auth, db, provider, storage };
+export { auth, db, provider, storage };

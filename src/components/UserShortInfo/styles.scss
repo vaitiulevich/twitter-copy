@@ -1,8 +1,13 @@
+@import '@styles/breakpoints';
+
 .user-info-panel {
   display: flex;
   align-items: center;
   gap: 1rem;
   margin-top: 2rem;
+  @include respond-to(desktop) {
+    gap: 0.2rem;
+  }
 }
 .user-info-img {
   height: 3rem;
@@ -10,8 +15,12 @@
   border-radius: 50%;
   overflow: hidden;
 }
+.user-info-img img {
+  object-fit: cover;
+  width: 100%;
+}
 .user-info {
-  width: 70%;
+  width: 60%;
 }
 .user-info-name,
 .user-info-slug {

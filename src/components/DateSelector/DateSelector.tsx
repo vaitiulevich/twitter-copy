@@ -93,6 +93,7 @@ export const DateSelector = memo(
         className="date-select"
         value={value}
         onChange={handleChange(key)}
+        aria-label={key}
       >
         {options.map(({ label, value }) => (
           <option className="date-option" key={value} value={value}>

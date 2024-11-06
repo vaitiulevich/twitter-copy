@@ -14,13 +14,13 @@ export const UserShortInfo = ({
   navTo?: string;
 }) => {
   return (
-    <div>
+    <>
       <div className="user-info-panel">
         <div className="user-info-img">
           <img src={avatar ?? images.avatar} alt="avatar" />
         </div>
         <div className="user-info">
-          <h3 className="user-info-name">
+          <h3 title={name} className="user-info-name">
             {navTo ? (
               <Link className="user-name-link" to={navTo}>
                 {name}
@@ -32,6 +32,6 @@ export const UserShortInfo = ({
           {userSlug && <p className="user-info-slug">{userSlug} </p>}
         </div>
       </div>
-    </div>
+    </>
   );
 };

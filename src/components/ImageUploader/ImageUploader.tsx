@@ -31,16 +31,14 @@ export const ImageUploader = ({
   const [files, setFiles] = useState<File[]>(initialFiles);
   const [errors, setErrors] = useState<string[]>([]);
 
-  const checkValidateImg = async (file: File) => {
-    if (!isFileSizeValid(file)) {
+  const checkValidateImg = (file: File) => {
+    const dimensionsValid = isImageDimensionsValid(file);
+
+    if (!isFileSizeValid(file) || !dimensionsValid) {
       setErrors((prev) => [...prev, ERR_INVALID_SIZE]);
       return false;
     }
-    const dimensionsValid = await isImageDimensionsValid(file);
-    if (!dimensionsValid) {
-      setErrors((prev) => [...prev, ERR_INVALID_DIMENSIONS]);
-      return false;
-    }
+
     return true;
   };
 
@@ -65,6 +63,7 @@ export const ImageUploader = ({
 
         if (isImageFile(byteArray)) {
           const isValidateImg = checkValidateImg(file);
+          console.log(isValidateImg);
           if (!isValidateImg) {
             return;
           }

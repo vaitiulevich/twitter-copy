@@ -20,7 +20,7 @@ interface FormData {
   name: string;
   phone: string;
   description?: yup.Maybe<string | undefined>;
-  dateBirth: Date;
+  dateBirth: string;
 }
 
 export const EditProfileForm = ({
@@ -52,10 +52,9 @@ export const EditProfileForm = ({
 
   const onSubmit = (data: FormData) => {
     const { dateBirth } = data;
-    const dateString = formatDate(dateBirth);
     const newData = {
       ...data,
-      dateBirth: dateString,
+      dateBirth: dateBirth,
       avatarFile: selectedAvatar[0] ?? null,
       bannerFile: selectedBanner[0] ?? null,
     };

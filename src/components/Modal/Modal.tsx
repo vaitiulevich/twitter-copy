@@ -10,16 +10,18 @@ interface ModalProps {
 }
 
 export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
-  if (!isOpen) return null;
-
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
     }
+
     return () => {
       document.body.style.overflow = '';
     };
-  }, []);
+  }, [isOpen]);
+  if (!isOpen) return null;
 
   const handleOverlayClick = (e: MouseEvent<HTMLDivElement>) => {
     if (e.currentTarget === e.target) {
