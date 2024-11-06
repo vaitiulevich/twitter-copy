@@ -13,11 +13,21 @@ export const ProfileHead = ({
   user: UserState;
   isOriginUser: boolean;
 }) => {
+  const {
+    name,
+    profileImg,
+    avatar,
+    userId,
+    userSlug,
+    description,
+    followers,
+    following,
+  } = user;
   let countPosts = useSelector((state: RootState) => state.posts.posts.length);
   return (
     <div>
       <header className="profile-header">
-        <h3>{user.name}</h3>
+        <h3 title={name}>{name}</h3>
         <p>{countPosts} Tweets</p>
       </header>
       <div className="profile-hero-panel">
@@ -25,35 +35,35 @@ export const ProfileHead = ({
           <div>
             <img
               className="profile-banner"
-              src={user.profileImg ?? images.profileBanner}
+              src={profileImg ?? images.profileBanner}
               alt="profile-banner"
             />
           </div>
 
           <div className="profile-avatar">
-            <img src={user.avatar ?? images.avatar} alt="avatar" />
+            <img src={avatar ?? images.avatar} alt="avatar" />
           </div>
           <div className="profile-edit-options">
             {isOriginUser ? (
               <EditProfileButton />
             ) : (
-              <FollowButton id={user.userId} user={user} />
+              <FollowButton id={userId} user={user} />
             )}
           </div>
         </div>
         <div className="profile-bio">
-          <h3 className="profile-name">{user.name}</h3>
-          <p className="profile-slug">{user.userSlug}</p>
-          {user.description && (
-            <p className="profile-description">{user.description}</p>
-          )}
+          <h3 className="profile-name" title={name}>
+            {name}
+          </h3>
+          <p className="profile-slug">{userSlug}</p>
+          {description && <p className="profile-description">{description}</p>}
           <div className="follow-panel">
             <div>
-              <span>{user.following.length}</span>
+              <span>{following.length}</span>
               Following
             </div>
             <div>
-              <span>{user.followers.length}</span>
+              <span>{followers.length}</span>
               Followers
             </div>
           </div>

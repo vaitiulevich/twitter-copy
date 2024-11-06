@@ -14,6 +14,10 @@
   height: 2.5rem;
   border-radius: 50%;
 }
+.search-post-avatar img {
+  object-fit: cover;
+  width: 100%;
+}
 .search-post-header {
   display: flex;
   align-items: center;

@@ -32,7 +32,7 @@ export const PostHeader = ({ post, isOriginPost }: PostHeaderProps) => {
   return (
     <div className="post-header">
       <div className="post-header-author">
-        <h3 className="post-author-name">
+        <h3 title={post.userName} className="post-author-name">
           <Link to={linkFromUserName}>{post.userName}</Link>
         </h3>
         <span className="post-author-slug">{post.userSlug}</span>

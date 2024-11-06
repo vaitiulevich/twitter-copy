@@ -21,12 +21,9 @@ function* searchTwitter(action: ReturnType<typeof searchRequest>): Generator {
 
   try {
     const searchTerm = action.payload;
-
     const postsWithUserNames = yield call(searchPosts, searchTerm);
     const usersResults = yield call(searchUsers, searchTerm);
-
     const hasResults = postsWithUserNames.length > 0 || usersResults.length > 0;
-    console.log(hasResults);
 
     if (hasResults) {
       yield put(

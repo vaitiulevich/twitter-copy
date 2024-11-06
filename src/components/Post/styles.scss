@@ -10,6 +10,10 @@
   border-radius: 50%;
   overflow: hidden;
 }
+.post-avatar img {
+  object-fit: cover;
+  width: 100%;
+}
 .post-content {
   width: 87%;
 }

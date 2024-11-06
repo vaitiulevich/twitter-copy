@@ -120,4 +120,4 @@ export const jpgSignature = [255, 216];
 export const SCELETON_POST_COUNT = 2;
 export const UPLOAD_IMG_COUNT = 4;
 
-export const COUNT_MAX_DATE_BIRTH_YEARS = 150;
+export const COUNT_MAX_DATE_BIRTH_YEARS = 120;
