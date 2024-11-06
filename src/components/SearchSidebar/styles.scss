@@ -121,7 +121,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
+  max-width: 60%;
   gap: 0.5rem;
   @include respond-to(pre-tablet) {
     background-color: aqua;
@@ -129,7 +129,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0;
-    width: 95%;
+    max-width: 100%;
     border-radius: 0.5rem;
     background-color: var(--background-opasity);
   }
