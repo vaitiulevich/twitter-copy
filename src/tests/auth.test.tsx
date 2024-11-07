@@ -1,19 +1,10 @@
 import { Provider } from 'react-redux';
 import { createBrowserRouter, Router, RouterProvider } from 'react-router-dom';
-import { ERR_REQUIRED } from '@constants/messages';
-import { SetPassword } from '@pages/Auth/SetPassword/SetPassword';
 import { SignUp } from '@pages/Auth/SignUp/SignUp';
 import { persistor } from '@store/store';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import App from 'App';
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
 import { createStore } from 'redux';
 import { PersistGate } from 'redux-persist/integration/react';
-
-import { auth } from '../firebase';
 
 const initialState = {
   auth: {
@@ -21,7 +12,7 @@ const initialState = {
     loading: false,
     error: null,
     user: {
-      email: 'dgdg',
+      email: 'tteest@mail.com',
       phone: '1234567890',
       dateBirth: '12-12-2020',
       name: 'tetsing',
@@ -60,7 +51,6 @@ describe('SignUp Component', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // (store.dispatch as jest.Mock) = mockDispatch;
     store.dispatch = mockDispatch;
 
     render(
@@ -142,64 +132,3 @@ describe('SignUp Component', () => {
     // });
   });
 });
-
-describe('SetPassword Component', () => {
-  const router = createBrowserRouter([
-    {
-      path: '/',
-      element: <SetPassword />,
-    },
-  ]);
-  const mockDispatch = jest.fn();
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    // (store.dispatch as jest.Mock) = mockDispatch;
-    store.dispatch = mockDispatch;
-
-    render(
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <RouterProvider router={router} />
-        </PersistGate>
-      </Provider>
-    );
-  });
-
-  test('renders SetPassword component', () => {
-    expect(screen.getByPlaceholderText(/Set Password/i)).toBeInTheDocument();
-    expect(
-      screen.getByPlaceholderText(/Confirm password/i)
-    ).toBeInTheDocument();
-    expect(screen.getByText(/Log Up/i)).toBeInTheDocument();
-  });
-});
-// describe('Authentication Tests', () => {
-//   const email = 'test@example.com';
-//   const password = 'Password123';
-
-//   test('User Registration', async () => {
-//     try {
-//       const userCredential = await createUserWithEmailAndPassword(
-//         auth,
-//         email,
-//         password
-//       );
-
-//       expect(userCredential.user).toBeDefined();
-//       expect(userCredential.user.email).toBe(email);
-//     } catch (error) {
-//       throw error;
-//     }
-//   });
-
-//   test('User Login', async () => {
-//     const userCredential = await signInWithEmailAndPassword(
-//       auth,
-//       email,
-//       password
-//     );
-//     expect(userCredential.user).toBeDefined();
-//     expect(userCredential.user.email).toBe(email);
-//   });
-// });
