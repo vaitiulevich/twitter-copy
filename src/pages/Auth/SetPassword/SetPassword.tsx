@@ -23,8 +23,13 @@ interface FormData {
 }
 
 export const SetPassword = () => {
-  const { control, handleSubmit } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+  } = useForm({
     mode: 'all',
+    shouldUnregister: false,
     resolver: yupResolver(setPasswordValidationSchema),
   });
   const dispatch = useDispatch();
@@ -82,7 +87,7 @@ export const SetPassword = () => {
           <Button
             loading={loading}
             type="submit"
-            disabled={loading}
+            disabled={!isValid || loading}
             text="Log Up"
           />
         </form>

@@ -1,3 +1,4 @@
+import { SearchState } from '@store/reducers/searchReducer';
 import * as actions from '@store/types/search/actionTypes';
 
 export const searchRequest = (term: string) =>
@@ -6,7 +7,7 @@ export const searchRequest = (term: string) =>
     payload: term,
   }) as const;
 
-export const searchSuccess = (results: any) =>
+export const searchSuccess = (results: SearchState) =>
   ({
     type: actions.SEARCH_SUCCESS,
     payload: results,

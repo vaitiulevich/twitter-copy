@@ -9,6 +9,7 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
+    "types": ["node", "cypress"],
     "target": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
@@ -28,7 +29,7 @@
       "/*": ["types/*"]
     }
   },
-  "include": ["./src"],
+  "include": ["./src", "cypress/**/*.ts", "cypress/support/commands.d.ts"],
   "exclude": ["./node_modules", "./build", "./dist"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

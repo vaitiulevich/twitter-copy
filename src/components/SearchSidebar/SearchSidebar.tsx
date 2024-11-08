@@ -79,7 +79,11 @@ export const SearchSidebar = () => {
           className="search-inp"
         />
         {searchTerm && (
-          <button onClick={handleClearInput} className="clear-inp-btn">
+          <button
+            onClick={handleClearInput}
+            name="clear"
+            className="clear-inp-btn"
+          >
             <img src={images.clear} alt="clear" />
           </button>
         )}

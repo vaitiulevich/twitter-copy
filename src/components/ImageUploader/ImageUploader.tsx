@@ -129,6 +129,7 @@ export const ImageUploader = ({
           accept=".png, .jpg, .jpeg"
           multiple
           type="file"
+          data-testid={name}
           onChange={handleFileChange}
         />
         <div>{renderErrors()}</div>
