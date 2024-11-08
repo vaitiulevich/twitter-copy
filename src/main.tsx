@@ -19,3 +19,7 @@ root.render(
     </PersistGate>
   </Provider>
 );
+if (window.Cypress) {
+  window.store = store;
+  console.log(window.store);
+}
