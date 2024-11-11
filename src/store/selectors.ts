@@ -44,7 +44,7 @@ export const selectOtherUserError = (state: RootState) => state.otherUser.error;
 export const isUserFollowing = createSelector(
   [otherUser, (state: RootState, userId: string) => userId],
   (user, userId) => {
-    return user?.otherUser?.followers.includes(userId);
+    return user?.otherUser?.followers?.includes(userId);
   }
 );
 

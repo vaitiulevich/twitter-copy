@@ -1,4 +1,4 @@
-import { User } from '@store/types';
+// import { User } from '@store/types';
 import {
   CLEAR_ERROR,
   CLEAR_OTHER_USER_DATA,
@@ -9,21 +9,16 @@ import {
   SET_FOLLOWING_STATUS,
   SET_FOLLOWING_STATUS_SUCCESS,
 } from '@store/types/otherUser/actionTypes';
+import { Reducer } from 'redux';
+
+import { UserState } from './userReducer';
 
 interface StatusRequest {
   loading?: boolean;
   error?: string | null;
-  status?: string | null;
 }
 export interface OtherUserState extends StatusRequest {
-  otherUser:
-    | (User & {
-        userSlug: string;
-        following: string[];
-        followers: string[];
-        userId?: string;
-      })
-    | null;
+  otherUser: UserState | null;
 }
 const initialState: OtherUserState = {
   otherUser: null,
@@ -31,7 +26,10 @@ const initialState: OtherUserState = {
   error: null,
 };
 
-const otherUserReducer = (state = initialState, action: OtherUserAction) => {
+const otherUserReducer: Reducer<OtherUserState, OtherUserAction> = (
+  state = initialState,
+  action: OtherUserAction
+) => {
   switch (action.type) {
     case CLEAR_ERROR:
       return { ...state, error: null };
@@ -50,7 +48,7 @@ const otherUserReducer = (state = initialState, action: OtherUserAction) => {
       return {
         ...state,
         loading: false,
-        error: action.payload,
+        error: action.payload.error,
         otherUser: null,
       };
     case SET_FOLLOWING_STATUS:

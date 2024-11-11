@@ -1,4 +1,5 @@
-import { User } from '@store/types';
+// import { User } from '@store/types';
+// import { Reducer } from 'react';
 import {
   AuthAction,
   CHECK_USER_EXISTS,
@@ -16,14 +17,17 @@ import {
   RESET_ERROR,
   RESET_USER_EXISTS,
 } from '@store/types/auth/actionTypes';
+import { Reducer } from 'redux';
+
+import { UserState } from './userReducer';
 
 export type AuthState = {
-  error: string | undefined;
+  error: string | undefined | null;
   loading: boolean;
   navigateToSetPassword: boolean;
   uid: string;
   endSessionTimestamp: number | null;
-  user?: User | null;
+  user?: UserState | null;
 };
 
 const initialState: AuthState = {
@@ -35,7 +39,10 @@ const initialState: AuthState = {
   user: undefined,
 };
 
-const authReducer = (state = initialState, action: AuthAction) => {
+const authReducer: Reducer<AuthState, AuthAction> = (
+  state = initialState,
+  action: AuthAction
+) => {
   switch (action.type) {
     case RESET_ERROR:
       return {

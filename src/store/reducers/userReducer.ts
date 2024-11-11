@@ -11,6 +11,7 @@ import {
   UPDATE_USER_DATA_SUCCESS,
   UserAction,
 } from '@store/types/user/actionTypes';
+import { Reducer } from 'redux';
 import { Maybe } from 'yup';
 
 export interface User {
@@ -24,17 +25,17 @@ export interface User {
 export interface UserState extends StatusRequest {
   user?: string;
   userId: string;
-  userSlug: string;
+  userSlug?: string;
   avatar?: null | string;
   profileImg?: null | string;
-  dateBirth: string;
-  email: string;
-  name: string;
+  dateBirth?: string;
+  email?: string;
+  name?: string;
   password?: string;
-  phone: string;
+  phone?: string;
   description?: Maybe<string | undefined>;
-  followers: string[];
-  following: string[];
+  followers?: string[];
+  following?: string[];
 }
 
 interface StatusRequest {
@@ -60,7 +61,10 @@ const initialState: UserState = {
   error: null,
 };
 
-const userReducer = (state = initialState, action: UserAction) => {
+const userReducer: Reducer<UserState, UserAction> = (
+  state = initialState,
+  action: UserAction
+) => {
   switch (action.type) {
     case CLEAR_ERROR:
       return { ...state, error: null };

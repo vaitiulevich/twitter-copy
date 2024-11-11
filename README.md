@@ -1,50 +1,45 @@
-# Twitter
+# Twitter-copy
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a minimal setup for a Twitter-like application built with React, TypeScript, and Vite. It features user authentication, the ability to add tweets, and user information management, all powered by Firestore for backend data storage. The project also utilizes Redux Saga for handling side effects and Yarn for dependency management.
 
-Currently, two official plugins are available:
+## Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Link: https://tweeter-copy.netlify.app/
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **User Authentication**: Users can sign up and log in.
+- **Tweet Management**: Users can create and view tweets.
+- **User Information**: Display user profiles and associated tweets.
+- **Persistent State**: Utilizes local storage for session persistence.
+- **Fast Development**: Built with Vite for fast hot module replacement (HMR).
+- **Type Safety**: Developed using TypeScript for enhanced reliability.
 
-- Configure the top-level `parserOptions` property like this:
+## Technologies Used
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
+- **React**: For building the user interface.
+- **TypeScript**: For type safety and better development experience.
+- **Redux Saga**: For managing side effects in Redux.
+- **Yarn**: For package management.
+- **Vite**: For a fast and efficient development environment.
+- **Firestore**: As the backend database for storing user data and tweets.
+
+## Getting Started
+
+## Project setup
+
+```
+yarn install
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### Compiles and hot-reloads for development
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react';
+```
+yarn dev
+```
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-});
+### Compiles and minifies for production
+
+```
+yarn build
 ```
