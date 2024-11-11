@@ -1,15 +1,14 @@
 import { ChangeEvent, memo, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-  DEFAULT_COUNT_DAYS_IN_MONTH,
-  DEFAULT_DAY,
-  DEFAULT_MONTH,
-  DEFAULT_YEAR,
-  Months,
-  YEAR_RANGE,
-} from '@constants/constants';
+import { DEFAULT_DAY, DEFAULT_MONTH, DEFAULT_YEAR } from '@constants/constants';
 import { ERR_REQUIRED } from '@constants/messages';
 import { resetError } from '@store/actions/authActions';
+import {
+  calculateDaysInMonth,
+  createDayOptions,
+  createMonthOptions,
+  createYearOptions,
+} from '@utils/DateSelectorUtils';
 
 import './styles.scss';
 
@@ -33,14 +32,10 @@ export const DateSelector = memo(
     const isEmptyDate =
       month === DEFAULT_MONTH && year === DEFAULT_YEAR && day === DEFAULT_DAY;
 
-    const daysInMonth = useMemo(() => {
-      const totalDays =
-        month !== DEFAULT_MONTH && year !== DEFAULT_YEAR
-          ? new Date(+year, +month, 0).getDate()
-          : DEFAULT_COUNT_DAYS_IN_MONTH;
-
-      return Array.from({ length: totalDays }, (_, index) => index + 1);
-    }, [month, year]);
+    const daysInMonth = useMemo(
+      () => calculateDaysInMonth(month, year),
+      [month, year]
+    );
 
     const checkValidation = () => {
       const validDay = +day <= daysInMonth.length && +day > 0;
@@ -102,30 +97,9 @@ export const DateSelector = memo(
         ))}
       </select>
     );
-
-    const monthOptions = [
-      { label: DEFAULT_MONTH, value: DEFAULT_MONTH, disabled: true },
-      ...Months.map((month, ind) => ({
-        label: month,
-        value: (ind + 1).toString(),
-      })),
-    ];
-
-    const dayOptions = [
-      { label: DEFAULT_DAY, value: DEFAULT_DAY, disabled: true },
-      ...daysInMonth.map((day) => ({
-        label: day.toString(),
-        value: day.toString(),
-      })),
-    ];
-
-    const yearOptions = [
-      { label: DEFAULT_YEAR, value: DEFAULT_YEAR, disabled: true },
-      ...Array.from({ length: YEAR_RANGE }, (_, index) => {
-        const yearValue = new Date().getFullYear() - index;
-        return { label: yearValue.toString(), value: yearValue.toString() };
-      }),
-    ];
+    const monthOptions = createMonthOptions();
+    const dayOptions = createDayOptions(daysInMonth);
+    const yearOptions = createYearOptions();
 
     const isErrorDate = isRequired && !isSetDate && error;
     return (

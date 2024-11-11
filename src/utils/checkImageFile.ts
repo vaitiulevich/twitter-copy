@@ -6,24 +6,17 @@ import {
   pngSignature,
 } from '@constants/constants';
 
-export const isImageFile = (byteArray: Uint8Array) => {
-  if (
-    byteArray.length >= 8 &&
-    byteArray.slice(0, 8).every((byte, index) => byte === pngSignature[index])
-  ) {
-    return true;
-  }
+const isPngSignature = (byteArray: Uint8Array) =>
+  byteArray.length >= 8 &&
+  byteArray.slice(0, 8).every((byte, index) => byte === pngSignature[index]);
 
-  if (
-    byteArray.length >= 2 &&
-    byteArray[0] === jpgSignature[0] &&
-    byteArray[1] === jpgSignature[1]
-  ) {
-    return true;
-  }
+const isJpgSignature = (byteArray: Uint8Array) =>
+  byteArray.length >= 2 &&
+  byteArray[0] === jpgSignature[0] &&
+  byteArray[1] === jpgSignature[1];
 
-  return false;
-};
+export const isImageFile = (byteArray: Uint8Array) =>
+  isPngSignature(byteArray) || isJpgSignature(byteArray);
 
 export const isFileSizeValid = (file: File) => {
   return file.size <= MAX_FILE_SIZE;

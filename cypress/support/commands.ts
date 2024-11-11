@@ -1,8 +1,6 @@
 /// <reference types="cypress" />
 
-import { signInWithEmailAndPassword, UserCredential } from 'firebase/auth';
 
-import { auth } from './e2e';
 
 // ***********************************************
 // This example commands.ts shows you how to

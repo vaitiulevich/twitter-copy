@@ -1,5 +1,5 @@
 import { Provider } from 'react-redux';
-import { createBrowserRouter, Router, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { SignUp } from '@pages/Auth/SignUp/SignUp';
 import { persistor } from '@store/store';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';

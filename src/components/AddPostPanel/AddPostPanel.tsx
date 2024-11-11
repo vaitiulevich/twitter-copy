@@ -8,8 +8,7 @@ import { images } from '@constants/images';
 import { hideErrorPopUp } from '@store/actions/popUpActions';
 import { addPostFailure, addPostRequest } from '@store/actions/postActions';
 import { PostState } from '@store/reducers/postReducer';
-import { selectPostLoad } from '@store/selectors';
-import { RootState } from '@store/types';
+import { selectPostLoad, selectUserSelector } from '@store/selectors';
 
 import './styles.scss';
 
@@ -22,8 +21,8 @@ export const AddPostPanel = ({
 }) => {
   const [postContent, setPostContent] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const user = useSelector((state: RootState) => state.user);
-  const { error } = useSelector((state: RootState) => state.user);
+  const { userId, userSlug, name, avatar, error } =
+    useSelector(selectUserSelector);
   const dispatch = useDispatch();
   const loading = useSelector(selectPostLoad);
 
@@ -40,9 +39,9 @@ export const AddPostPanel = ({
       images: [],
       files: selectedFiles ?? [],
       likes: [],
-      userId: user.userId,
-      userSlug: user.userSlug,
-      userName: user.name,
+      userId: userId,
+      userSlug: userSlug,
+      userName: name,
       userAvatar: null,
       timestamp: new Date().getTime(),
       postId: '',
@@ -58,11 +57,11 @@ export const AddPostPanel = ({
   };
   const currentLength = postContent.length;
   const isDisableBtn =
-    (!postContent.trim() && selectedFiles.length === 0) || loading;
+    (!postContent.trim() && !selectedFiles.length) || loading;
   return (
     <div className="add-post-panel">
       <div className="add-post-avatar">
-        <img src={user.avatar ?? images.avatar} alt="avatar" />
+        <img src={avatar ?? images.avatar} alt="avatar" />
       </div>
       <div className="add-posts-block">
         <div>

@@ -1,9 +1,8 @@
 import { Provider } from 'react-redux';
 import { AddPostPanel } from '@components/AddPostPanel/AddPostPanel';
-import { addPostRequest } from '@store/actions/postActions';
 import { persistor } from '@store/store';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { applyMiddleware, createStore } from 'redux';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { createStore } from 'redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
 const initialState = {

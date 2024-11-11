@@ -10,8 +10,11 @@ import { ErrorBlock } from '@components/ErrorBlock/ErrorBlock';
 import { images } from '@constants/images';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { checkUserExists, resetUserExist } from '@store/actions/authActions';
-import { selectAuthError, selectAuthLoad } from '@store/selectors';
-import { RootState } from '@store/types';
+import {
+  selectAuthError,
+  selectAuthLoad,
+  selectAuthToSetPassword,
+} from '@store/selectors';
 import { signUpValidationSchema } from '@utils/validationSchemas';
 
 import './styles.scss';
@@ -29,12 +32,14 @@ export const SignUp = () => {
     control,
     handleSubmit,
     formState: { isValid },
-  } = useForm({
+  } = useForm<FormData>({
     mode: 'all',
     resolver: yupResolver(signUpValidationSchema),
   });
   const loading = useSelector(selectAuthLoad);
   const error = useSelector(selectAuthError);
+  const selectAuthExist = useSelector(selectAuthToSetPassword);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -44,10 +49,6 @@ export const SignUp = () => {
       dispatch(checkUserExists(completeData));
     }
   };
-
-  const selectAuthExist = useSelector(
-    (state: RootState) => state.auth.navigateToSetPassword
-  );
 
   useEffect(() => {
     if (selectAuthExist) {
@@ -62,6 +63,7 @@ export const SignUp = () => {
     },
     []
   );
+  const isDisabledButton = loading || !isValid || !!!selectedDate;
   return (
     <section className="sign-up-section">
       <div className="sign-up-form-container">
@@ -101,7 +103,7 @@ export const SignUp = () => {
           </div>
 
           <Button
-            disabled={loading || !isValid || !!!selectedDate}
+            disabled={isDisabledButton}
             text="Next"
             loading={loading}
             type="submit"

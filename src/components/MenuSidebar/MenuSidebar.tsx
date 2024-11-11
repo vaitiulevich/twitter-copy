@@ -8,7 +8,7 @@ import { NotificationPopUp } from '@components/NotificationPopUp/NotificationPop
 import withModal from '@HOC/withModal';
 import { logoutFailure } from '@store/actions/authActions';
 import { hideErrorPopUp } from '@store/actions/popUpActions';
-import { RootState } from '@store/types';
+import { selectAuthError } from '@store/selectors';
 
 import './styles.scss';
 
@@ -19,7 +19,7 @@ interface MenuSidebarProps {
 
 export const MenuSidebar = withModal(
   ({ openModal, onCloseModal }: MenuSidebarProps) => {
-    const error = useSelector((state: RootState) => state.auth.error);
+    const error = useSelector(selectAuthError);
     const dispatch = useDispatch();
     const handleOpenModal = useCallback(() => {
       openModal(

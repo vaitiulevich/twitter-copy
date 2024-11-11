@@ -1,13 +1,12 @@
-import { useEffect, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleThemeRequest } from '@store/actions/themeActions';
-import { selectThemeType } from '@store/selectors';
+import { selectTheme } from '@store/selectors';
 
 import './styles.scss';
 
 const ThemeToggle = () => {
   const dispatch = useDispatch();
-  const theme = useSelector(selectThemeType);
+  const { theme } = useSelector(selectTheme);
 
   const toggleTheme = () => {
     dispatch(toggleThemeRequest());

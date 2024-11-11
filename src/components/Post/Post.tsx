@@ -7,17 +7,15 @@ import { PostState } from '@store/reducers/postReducer';
 import classNames from 'classnames';
 
 import './styles.scss';
-
-export const Post = ({
-  post,
-  userId,
-  navigateTo,
-}: {
+interface PostProps {
   post: PostState;
   userId: string;
   navigateTo?: string;
-}) => {
+}
+export const Post = ({ post, userId, navigateTo }: PostProps) => {
   const isOriginPost = post.userId === userId;
+  const { userAvatar, content, id, likes } = post;
+
   const renderImages = () => {
     if (!post.images || !post.images.length) return null;
 
@@ -44,7 +42,7 @@ export const Post = ({
   const postContent = (
     <div>
       <div className="post-text">
-        {Array.isArray(post.content) && post.content.join(' ')}
+        {Array.isArray(content) && content.join(' ')}
       </div>
       {renderImages()}
     </div>
@@ -52,12 +50,12 @@ export const Post = ({
   return (
     <div className="post">
       <div className="post-avatar">
-        <img src={post.userAvatar ?? images.avatar} alt="avatar" />
+        <img src={userAvatar ?? images.avatar} alt="avatar" />
       </div>
       <div className="post-content">
         <PostHeader post={post} isOriginPost={isOriginPost} />
         {navigateTo ? <Link to={navigateTo}>{postContent}</Link> : postContent}
-        <PostLikeButton post={post} />
+        <PostLikeButton id={id} likes={likes} />
       </div>
     </div>
   );

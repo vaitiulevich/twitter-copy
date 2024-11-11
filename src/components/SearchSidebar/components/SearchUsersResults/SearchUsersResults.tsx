@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { FollowButton } from '@components/FollowButton/FollowButton';
 import { UserShortInfo } from '@components/UserShortInfo/UserShortInfo';
 import { UserState } from '@store/reducers/userReducer';
-import { RootState } from '@store/types';
+import { selectUserId } from '@store/selectors';
 
 interface UserResultsProps {
   users: UserState[];
@@ -11,7 +11,7 @@ interface UserResultsProps {
 }
 
 export const SearchUsersResults = ({ users, searchTerm }: UserResultsProps) => {
-  const originId = useSelector((state: RootState) => state.user.userId);
+  const originId = useSelector(selectUserId);
 
   return (
     <div className="user-results">

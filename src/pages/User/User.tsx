@@ -9,25 +9,30 @@ import {
   fetchOtherUserDataRequest,
 } from '@store/actions/otherUserActions';
 import { hideErrorPopUp } from '@store/actions/popUpActions';
-import { selectOtherUser, selectUserId } from '@store/selectors';
-import { RootState } from '@store/types';
+import {
+  selectOtherUser,
+  selectOtherUserError,
+  selectUserId,
+} from '@store/selectors';
 import { userPostsQuery } from '@utils/querys';
 
 import './styles.scss';
 
 export const User = () => {
   const { id } = useParams();
-  const originId = useSelector(selectUserId);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const error = useSelector((state: RootState) => state.otherUser.error);
+  const error = useSelector(selectOtherUserError);
+  const otherUser = useSelector(selectOtherUser);
+  const originId = useSelector(selectUserId);
+  const isOriginUser = id === originId;
 
   const handleClose = useCallback(() => {
     dispatch(hideErrorPopUp());
     dispatch(fetchOtherUserDataError(null));
   }, []);
   useEffect(() => {
-    if (id === originId) {
+    if (isOriginUser) {
       navigate('/profile');
     }
   }, []);
@@ -37,15 +42,13 @@ export const User = () => {
     }
   }, [id]);
 
-  const otherUser = useSelector(selectOtherUser);
-
   return (
     <section className="user">
       {otherUser && (
         <>
           <ProfileHead
-            user={{ ...otherUser, userId: id ?? '' }}
-            isOriginUser={false}
+            user={{ ...otherUser.otherUser, userId: id ?? '' }}
+            isOriginUser={isOriginUser}
           />
           <Feed query={() => userPostsQuery(id as string)} />
           {error && <NotificationPopUp message={error} onClose={handleClose} />}

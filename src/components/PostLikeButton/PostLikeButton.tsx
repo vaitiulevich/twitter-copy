@@ -1,18 +1,17 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { images } from '@constants/images';
 import { updatePostLikesRequest } from '@store/actions/postActions';
-import { PostState } from '@store/reducers/postReducer';
-import { RootState } from '@store/types';
+import { selectUserId } from '@store/selectors';
 
 import './styles.scss';
 
 interface PostLikeButtonProps {
-  post: PostState;
+  id?: string;
+  likes: string[];
 }
 
-export const PostLikeButton = ({ post }: PostLikeButtonProps) => {
-  const likes = post.likes;
-  const userId = useSelector((state: RootState) => state.user.userId);
+export const PostLikeButton = ({ id, likes }: PostLikeButtonProps) => {
+  const userId = useSelector(selectUserId);
   const userHasLiked = likes.includes(userId);
   const dispatch = useDispatch();
 
@@ -21,8 +20,8 @@ export const PostLikeButton = ({ post }: PostLikeButtonProps) => {
       ? likes.filter((id) => id !== userId)
       : [...likes, userId];
 
-    if (post.id) {
-      dispatch(updatePostLikesRequest(post.id, updatedLikes));
+    if (id) {
+      dispatch(updatePostLikesRequest(id, updatedLikes));
     }
   };
   return (

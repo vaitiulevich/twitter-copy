@@ -11,7 +11,7 @@ import {
   selectUserLoad,
   selectUserStatus,
 } from '@store/selectors';
-import { chandgePasswordValidationSchema } from '@utils/validationSchemas';
+import { changePasswordValidationSchema } from '@utils/validationSchemas';
 import { onAuthStateChanged } from 'firebase/auth';
 
 import './styles.scss';
@@ -24,9 +24,9 @@ interface FormData {
 
 export const Settings = () => {
   const dispatch = useDispatch();
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset } = useForm<FormData>({
     mode: 'all',
-    resolver: yupResolver(chandgePasswordValidationSchema),
+    resolver: yupResolver(changePasswordValidationSchema),
   });
   const [isGoogleAuth, setIsGoogleAuth] = useState<boolean | null>(null);
   const error = useSelector(selectUserError);
@@ -58,7 +58,7 @@ export const Settings = () => {
   return (
     <section className="settings">
       <h2 className="settings-headline">Profile settings</h2>
-      {isGoogleAuth === false && (
+      {!isGoogleAuth && (
         <div className="change-password">
           <h3>Change user password</h3>
           <form className="sign-up-form" onSubmit={handleSubmit(onSubmit)}>
@@ -81,13 +81,13 @@ export const Settings = () => {
               text="Change password"
             />
           </form>
-          {status !== null && (
+          {status && (
             <p className="success-status">Password changed successfully</p>
           )}
           {error && <ErrorBlock message={error} />}
         </div>
       )}
-      {isGoogleAuth === true && (
+      {isGoogleAuth && (
         <p className="google-auth-mess">
           You logged in with Google. Password change is not available.
         </p>

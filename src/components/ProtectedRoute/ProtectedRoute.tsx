@@ -8,10 +8,13 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const timestamp = useSelector(selectAuthTimestamp);
   const dispatch = useDispatch();
 
-  const isSessionEnd = timestamp && nowTime > +timestamp;
+  const isSessionEnd =
+    timestamp && timestamp !== undefined && nowTime > +timestamp;
   const user = useSelector(selectAuthUid);
 
-  if (!user || isSessionEnd || isSessionEnd === undefined) {
+  const isRedirect = !user || isSessionEnd;
+
+  if (isRedirect) {
     dispatch(logoutRequest());
     return <Navigate to="/" />;
   }

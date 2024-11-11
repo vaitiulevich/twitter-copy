@@ -15,7 +15,7 @@ import { Profile } from '@pages/Profile/Profile';
 import { Settings } from '@pages/Settings/Settings';
 import { User } from '@pages/User/User';
 import { UserAppWrapper } from '@pages/UserAppWrapper/UserAppWrapper';
-import { selectThemeType } from '@store/selectors';
+import { selectTheme } from '@store/selectors';
 
 const router = createBrowserRouter([
   {
@@ -96,7 +96,7 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => {
-  const theme = useSelector(selectThemeType);
+  const { theme } = useSelector(selectTheme);
 
   useEffect(() => {
     document.body.setAttribute('data-theme', theme);

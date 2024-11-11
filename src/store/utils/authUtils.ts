@@ -18,27 +18,30 @@ interface UserDataProps extends User {
   following: string[];
   posts: string[];
 }
+
 export async function checkDocUserExists(
   email?: string,
   phone?: string
-): Promise<boolean | null> {
+): Promise<boolean> {
   const usersRef = collection(db, 'users');
-  const emailQuery = email
-    ? query(usersRef, where('email', '==', email))
-    : null;
-  const phoneQuery = phone
-    ? query(usersRef, where('phone', '==', phone))
-    : null;
 
-  const emailExists = emailQuery ? await getDocs(emailQuery) : null;
-  const phoneExists = phoneQuery ? await getDocs(phoneQuery) : null;
+  const queries = [];
+  if (email) {
+    queries.push(query(usersRef, where('email', '==', email)));
+  }
+  if (phone) {
+    queries.push(query(usersRef, where('phone', '==', phone)));
+  }
 
-  return (
-    !!(emailExists && !emailExists.empty) ||
-    !!(phoneExists && !phoneExists.empty)
-  );
+  for (const query of queries) {
+    const snapshot = await getDocs(query);
+    if (!snapshot.empty) {
+      return true;
+    }
+  }
+
+  return false;
 }
-
 export function* addUserToDatabase(
   uid: string,
   userData: UserDataProps

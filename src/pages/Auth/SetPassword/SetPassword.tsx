@@ -27,7 +27,7 @@ export const SetPassword = () => {
     control,
     handleSubmit,
     formState: { isValid },
-  } = useForm({
+  } = useForm<FormData>({
     mode: 'all',
     shouldUnregister: false,
     resolver: yupResolver(setPasswordValidationSchema),
@@ -65,6 +65,7 @@ export const SetPassword = () => {
       navigate('/profile');
     }
   }, [logUser]);
+  const isDisabledButton = !isValid || loading;
   return (
     <section className="set-password-section">
       <div className="set-password-form-container">
@@ -87,7 +88,7 @@ export const SetPassword = () => {
           <Button
             loading={loading}
             type="submit"
-            disabled={!isValid || loading}
+            disabled={isDisabledButton}
             text="Log Up"
           />
         </form>

@@ -1,4 +1,5 @@
 import { memo, MouseEvent, MouseEventHandler } from 'react';
+import { LOADING } from '@constants/messages';
 import classNames from 'classnames';
 
 import './styles.scss';
@@ -34,7 +35,7 @@ export const Button = memo(
         className={classNames('btn', className)}
         disabled={disabled}
       >
-        {loading ? 'Loading...' : text}
+        {loading ? LOADING : text}
       </button>
     );
   }

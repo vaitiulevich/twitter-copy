@@ -1,11 +1,11 @@
 import {
   MAX_LENTGH_NAME,
   MAX_LENTGH_PASSWORD,
-  MAX_POST_FILES,
   MIN_LENTGH_NAME,
   MIN_LENTGH_PASSWORD,
 } from './constants';
 
+export const LOADING = 'Loading...';
 export const ERR_REQUIRED = 'Required field';
 export const ERR_INCORRECT_FILL = 'The field is filled in incorrectly';
 export const USER_ALREDY_EXIST = 'User alredy exist';

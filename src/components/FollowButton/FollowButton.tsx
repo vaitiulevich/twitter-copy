@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { LOADING } from '@constants/messages';
 import { setFollowingStatus } from '@store/actions/otherUserActions';
 import { UserState } from '@store/reducers/userReducer';
-import { isUserFollowing } from '@store/selectors';
-import { RootState } from '@store/types';
+import { selectOtherUserFollowers, selectUserId } from '@store/selectors';
 
 import './styles.scss';
 
@@ -17,16 +16,14 @@ export const FollowButton = ({
   user: UserState;
   searchTerm?: string;
 }) => {
-  const originId = useSelector((state: RootState) => state.user.userId);
+  const originId = useSelector(selectUserId);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const userFollowers = user.followers || [];
   const isFollowingSearch = userFollowers.includes(originId);
   const isFollowing = isFollowingSearch;
 
-  const otherUserFollowers =
-    useSelector((state: RootState) => state.otherUser.otherUser?.followers) ||
-    [];
+  const otherUserFollowers = useSelector(selectOtherUserFollowers) || [];
   const [textFollowing, setTextFollowing] = useState(
     isFollowing ? 'Unfollow' : 'Follow'
   );
@@ -45,7 +42,7 @@ export const FollowButton = ({
 
   return (
     <button onClick={handleFollow} disabled={loading} className="follow-button">
-      {loading ? 'Loading...' : textFollowing}
+      {loading ? LOADING : textFollowing}
     </button>
   );
 };
