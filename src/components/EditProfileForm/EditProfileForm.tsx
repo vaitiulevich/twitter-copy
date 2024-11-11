@@ -15,7 +15,7 @@ import * as yup from 'yup';
 
 import './styles.scss';
 
-interface FormData {
+export interface UpdateFormData {
   name: string;
   phone: string;
   description?: yup.Maybe<string | undefined>;
@@ -31,7 +31,7 @@ export const EditProfileForm = ({ onCloseModal }: EditProfileFormProps) => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<UpdateFormData>({
     mode: 'all',
     resolver: yupResolver(editProfileValidationSchema),
   });
@@ -45,7 +45,7 @@ export const EditProfileForm = ({ onCloseModal }: EditProfileFormProps) => {
   const today = todayDate.toISOString().split('T')[0];
   const minBirthDate = calculateMinBirthDate(COUNT_MAX_DATE_BIRTH_YEARS);
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (data: UpdateFormData) => {
     const { dateBirth } = data;
     const newData = {
       ...data,

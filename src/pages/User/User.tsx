@@ -9,6 +9,7 @@ import {
   fetchOtherUserDataRequest,
 } from '@store/actions/otherUserActions';
 import { hideErrorPopUp } from '@store/actions/popUpActions';
+import { UserState } from '@store/reducers/userReducer';
 import {
   selectOtherUser,
   selectOtherUserError,
@@ -47,7 +48,7 @@ export const User = () => {
       {otherUser && (
         <>
           <ProfileHead
-            user={{ ...otherUser.otherUser, userId: id ?? '' }}
+            user={{ ...(otherUser.otherUser as UserState), userId: id ?? '' }}
             isOriginUser={isOriginUser}
           />
           <Feed query={() => userPostsQuery(id as string)} />

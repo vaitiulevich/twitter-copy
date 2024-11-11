@@ -1,4 +1,6 @@
-import { ProfileFiles, User } from '@store/types';
+import { UpdateFormData } from '@components/EditProfileForm/EditProfileForm';
+import { UserState } from '@store/reducers/userReducer';
+import { ProfileFiles } from '@store/types';
 import * as actions from '@store/types/user/actionTypes';
 
 export const changePasswordRequest = (
@@ -29,7 +31,7 @@ export const changePasswordFailure = (error: string | null) =>
 
 export const updateUserDataRequest = (
   userId: string,
-  userData: Omit<User, 'email'> & ProfileFiles,
+  userData: UpdateFormData & ProfileFiles,
   closeModal?: () => void
 ) =>
   ({
@@ -54,7 +56,7 @@ export const getUserData = (id: string) =>
     payload: id,
   }) as const;
 
-export const getUserDataSuccess = (user: User) =>
+export const getUserDataSuccess = (user: UserState) =>
   ({
     type: actions.GET_USER_DATA_SUCCESS,
     payload: user,

@@ -25,17 +25,17 @@ export interface User {
 export interface UserState extends StatusRequest {
   user?: string;
   userId: string;
-  userSlug?: string;
+  userSlug: string;
   avatar?: null | string;
   profileImg?: null | string;
   dateBirth?: string;
   email?: string;
-  name?: string;
+  name: string;
   password?: string;
   phone?: string;
   description?: Maybe<string | undefined>;
-  followers?: string[];
-  following?: string[];
+  followers: string[];
+  following: string[];
 }
 
 interface StatusRequest {

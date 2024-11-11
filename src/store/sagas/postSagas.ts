@@ -102,6 +102,7 @@ function* getPost(action: ReturnType<typeof getPostRequest>): Generator {
     yield put(getPostFailure('Error receiving post'));
   }
 }
+
 function* updatePostLikes(action: ReturnType<typeof updatePostLikesRequest>) {
   const { postId, likes } = action.payload;
   try {
@@ -112,6 +113,7 @@ function* updatePostLikes(action: ReturnType<typeof updatePostLikesRequest>) {
     yield put(updatePostLikesFailure('Like error'));
   }
 }
+
 function* addPost(action: ReturnType<typeof addPostRequest>): Generator {
   try {
     const { files, ...postFields } = action.payload.postData;

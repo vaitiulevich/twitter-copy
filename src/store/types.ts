@@ -1,11 +1,8 @@
-// import { Maybe } from 'yup';
-
-import authReducer, { AuthState } from './reducers/authRedicer';
-import otherUserReducer, { OtherUserState } from './reducers/otherUserReducer';
-import popUpReducer, { PopUpState } from './reducers/popUpReducer';
-import userReducer, { PostsState } from './reducers/postReducer';
-import postReducer from './reducers/postReducer';
-import searchReducer, { SearchState } from './reducers/searchReducer';
+import { AuthState } from './reducers/authRedicer';
+import { OtherUserState } from './reducers/otherUserReducer';
+import { PopUpState } from './reducers/popUpReducer';
+import { PostsState } from './reducers/postReducer';
+import { SearchState } from './reducers/searchReducer';
 import { ThemeState } from './reducers/themeReducer';
 import { UserState } from './reducers/userReducer';
 import { AuthAction } from './types/auth/actionTypes';
@@ -15,16 +12,6 @@ import { PostAction } from './types/posts/actionTypes';
 import { SearchAction } from './types/search/actionTypes';
 import { ThemeAction } from './types/theme/actionTypes';
 import { UserAction } from './types/user/actionTypes';
-
-// export interface User {
-//   email: string;
-//   phone: string;
-//   dateBirth: string;
-//   name: string;
-//   avatar?: string | null;
-//   profileImg?: string | null;
-//   description?: Maybe<string | undefined>;
-// }
 
 export interface ProfileFiles {
   avatarFile?: File;
@@ -44,7 +31,6 @@ export type RootState = {
   search: SearchState;
   popup: PopUpState;
 };
-
 export type RootAction =
   | ThemeAction
   | AuthAction
@@ -53,31 +39,3 @@ export type RootAction =
   | OtherUserAction
   | SearchAction
   | PopUpAction;
-
-export interface RootReducerState {
-  theme?: (state: ThemeState | undefined, action: ThemeAction) => ThemeState;
-  auth?: (
-    state: AuthState | undefined,
-    action: AuthAction
-  ) => AuthState | ReturnType<typeof authReducer>;
-  user?: (
-    state: UserState | undefined,
-    action: UserAction
-  ) => UserState | ReturnType<typeof userReducer>;
-  posts?: (
-    state: PostsState | undefined,
-    action: PostAction
-  ) => PostsState | ReturnType<typeof postReducer>;
-  otherUser?: (
-    state: OtherUserState | undefined,
-    action: OtherUserAction
-  ) => OtherUserState | ReturnType<typeof otherUserReducer>;
-  search?: (
-    state: SearchState | undefined,
-    action: SearchAction
-  ) => SearchState | ReturnType<typeof searchReducer>;
-  popup?: (
-    state: PopUpState | undefined,
-    action: PopUpAction
-  ) => PopUpState | ReturnType<typeof popUpReducer>;
-}

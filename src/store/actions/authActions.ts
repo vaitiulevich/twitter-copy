@@ -1,4 +1,4 @@
-import { User } from '@store/types';
+import { UserState } from '@store/reducers/userReducer';
 import * as types from '@store/types/auth/actionTypes';
 
 export const loginRequest = (
@@ -43,7 +43,7 @@ export const logoutFailure = (error: string | null) =>
     payload: error,
   }) as const;
 
-export const checkUserExists = (user: User) =>
+export const checkUserExists = (user: UserState) =>
   ({
     type: types.CHECK_USER_EXISTS,
     payload: { user },
@@ -55,7 +55,7 @@ export const checkUserExistsFailure = (error: string) =>
     payload: { error },
   }) as const;
 
-export const checkUserExistsSuccess = (user: User) =>
+export const checkUserExistsSuccess = (user: UserState) =>
   ({
     type: types.CHECK_USER_EXISTS_SUCCESS,
     payload: { user },
@@ -70,7 +70,7 @@ export const resetUserExist = () =>
     type: types.RESET_USER_EXISTS,
   }) as const;
 
-export const registerRequest = (user: User & { password: string }) =>
+export const registerRequest = (user: UserState & { password: string }) =>
   ({
     type: types.REGISTER_REQUEST,
     payload: { user },
@@ -91,7 +91,7 @@ export const googleLoginRequest = () =>
   ({ type: types.GOOGLE_LOGIN_REQUEST }) as const;
 export const googleLogupRequest = () =>
   ({ type: types.GOOGLE_LOGUP_REQUEST }) as const;
-export const googleLoginSuccess = (user: User) =>
+export const googleLoginSuccess = (user: UserState) =>
   ({
     type: types.GOOGLE_LOGIN_SUCCESS,
     payload: user,

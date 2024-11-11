@@ -1,5 +1,3 @@
-// import { User } from '@store/types';
-// import { Reducer } from 'react';
 import {
   AuthAction,
   CHECK_USER_EXISTS,
@@ -42,7 +40,7 @@ const initialState: AuthState = {
 const authReducer: Reducer<AuthState, AuthAction> = (
   state = initialState,
   action: AuthAction
-) => {
+): AuthState => {
   switch (action.type) {
     case RESET_ERROR:
       return {

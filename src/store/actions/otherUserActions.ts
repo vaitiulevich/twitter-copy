@@ -1,4 +1,4 @@
-import { User } from '@store/types';
+import { UserState } from '@store/reducers/userReducer';
 import * as actions from '@store/types/otherUser/actionTypes';
 
 export const clearError = () =>
@@ -17,7 +17,7 @@ export const fetchOtherUserDataRequest = (id: string) =>
     payload: { id },
   }) as const;
 
-export const fetchOtherUserDataSuccess = (user: User) =>
+export const fetchOtherUserDataSuccess = (user: UserState) =>
   ({
     type: actions.FETCH_OTHER_USER_SUCCESS,
     payload: { user },
