@@ -33,7 +33,7 @@ export const useFetchPosts = (
     return () => {
       dispatch(fetchPostsSuccess([]));
     };
-  }, [location, originId]);
+  }, [location, query, originId]);
 
   useEffect(() => {
     if (!isMorePosts || !loadMoreRef.current) {

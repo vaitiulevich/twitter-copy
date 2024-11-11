@@ -4,6 +4,7 @@ import { NotificationPopUp } from '@components/NotificationPopUp/NotificationPop
 import { Post } from '@components/Post/Post';
 import { SkeletonPost } from '@components/SkeletonPost/SkeletonPost';
 import { SCELETON_POST_COUNT } from '@constants/constants';
+import { PostState } from '@store/reducers/postReducer';
 import { selectAuthUid } from '@store/selectors';
 import { useFetchPosts } from '@utils/hooks/useFetchPosts';
 import { DocumentData, Query } from 'firebase/firestore';
@@ -29,7 +30,7 @@ export const Feed = ({ query, isNavigateFeed = false }: FeedProps) => {
   } = useFetchPosts(userId, query, location.pathname);
 
   const renderTweets = () => {
-    return visiblePosts.map((post) => (
+    return visiblePosts.map((post: PostState) => (
       <Post
         key={post.id}
         post={post}
