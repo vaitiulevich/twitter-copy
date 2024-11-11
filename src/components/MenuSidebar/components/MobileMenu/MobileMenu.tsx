@@ -3,14 +3,15 @@ import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { NavMenu } from '@constants/constants';
 import { images } from '@constants/images';
-import { RootState } from '@store/types';
+import { selectTheme } from '@store/selectors';
 import classNames from 'classnames';
 
 import './styles.scss';
 
 export const MobileMenu = memo(
   ({ handleOpenExitModal }: { handleOpenExitModal: () => void }) => {
-    const theme = useSelector((state: RootState) => state.theme.theme);
+    const { theme } = useSelector(selectTheme);
+
     const isLightTheme = theme === 'light';
     const location = useLocation();
     const renderMobileMenu = () => {

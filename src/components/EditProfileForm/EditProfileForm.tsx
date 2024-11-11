@@ -3,14 +3,13 @@ import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@components/Button/Button';
 import { ControlledInput } from '@components/ControlledInput/ControlledInput';
-import { ImageUploader } from '@components/ImageUploader/ImageUploader';
 import { ImageUploaderSection } from '@components/ImageUploaderSection/ImageUploaderSection';
 import { COUNT_MAX_DATE_BIRTH_YEARS } from '@constants/constants';
 import { images } from '@constants/images';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { updateUserDataRequest } from '@store/actions/userActions';
 import { selectUserLoad, selectUserSelector } from '@store/selectors';
-import { formatDate } from '@utils/formatDate';
+import { calculateMinBirthDate } from '@utils/calculateMinBirthDate';
 import { editProfileValidationSchema } from '@utils/validationSchemas';
 import * as yup from 'yup';
 
@@ -23,16 +22,16 @@ interface FormData {
   dateBirth: string;
 }
 
-export const EditProfileForm = ({
-  onCloseModal,
-}: {
+interface EditProfileFormProps {
   onCloseModal?: () => void;
-}) => {
+}
+
+export const EditProfileForm = ({ onCloseModal }: EditProfileFormProps) => {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormData>({
     mode: 'all',
     resolver: yupResolver(editProfileValidationSchema),
   });
@@ -44,11 +43,7 @@ export const EditProfileForm = ({
   const [selectedAvatar, setSelectedAvatar] = useState<File[]>([]);
   const todayDate = new Date();
   const today = todayDate.toISOString().split('T')[0];
-  const minBirthDate = new Date(
-    todayDate.setFullYear(todayDate.getFullYear() - COUNT_MAX_DATE_BIRTH_YEARS)
-  )
-    .toISOString()
-    .split('T')[0];
+  const minBirthDate = calculateMinBirthDate(COUNT_MAX_DATE_BIRTH_YEARS);
 
   const onSubmit = (data: FormData) => {
     const { dateBirth } = data;
@@ -58,9 +53,10 @@ export const EditProfileForm = ({
       avatarFile: selectedAvatar[0] ?? null,
       bannerFile: selectedBanner[0] ?? null,
     };
-    dispatch(updateUserDataRequest(userId, newData, onCloseModal ?? undefined));
+    dispatch(updateUserDataRequest(userId, newData, onCloseModal));
   };
 
+  const isDisabledButton = loading || Object.keys(errors).length > 0;
   return (
     <div>
       <div>
@@ -111,7 +107,7 @@ export const EditProfileForm = ({
         <Button
           type="submit"
           loading={loading}
-          disabled={loading || Object.keys(errors).length > 0}
+          disabled={isDisabledButton}
           text="Update"
         />
       </form>

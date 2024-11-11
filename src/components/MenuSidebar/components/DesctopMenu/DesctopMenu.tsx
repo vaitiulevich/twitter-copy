@@ -5,7 +5,7 @@ import { Button } from '@components/Button/Button';
 import { UserShortInfo } from '@components/UserShortInfo/UserShortInfo';
 import { NavMenu } from '@constants/constants';
 import { images } from '@constants/images';
-import { RootState } from '@store/types';
+import { selectTheme, selectUserSelector } from '@store/selectors';
 import classNames from 'classnames';
 
 import './styles.scss';
@@ -18,12 +18,10 @@ export const DesctopMenu = memo(
     handleOpenExitModal: () => void;
     handleOpenModal: () => void;
   }) => {
-    const theme = useSelector((state: RootState) => state.theme.theme);
+    const { theme } = useSelector(selectTheme);
     const isLightTheme = theme === 'light';
 
-    const { avatar, name, userSlug } = useSelector(
-      (state: RootState) => state.user
-    );
+    const { avatar, name, userSlug } = useSelector(selectUserSelector);
 
     const location = useLocation();
 

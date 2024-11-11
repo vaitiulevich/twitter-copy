@@ -105,13 +105,14 @@ export function* monitorUserChannel(
 ): Generator {
   while (true) {
     const changedUserData = yield take(userChannel);
+    const { userId, name, avatar, userSlug } = changedUserData[0];
     const updatedPostsWithNewData = initialPosts.map((post: PostState) =>
-      post.userId === changedUserData[0].userId
+      post.userId === userId
         ? {
             ...post,
-            userName: changedUserData[0].name,
-            userAvatar: changedUserData[0].avatar,
-            userSlug: changedUserData[0].userSlug,
+            userName: name,
+            userAvatar: avatar,
+            userSlug: userSlug,
           }
         : post
     );

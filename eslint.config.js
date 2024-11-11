@@ -3,7 +3,7 @@ import tseslint from '@typescript-eslint/eslint-plugin';
 import tsparser from '@typescript-eslint/parser';
 import pluginReact from 'eslint-plugin-react';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import globals from 'globals';
+import unusedImports from 'eslint-plugin-unused-imports';
 
 export default [
   {
@@ -20,6 +20,7 @@ export default [
       '@typescript-eslint': tseslint,
       '@eslint/js': pluginJs,
       'simple-import-sort': simpleImportSort,
+      'unused-imports': unusedImports,
     },
     settings: {
       react: {
@@ -32,6 +33,16 @@ export default [
         'error',
         {
           groups: [['^\\u0000'], ['^react', '^@?\\w'], ['^src/', '^(../|./)']],
+        },
+      ],
+      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-vars': [
+        'warn',
+        {
+          vars: 'all',
+          varsIgnorePattern: '^_',
+          args: 'after-used',
+          argsIgnorePattern: '^_',
         },
       ],
     },

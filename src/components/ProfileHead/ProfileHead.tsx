@@ -3,16 +3,15 @@ import { EditProfileButton } from '@components/EditProfileButton/EditProfileButt
 import { FollowButton } from '@components/FollowButton/FollowButton';
 import { images } from '@constants/images';
 import { UserState } from '@store/reducers/userReducer';
-import { RootState } from '@store/types';
+import { selectPostsLength } from '@store/selectors';
 
 import './styles.scss';
-export const ProfileHead = ({
-  user,
-  isOriginUser,
-}: {
+
+interface ProfileHeadProps {
   user: UserState;
   isOriginUser: boolean;
-}) => {
+}
+export const ProfileHead = ({ user, isOriginUser }: ProfileHeadProps) => {
   const {
     name,
     profileImg,
@@ -20,10 +19,10 @@ export const ProfileHead = ({
     userId,
     userSlug,
     description,
-    followers,
-    following,
+    followers = [],
+    following = [],
   } = user;
-  let countPosts = useSelector((state: RootState) => state.posts.posts.length);
+  let countPosts = useSelector(selectPostsLength);
   return (
     <div>
       <header className="profile-header">

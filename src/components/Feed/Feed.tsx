@@ -4,7 +4,7 @@ import { NotificationPopUp } from '@components/NotificationPopUp/NotificationPop
 import { Post } from '@components/Post/Post';
 import { SkeletonPost } from '@components/SkeletonPost/SkeletonPost';
 import { SCELETON_POST_COUNT } from '@constants/constants';
-import { RootState } from '@store/types';
+import { selectAuthUid } from '@store/selectors';
 import { useFetchPosts } from '@utils/hooks/useFetchPosts';
 import { DocumentData, Query } from 'firebase/firestore';
 
@@ -16,7 +16,7 @@ interface FeedProps {
 }
 
 export const Feed = ({ query, isNavigateFeed = false }: FeedProps) => {
-  const userId = useSelector((state: RootState) => state.auth.uid);
+  const userId = useSelector(selectAuthUid);
   const location = useLocation();
   const {
     loadMoreRef,
@@ -34,7 +34,7 @@ export const Feed = ({ query, isNavigateFeed = false }: FeedProps) => {
         key={post.id}
         post={post}
         userId={userId}
-        navigateTo={isNavigateFeed ? `posts/${post.id}` : undefined}
+        navigateTo={isNavigateFeed ? `posts/${post.id}` : ''}
       />
     ));
   };

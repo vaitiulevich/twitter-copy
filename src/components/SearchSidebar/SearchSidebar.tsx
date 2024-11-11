@@ -1,6 +1,7 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { images } from '@constants/images';
+import { LOADING } from '@constants/messages';
 import { searchRequest, searchSuccess } from '@store/actions/searchActions';
 import {
   selectSearchLoad,
@@ -8,7 +9,6 @@ import {
   selectSearchUsers,
 } from '@store/selectors';
 import { debounce } from '@utils/debounce';
-import classNames from 'classnames';
 
 import './styles.scss';
 import { SearchPostsResults } from './components/SearchPostsResults/SearchPostsResults';
@@ -63,6 +63,36 @@ export const SearchSidebar = () => {
     };
   }, [timeoutId]);
 
+  const renderResults = () => {
+    const isNothingFound = !isHasResults && searchTerm.trim();
+    const isHasPosts = posts && posts.length > 0;
+    const isHasUsers = users && users.length > 0;
+    if (loading) {
+      return <p className="search-results">{LOADING}</p>;
+    }
+    if (isNothingFound) {
+      return <div className="search-results">Nothing found</div>;
+    }
+    if (isHasResults) {
+      return (
+        <div className="search-results">
+          <h2 className="search-headline">Search results</h2>
+          {isHasPosts && (
+            <>
+              <h3 className="search-item-headline">Tweets</h3>
+              <SearchPostsResults posts={posts} />
+            </>
+          )}
+          {isHasUsers && (
+            <>
+              <h3 className="search-item-headline">Users</h3>
+              <SearchUsersResults searchTerm={searchTerm} users={users} />
+            </>
+          )}
+        </div>
+      );
+    }
+  };
   return (
     <aside className="search-sidebar">
       <img src={images.logo} alt="logo" className="mobile-header-logo" />
@@ -88,31 +118,7 @@ export const SearchSidebar = () => {
           </button>
         )}
       </div>
-      {(users === null || posts === null) && searchTerm.trim() && (
-        <div className="search-results">Nothing found</div>
-      )}
-      {(isHasResults || loading) && (
-        <div
-          className={classNames('search-results', {
-            visible: isFocused || loading,
-          })}
-        >
-          {isHasResults && <h2 className="search-headline">Search results</h2>}
-          {posts && posts.length > 0 && (
-            <>
-              <h3 className="search-item-headline">Tweets</h3>
-              <SearchPostsResults posts={posts} />
-            </>
-          )}
-          {users && users.length > 0 && (
-            <>
-              <h3 className="search-item-headline">Users</h3>
-              <SearchUsersResults searchTerm={searchTerm} users={users} />
-            </>
-          )}
-          {loading && <p>Loading...</p>}
-        </div>
-      )}
+      {renderResults()}
     </aside>
   );
 };

@@ -5,6 +5,10 @@ export const MAX_FILE_SIZE = 200 * 1024;
 export const MAX_WIDTH = 1920;
 export const MAX_HEIGHT = 1080;
 
+export const SECONDS_IN_MINUTE = 60;
+export const SECONDS_IN_HOUR = 3600;
+export const SECONDS_IN_DAY = 86400;
+
 export const Months = [
   'January',
   'February',

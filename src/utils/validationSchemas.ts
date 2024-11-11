@@ -10,7 +10,6 @@ import {
   MIN_LOGIN_LENTGH_PASSWORD,
 } from '@constants/constants';
 import {
-  ERR_DATE_FUTURE,
   ERR_DATE_MIN_BIRTH,
   ERR_INCORRECT_FILL,
   ERR_MAX_LENTGH_NAME,
@@ -20,9 +19,8 @@ import {
   ERR_PASSWORD_RULES,
   ERR_REQUIRED,
 } from '@constants/messages';
+import { DATE_REGEX, EMAIL_REGEX, PASSWORD_REGEX } from '@constants/regex';
 import * as yup from 'yup';
-
-import { formatDate } from './formatDate';
 
 export const stringRequired = (min: number, max: number) =>
   yup
@@ -38,13 +36,12 @@ export const passwordValidation = yup
   .required(ERR_REQUIRED)
   .min(MIN_LENTGH_PASSWORD, ERR_PASSWORD_RULES)
   .max(MAX_LENTGH_PASSWORD, ERR_PASSWORD_RULES)
-  .matches(/(?=.*[0-9])/, ERR_PASSWORD_RULES)
-  .matches(/(?=.*[A-Z])/, ERR_PASSWORD_RULES);
+  .matches(PASSWORD_REGEX, ERR_PASSWORD_RULES);
 
 export const emailValidation = yup
   .string()
   .required(ERR_REQUIRED)
-  .matches(/^[^\s]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, ERR_INCORRECT_FILL)
+  .matches(EMAIL_REGEX, ERR_INCORRECT_FILL)
   .email(ERR_INCORRECT_FILL);
 
 export const setPasswordValidationSchema = yup.object().shape({
@@ -55,16 +52,17 @@ export const setPasswordValidationSchema = yup.object().shape({
     .required(ERR_PASSWORD_CONFIRM),
 });
 
-export const chandgePasswordValidationSchema = yup.object().shape({
+export const changePasswordValidationSchema = yup.object().shape({
   password: stringRequired(
     MIN_LOGIN_LENTGH_PASSWORD,
     MAX_LOGIN_LENTGH_PASSWORD
   ),
   newPassword: passwordValidation,
 });
+
 const todayDate = new Date();
 const todayYear = todayDate.getFullYear();
-const minDateBirt = todayDate.getFullYear() - COUNT_MAX_DATE_BIRTH_YEARS;
+const minDateBirt = todayYear - COUNT_MAX_DATE_BIRTH_YEARS;
 
 export const editProfileValidationSchema = yup.object().shape({
   name: stringRequired(MIN_LENTGH_NAME, MAX_LENTGH_NAME),
@@ -72,7 +70,7 @@ export const editProfileValidationSchema = yup.object().shape({
   dateBirth: yup
     .string()
     .required(ERR_REQUIRED)
-    .matches(/^\d{4}-\d{2}-\d{2}$/)
+    .matches(DATE_REGEX)
     .test('is-valid-date', ERR_DATE_MIN_BIRTH, (value) => {
       if (!value) return false;
       const year = parseInt(value.slice(0, 4), 10);

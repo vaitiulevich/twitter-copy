@@ -2,74 +2,45 @@ import { createSelector } from 'reselect';
 
 import { RootState } from './types';
 
-const selectTheme = (state: RootState) => state.theme;
-export const selectThemeType = createSelector(
-  [selectTheme],
-  (theme) => theme.theme
-);
+export const selectTheme = (state: RootState) => state.theme;
 
-const selectPosts = (state: RootState) => state.posts;
-export const selectPostLoad = createSelector(
-  [selectPosts],
-  (post) => post.loading
-);
+export const selectPosts = (state: RootState) => state.posts;
 
-export const selectIsMorePost = createSelector(
-  [selectPosts],
-  (post) => post.isMorePosts
-);
-export const selectUserPosts = createSelector(
-  [selectPosts],
-  (post) => post.posts
-);
+export const selectPostLoad = (state: RootState) => state.posts.loading;
+export const selectPostSelected = (state: RootState) => state.posts.selectPost;
+
+export const selectIsMorePost = (state: RootState) => state.posts.isMorePosts;
+export const selectUserPosts = (state: RootState) => state.posts;
+export const selectPostsLength = (state: RootState) => state.posts.posts.length;
 export const selectPostById = createSelector(
   [selectPosts, (state: RootState, postId: string) => postId],
   (post, postId) => post.posts.find((p) => p.id === postId)
 );
 
-const selectUser = (state: RootState) => state.user;
-export const selectUserSelector = createSelector([selectUser], (user) => user);
-export const selectUserId = createSelector([selectUser], (user) => user.userId);
-export const selectUserLoad = createSelector(
-  [selectUser],
-  (user) => user.loading
-);
-export const selectUserError = createSelector(
-  [selectUser],
-  (user) => user.error
-);
-export const selectUserStatus = createSelector(
-  [selectUser],
-  (user) => user.status
-);
+export const selectUserSelector = (state: RootState) => state.user;
+export const selectUserId = (state: RootState) => state.user.userId;
+export const selectUserLoad = (state: RootState) => state.user.loading;
+export const selectUserError = (state: RootState) => state.user.error;
+export const selectUserStatus = (state: RootState) => state.user.status;
 
-const selectAuth = (state: RootState) => state.auth;
-export const selectAuthTimestamp = createSelector(
-  [selectAuth],
-  (auth) => auth.endSessionTimestamp
-);
-export const selectAuthUid = createSelector([selectAuth], (auth) => auth.uid);
-export const selectAuthError = createSelector(
-  [selectAuth],
-  (auth) => auth.error
-);
-export const selectAuthUser = createSelector([selectAuth], (auth) => auth.user);
-export const selectAuthLoad = createSelector(
-  [selectAuth],
-  (auth) => auth.loading
-);
+export const selectAuthTimestamp = (state: RootState) =>
+  state.auth.endSessionTimestamp;
+export const selectAuthUid = (state: RootState) => state.auth.uid;
+export const selectAuthError = (state: RootState) => state.auth.error;
+export const selectAuthUser = (state: RootState) => state.auth.user;
+export const selectAuthLoad = (state: RootState) => state.auth.loading;
+export const selectAuthToSetPassword = (state: RootState) =>
+  state.auth.navigateToSetPassword;
 
 const otherUser = (state: RootState) => state.otherUser;
 
-export const selectOtherUser = createSelector(
-  [otherUser],
-  (user) => user.otherUser
-);
+export const selectOtherUser = (state: RootState) => state.otherUser;
+export const selectOtherUserFollowers = (state: RootState) =>
+  state.otherUser.otherUser?.followers;
 
-export const selectOtherUserLoad = createSelector(
-  [otherUser],
-  (user) => user.loading
-);
+export const selectOtherUserLoad = (state: RootState) =>
+  state.otherUser.loading;
+export const selectOtherUserError = (state: RootState) => state.otherUser.error;
 export const isUserFollowing = createSelector(
   [otherUser, (state: RootState, userId: string) => userId],
   (user, userId) => {
@@ -77,19 +48,8 @@ export const isUserFollowing = createSelector(
   }
 );
 
-const search = (state: RootState) => state.search;
+export const selectSearchLoad = (state: RootState) => state.search.loading;
 
-export const selectSearchLoad = createSelector(
-  [search],
-  (search) => search.loading
-);
+export const selectSearchUsers = (state: RootState) => state.search.users;
 
-export const selectSearchUsers = createSelector(
-  [search],
-  (search) => search.users
-);
-
-export const selectSearchPosts = createSelector(
-  [search],
-  (search) => search.posts
-);
+export const selectSearchPosts = (state: RootState) => state.search.posts;

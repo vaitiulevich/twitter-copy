@@ -14,6 +14,7 @@ export const clearError = () =>
   ({
     type: actions.CLEAR_ERROR,
   }) as const;
+
 export const changePasswordSuccess = (status: string | null) =>
   ({
     type: actions.CHANGE_PASSWORD_SUCCESS,
@@ -40,6 +41,7 @@ export const updateUserDataSuccess = () =>
   ({
     type: actions.UPDATE_USER_DATA_SUCCESS,
   }) as const;
+
 export const updateUserDataFailure = (error: string | null) =>
   ({
     type: actions.UPDATE_USER_DATA_FAILURE,

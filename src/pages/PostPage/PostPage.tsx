@@ -4,16 +4,20 @@ import { useParams } from 'react-router-dom';
 import { Post } from '@components/Post/Post';
 import { SkeletonPost } from '@components/SkeletonPost/SkeletonPost';
 import { getPostRequest } from '@store/actions/postActions';
-import { RootState } from '@store/types';
+import {
+  selectPostLoad,
+  selectPostSelected,
+  selectUserId,
+} from '@store/selectors';
 
 import './styles.scss';
 
 export const PostPage = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const post = useSelector((state: RootState) => state.posts.selectPost);
-  const loading = useSelector((state: RootState) => state.posts.loading);
-  const userId = useSelector((state: RootState) => state.user.userId);
+  const post = useSelector(selectPostSelected);
+  const loading = useSelector(selectPostLoad);
+  const userId = useSelector(selectUserId);
   useEffect(() => {
     if (id) {
       dispatch(getPostRequest(id));

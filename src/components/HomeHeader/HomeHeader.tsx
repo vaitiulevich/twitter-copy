@@ -2,12 +2,13 @@ import { useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import ThemeToggle from '@components/ThemeToggle/ThemeToggle';
 import { images } from '@constants/images';
-import { selectThemeType } from '@store/selectors';
+import { selectTheme } from '@store/selectors';
 
 import './styles.scss';
 export const HomeHeader = () => {
   const location = useLocation();
-  const theme = useSelector(selectThemeType);
+  const { theme } = useSelector(selectTheme);
+
   const isHomeChildPage =
     location.pathname.includes('/posts/') ||
     location.pathname.includes('/user/');

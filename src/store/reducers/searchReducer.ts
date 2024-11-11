@@ -28,8 +28,11 @@ const initialState: SearchState = {
   loading: false,
   error: null,
 };
-
-const searchReducer = (state = initialState, action: SearchAction) => {
+// Type '(state: SearchState | undefined, action: SearchAction) => SearchState' is not assignable to type 'SearchState'.
+const searchReducer = (
+  state: SearchState = initialState,
+  action: SearchAction
+) => {
   switch (action.type) {
     case SEARCH_REQUEST:
       return { ...state, loading: true, error: null };

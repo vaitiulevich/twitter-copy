@@ -4,9 +4,9 @@ import {
 } from '@store/types/theme/actionTypes';
 type Theme = 'light' | 'dark';
 
-export type ThemeState = {
+export interface ThemeState {
   theme: Theme;
-};
+}
 const initialState: ThemeState = {
   theme: 'light',
 };

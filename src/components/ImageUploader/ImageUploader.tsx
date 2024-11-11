@@ -1,9 +1,8 @@
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { DEFAULT_POST_FILES } from '@constants/constants';
 import { images, images as imagesIcons } from '@constants/images';
 import {
   ERR_COUNT_FILES,
-  ERR_INVALID_DIMENSIONS,
   ERR_INVALID_FILE,
   ERR_INVALID_SIZE,
 } from '@constants/messages';

@@ -6,15 +6,19 @@ import { NotificationPopUp } from '@components/NotificationPopUp/NotificationPop
 import { ProfileHead } from '@components/ProfileHead/ProfileHead';
 import { hideErrorPopUp } from '@store/actions/popUpActions';
 import { getUserData, getUserDataFailure } from '@store/actions/userActions';
-import { selectAuthUid, selectUserSelector } from '@store/selectors';
-import { RootState } from '@store/types';
+import {
+  selectAuthUid,
+  selectUserError,
+  selectUserSelector,
+} from '@store/selectors';
 import { userPostsQuery } from '@utils/querys';
 
 import './styles.scss';
 
 export const Profile = () => {
   const user = useSelector(selectUserSelector);
-  const { error } = useSelector((state: RootState) => state.user);
+  const error = useSelector(selectUserError);
+  const authId = useSelector(selectAuthUid);
 
   const dispatch = useDispatch();
   const fetchUser = (uid: string) => {
@@ -22,7 +26,6 @@ export const Profile = () => {
       dispatch(getUserData(uid));
     }
   };
-  const authId = useSelector(selectAuthUid);
   useEffect(() => {
     if (authId) {
       fetchUser(authId);

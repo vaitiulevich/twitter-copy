@@ -3,7 +3,11 @@ import { Button } from '@components/Button/Button';
 import { logoutRequest } from '@store/actions/authActions';
 
 import './styles.scss';
-export const ExitAlert = ({ onCloseModal }: { onCloseModal?: () => void }) => {
+
+interface ExitAlertProps {
+  onCloseModal?: () => void;
+}
+export const ExitAlert = ({ onCloseModal }: ExitAlertProps) => {
   const dispatch = useDispatch();
   const handleLogOut = () => {
     dispatch(logoutRequest());

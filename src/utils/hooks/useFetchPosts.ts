@@ -9,7 +9,7 @@ import {
   setIsMorePosts,
   updatePostLikesFailure,
 } from '@store/actions/postActions';
-import { RootState } from '@store/types';
+import { selectPosts, selectUserId } from '@store/selectors';
 import { DocumentData, Query } from 'firebase/firestore';
 
 export const useFetchPosts = (
@@ -19,13 +19,12 @@ export const useFetchPosts = (
 ) => {
   const dispatch = useDispatch();
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
-  const { isMorePosts, loading, posts, visiblePostsCount, error } = useSelector(
-    (state: RootState) => state.posts
-  );
+  const { isMorePosts, loading, posts, visiblePostsCount, error } =
+    useSelector(selectPosts);
 
   const visiblePosts = posts.slice(0, visiblePostsCount);
   const isHasPosts = visiblePosts.length > 0;
-  const user = useSelector((state: RootState) => state.user);
+  const originId = useSelector(selectUserId);
 
   useEffect(() => {
     dispatch(fetchPostsRequest(userId, query));
@@ -34,7 +33,7 @@ export const useFetchPosts = (
     return () => {
       dispatch(fetchPostsSuccess([]));
     };
-  }, [location, user.userId]);
+  }, [location, originId]);
 
   useEffect(() => {
     if (!isMorePosts || !loadMoreRef.current) {

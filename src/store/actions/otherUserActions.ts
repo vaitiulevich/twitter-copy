@@ -38,6 +38,7 @@ export const setFollowingStatus = (
     type: actions.SET_FOLLOWING_STATUS,
     payload: { isFollowing, id, originId, searchTerm },
   }) as const;
+
 export const setFollowingStatusSuccess = () =>
   ({
     type: actions.SET_FOLLOWING_STATUS_SUCCESS,

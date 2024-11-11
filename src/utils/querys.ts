@@ -1,8 +1,6 @@
-import { POSTS_PER_PAGE } from '@constants/constants';
 import { PostState } from '@store/reducers/postReducer';
 import {
   collection,
-  limit,
   orderBy,
   query,
   startAfter,
@@ -16,7 +14,6 @@ export const userPostsQuery = (userId: string) => {
     postsRef,
     where('userId', '==', userId),
     orderBy('timestamp', 'desc')
-    // limit(POSTS_PER_PAGE)
   );
 };
 export const userAllPostsQuery = (userId: string) => {
@@ -36,7 +33,6 @@ export const userCursorPostsQuery = (
     where('userId', '==', userId),
     orderBy('timestamp', 'desc'),
     startAfter(lastVisible)
-    // limit(POSTS_PER_PAGE)
   );
 };
 
@@ -45,12 +41,7 @@ export const allPostsQuery = () => {
 };
 
 export const allCursorPostsQuery = (lastVisible: PostState) => {
-  return query(
-    postsRef,
-    orderBy('timestamp', 'desc'),
-    startAfter(lastVisible)
-    // limit(POSTS_PER_PAGE)
-  );
+  return query(postsRef, orderBy('timestamp', 'desc'), startAfter(lastVisible));
 };
 
 export const postSearchQuery = (searchTerm: string) => {
