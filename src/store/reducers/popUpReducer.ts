@@ -3,7 +3,7 @@ import {
   PopUpAction,
   SHOW_ERROR_POPUP,
 } from '@store/types/popUp/actionTypes';
-interface PopUpState {
+export interface PopUpState {
   message: string | null;
 }
 const initialState: PopUpState = {

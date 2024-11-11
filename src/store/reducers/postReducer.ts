@@ -17,6 +17,7 @@ import {
   SET_IS_MORE_POSTS,
   UPDATE_POST_LIKES_FAILURE,
 } from '@store/types/posts/actionTypes';
+import { Reducer } from 'redux';
 
 export interface PostState {
   id?: string;
@@ -49,7 +50,10 @@ const initialState: PostsState = {
   error: null,
 };
 
-const userReducer = (state = initialState, action: PostAction) => {
+const userReducer: Reducer<PostsState, PostAction> = (
+  state = initialState,
+  action: PostAction
+) => {
   switch (action.type) {
     case GET_POST_REQUEST:
       return { ...state, loading: true };

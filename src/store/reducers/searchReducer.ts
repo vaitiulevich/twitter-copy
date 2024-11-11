@@ -1,4 +1,3 @@
-import { User } from '@store/types';
 import {
   SEARCH_FAILURE,
   SEARCH_REQUEST,
@@ -14,9 +13,8 @@ interface StatusRequest {
   error?: string | null;
 }
 
-export interface UserSearch extends User {
+export interface UserSearch extends UserState {
   id: string;
-  userSlug?: string;
 }
 export interface SearchState extends StatusRequest {
   users: UserState[] | null;
@@ -28,7 +26,6 @@ const initialState: SearchState = {
   loading: false,
   error: null,
 };
-// Type '(state: SearchState | undefined, action: SearchAction) => SearchState' is not assignable to type 'SearchState'.
 const searchReducer = (
   state: SearchState = initialState,
   action: SearchAction

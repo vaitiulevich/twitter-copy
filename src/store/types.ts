@@ -1,24 +1,17 @@
-import { Maybe } from 'yup';
-
 import { AuthState } from './reducers/authRedicer';
 import { OtherUserState } from './reducers/otherUserReducer';
+import { PopUpState } from './reducers/popUpReducer';
 import { PostsState } from './reducers/postReducer';
 import { SearchState } from './reducers/searchReducer';
 import { ThemeState } from './reducers/themeReducer';
 import { UserState } from './reducers/userReducer';
 import { AuthAction } from './types/auth/actionTypes';
+import { OtherUserAction } from './types/otherUser/actionTypes';
+import { PopUpAction } from './types/popUp/actionTypes';
+import { PostAction } from './types/posts/actionTypes';
+import { SearchAction } from './types/search/actionTypes';
 import { ThemeAction } from './types/theme/actionTypes';
 import { UserAction } from './types/user/actionTypes';
-
-export interface User {
-  email: string;
-  phone: string;
-  dateBirth: string;
-  name: string;
-  avatar?: string | null;
-  profileImg?: string | null;
-  description?: Maybe<string | undefined>;
-}
 
 export interface ProfileFiles {
   avatarFile?: File;
@@ -36,6 +29,13 @@ export type RootState = {
   posts: PostsState;
   otherUser: OtherUserState;
   search: SearchState;
+  popup: PopUpState;
 };
-
-export type RootAction = AuthAction | UserAction | ThemeAction;
+export type RootAction =
+  | ThemeAction
+  | AuthAction
+  | UserAction
+  | PostAction
+  | OtherUserAction
+  | SearchAction
+  | PopUpAction;
